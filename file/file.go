@@ -1,0 +1,121 @@
+package file
+
+import (
+	"bytes"
+	"fmt"
+	"go-generator/format"
+	"log"
+	"os"
+	"path/filepath"
+	"strings"
+	"text/template"
+)
+
+type DirectoryStructure map[string][]string
+
+func CreateStructure(basePath string, structure DirectoryStructure, temp *template.Template) error {
+	for dir, files := range structure {
+		// Append the base path to the directory
+		fullDirPath := filepath.Join(basePath, dir)
+
+		// Create the directory and any necessary parents
+		err := CreateFolder(fullDirPath)
+		if err != nil {
+			return fmt.Errorf("error creating directory %s: %w", fullDirPath, err)
+		}
+
+		// Check if there are any files to create, including empty strings
+		if len(files) == 0 || (len(files) == 1 && files[0] == "") {
+			// No files to create, just create the directory
+			fmt.Printf("Empty directory created: %s\n", fullDirPath)
+			continue
+		}
+
+		// Create each file in the directory
+		for _, file := range files {
+			if file == "" {
+				continue
+			}
+
+			// Read tmpl file and parse data
+			contentData, _ := ParseContent(temp, file, dir)
+			// Create file with content
+			err = CreateFile(filepath.Join(fullDirPath, file), contentData)
+			if err != nil {
+				log.Fatalf("Failed to create file: %v", err)
+			}
+		}
+	}
+	return nil
+}
+
+// CreateFolder creates the specified folder if it doesn't exist.
+func CreateFolder(folderPath string) error {
+	err := os.MkdirAll(folderPath, os.ModePerm)
+	if err != nil {
+		return fmt.Errorf("error creating folder: %v", err)
+	}
+	fmt.Println("Created folder:", folderPath)
+	return nil
+}
+
+// CreateFile creates a file at the specified filePath and writes content to it.
+func CreateFile(filePath, content string) error {
+	// Ensure the folder for the file exists
+	folder := filepath.Dir(filePath)
+	if err := CreateFolder(folder); err != nil {
+		return err
+	}
+
+	// Create the file
+	file, err := os.Create(filePath)
+	if err != nil {
+		return fmt.Errorf("error creating file: %v", err)
+	}
+	defer file.Close()
+
+	// Write content if any
+	if content != "" {
+		_, err = file.WriteString(content)
+		if err != nil {
+			return fmt.Errorf("error writing content to file: %v", err)
+		}
+	}
+
+	fmt.Println("Created file:", filePath)
+	return nil
+}
+
+// ParseContent processes a Go template and returns the formatted Go code.
+func ParseContent(tmpl *template.Template, fileName, dir string) (string, error) {
+	data := map[string]string{
+		"ServiceName": "custom",
+	}
+
+	templateName := "main"
+
+	switch {
+	case strings.Contains(fileName, "cmd"):
+		templateName = "main"
+	case strings.Contains(fileName, "service"):
+		templateName = "service"
+	case strings.Contains(fileName, "repository"):
+		templateName = "repository"
+	case strings.Contains(dir, "database"):
+		templateName = "database"
+	}
+
+	var output bytes.Buffer
+
+	err := tmpl.ExecuteTemplate(&output, templateName, data)
+	if err != nil {
+		return "", fmt.Errorf("failed to execute template: %w", err)
+	}
+
+	formattedOutput, err := format.FormatGoCode(output.Bytes())
+	if err != nil {
+		return "", fmt.Errorf("failed to format Go code: %w", err)
+	}
+
+	return string(formattedOutput), nil
+}
