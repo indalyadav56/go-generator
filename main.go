@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
-	"go-generator/file"
 	"io"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"text/template"
+
+	"github.com/indalyadav56/go-generator/file"
 )
 
 func main() {

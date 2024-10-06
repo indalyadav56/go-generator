@@ -3,12 +3,13 @@ package file
 import (
 	"bytes"
 	"fmt"
-	"go-generator/format"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
+
+	"github.com/indalyadav56/go-generator/format"
 )
 
 type DirectoryStructure map[string][]string
