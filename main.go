@@ -13,22 +13,31 @@ import (
 )
 
 func main() {
+	var projectTitle string
+
+	fmt.Print("Enter your project title: ")
+	fmt.Scanln(&projectTitle)
+
 	tmpl, err := template.ParseGlob("templates/*.tmpl")
 	if err != nil {
 		panic(err)
 	}
 
-	projectTitle := "todo"
-
 	structure := file.DirectoryStructure{
 		fmt.Sprintf("cmd/%s", projectTitle): {fmt.Sprintf("%s.go", projectTitle)},
 		"config":                            {"env.go"},
+		"constants":                         {"constant.go"},
 		"database":                          {"postgres.go"},
-		"repository":                        {fmt.Sprintf("%s_repository.go", projectTitle)},
-		"controllers":                       {fmt.Sprintf("%s_controller.go", projectTitle)},
-		"services":                          {fmt.Sprintf("%s_service.go", projectTitle)},
+		"middlewares":                       {""},
+		"scripts":                           {""},
+		"internal":                          {""},
+		"internal/dto":                      {fmt.Sprintf("%s_dto.go", projectTitle)},
+		"internal/models":                   {fmt.Sprintf("%s_model.go", projectTitle)},
+		"internal/services":                 {fmt.Sprintf("%s_service.go", projectTitle)},
+		"internal/repository":               {fmt.Sprintf("%s_repository.go", projectTitle)},
+		"internal/controllers":              {fmt.Sprintf("%s_controller.go", projectTitle)},
 		"logs":                              {"app.log"},
-		".":                                 {"README.md"},
+		".":                                 {"README.md", "Dockerfile", "docker-compose.yml"},
 	}
 
 	// Call the createStructure function to create the directories and files
@@ -60,8 +69,6 @@ func runGoModTidy(basePath string) error {
 	return nil
 }
 
-// Function to initialize a Go module (go mod init)
-// initGoModule initializes a Go module in the "custom" folder within the current working directory.
 func initGoModule(projectTitle string) error {
 	// Get the current working directory
 	currentDir, err := os.Getwd()

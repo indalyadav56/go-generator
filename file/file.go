@@ -10,6 +10,8 @@ import (
 	"text/template"
 
 	"github.com/indalyadav56/go-generator/format"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 type DirectoryStructure map[string][]string
@@ -39,7 +41,7 @@ func CreateStructure(basePath string, structure DirectoryStructure, temp *templa
 			}
 
 			// Read tmpl file and parse data
-			contentData, _ := ParseContent(temp, file, dir)
+			contentData, _ := ParseContent(temp, file, dir, basePath)
 			// Create file with content
 			err = CreateFile(filepath.Join(fullDirPath, file), contentData)
 			if err != nil {
@@ -88,9 +90,13 @@ func CreateFile(filePath, content string) error {
 }
 
 // ParseContent processes a Go template and returns the formatted Go code.
-func ParseContent(tmpl *template.Template, fileName, dir string) (string, error) {
+func ParseContent(tmpl *template.Template, fileName, dir, projectTitle string) (string, error) {
+	caser := cases.Title(language.English)
+	capitalized := caser.String(projectTitle)
+
 	data := map[string]string{
-		"ServiceName": "custom",
+		"IServiceName": capitalized,
+		"ServiceName":  projectTitle,
 	}
 
 	templateName := "main"
@@ -108,12 +114,14 @@ func ParseContent(tmpl *template.Template, fileName, dir string) (string, error)
 		templateName = "database"
 	case strings.Contains(dir, "config"):
 		templateName = "config"
+	case strings.Contains(fileName, "constant"):
+		templateName = "constant"
+	case strings.Contains(fileName, "controller"):
+		templateName = "controller"
 	case strings.Contains(strings.ToLower(fileName), "readme"):
 		templateName = "readme"
 		isFormat = false
 	}
-
-	fmt.Println("templateName:->", templateName)
 
 	var output bytes.Buffer
 
