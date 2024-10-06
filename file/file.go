@@ -108,7 +108,7 @@ func ParseContent(tmpl *template.Template, fileName, dir string) (string, error)
 		templateName = "database"
 	case strings.Contains(dir, "config"):
 		templateName = "config"
-	case strings.Contains(fileName, "readme"):
+	case strings.Contains(strings.ToLower(fileName), "readme"):
 		templateName = "readme"
 		isFormat = false
 	}

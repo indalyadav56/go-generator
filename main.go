@@ -28,7 +28,7 @@ func main() {
 		"controllers":                       {fmt.Sprintf("%s_controller.go", projectTitle)},
 		"services":                          {fmt.Sprintf("%s_service.go", projectTitle)},
 		"logs":                              {"app.log"},
-		".":                                 {"readme.md"},
+		".":                                 {"README.md"},
 	}
 
 	// Call the createStructure function to create the directories and files
