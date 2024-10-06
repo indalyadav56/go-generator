@@ -1,11 +1,39 @@
 {{define "repository"}}
-
 package repository
 
 import "fmt"
 
-func main() {
-fmt.Println("Hello, {{.ServiceName}}!");
+// {{.ServiceName}}Repository is the repository for {{.ServiceName}} operations.
+type {{.ServiceName}}Repository struct {
+	// Add database connection or other dependencies here
+}
+
+// Create adds a new {{.ServiceName}}.
+func (r *{{.ServiceName}}Repository) Create(data string) error {
+	fmt.Println("Creating a new {{.ServiceName}}:", data)
+	// Add database logic for creating a {{.ServiceName}}
+	return nil
+}
+
+// Read fetches a {{.ServiceName}} by ID.
+func (r *{{.ServiceName}}Repository) Read(id string) (string, error) {
+	fmt.Println("Reading {{.ServiceName}} with ID:", id)
+	// Add database logic for reading a {{.ServiceName}}
+	return "some_data", nil
+}
+
+// Update modifies an existing {{.ServiceName}}.
+func (r *{{.ServiceName}}Repository) Update(id string, data string) error {
+	fmt.Println("Updating {{.ServiceName}} with ID:", id)
+	// Add database logic for updating a {{.ServiceName}}
+	return nil
+}
+
+// Delete removes a {{.ServiceName}} by ID.
+func (r *{{.ServiceName}}Repository) Delete(id string) error {
+	fmt.Println("Deleting {{.ServiceName}} with ID:", id)
+	// Add database logic for deleting a {{.ServiceName}}
+	return nil
 }
 
 {{end}}

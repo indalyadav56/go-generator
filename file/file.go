@@ -94,9 +94,11 @@ func ParseContent(tmpl *template.Template, fileName, dir string) (string, error)
 	}
 
 	templateName := "main"
+	isFormat := true
 
 	switch {
 	case strings.Contains(fileName, "cmd"):
+		isFormat = true
 		templateName = "main"
 	case strings.Contains(fileName, "service"):
 		templateName = "service"
@@ -104,7 +106,14 @@ func ParseContent(tmpl *template.Template, fileName, dir string) (string, error)
 		templateName = "repository"
 	case strings.Contains(dir, "database"):
 		templateName = "database"
+	case strings.Contains(dir, "config"):
+		templateName = "config"
+	case strings.Contains(fileName, "readme"):
+		templateName = "readme"
+		isFormat = false
 	}
+
+	fmt.Println("templateName:->", templateName)
 
 	var output bytes.Buffer
 
@@ -113,10 +122,13 @@ func ParseContent(tmpl *template.Template, fileName, dir string) (string, error)
 		return "", fmt.Errorf("failed to execute template: %w", err)
 	}
 
-	formattedOutput, err := format.FormatGoCode(output.Bytes())
-	if err != nil {
-		return "", fmt.Errorf("failed to format Go code: %w", err)
+	if isFormat {
+		formattedOutput, err := format.FormatGoCode(output.Bytes())
+		if err != nil {
+			return "", fmt.Errorf("failed to format Go code: %w", err)
+		}
+		return string(formattedOutput), nil
 	}
 
-	return string(formattedOutput), nil
+	return output.String(), nil
 }

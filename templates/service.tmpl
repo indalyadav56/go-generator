@@ -1,11 +1,42 @@
 {{define "service"}}
-
 package services
 
-import "fmt"
+import (
+	"fmt"
+)
 
-func main() {
-fmt.Println("Hello, {{.ServiceName}}!");
+// {{.ServiceName}}Service defines the service for {{.ServiceName}}
+type {{.ServiceName}}Service struct {
+	// Add your repository or data source here, e.g.,
+	// repo {{.ServiceName}}Repository
+}
+
+// Create creates a new {{.ServiceName}}
+func (s *{{.ServiceName}}Service) Create(data string) error {
+	fmt.Println("Creating new {{.ServiceName}}: ", data)
+	// Add your create logic here, e.g., calling repository
+	return nil
+}
+
+// Read retrieves a {{.ServiceName}} by ID
+func (s *{{.ServiceName}}Service) Read(id string) (string, error) {
+	fmt.Println("Reading {{.ServiceName}} with ID: ", id)
+	// Add your read logic here, e.g., calling repository
+	return id, nil
+}
+
+// Update updates an existing {{.ServiceName}} by ID
+func (s *{{.ServiceName}}Service) Update(id string, data string) error {
+	fmt.Println("Updating {{.ServiceName}} with ID: ", id)
+	// Add your update logic here, e.g., calling repository
+	return nil
+}
+
+// Delete deletes a {{.ServiceName}} by ID
+func (s *{{.ServiceName}}Service) Delete(id string) error {
+	fmt.Println("Deleting {{.ServiceName}} with ID: ", id)
+	// Add your delete logic here, e.g., calling repository
+	return nil
 }
 
 {{end}}
