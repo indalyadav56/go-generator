@@ -2,10 +2,27 @@
 
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"{{.ServiceName}}/pkg/logger"
+    "github.com/gin-gonic/gin"
+    "myapp/routes"
+)
 
 func main() {
-fmt.Println("Hello, {{.ServiceName}}!");
+    logger, err := logger.New()
+	if err != nil {
+		fmt.Println("Error creating logger:", err)
+		return
+	}
+
+	fmt.Println("Hello, todo!", logger)
+
+    router := gin.Default()
+
+    // Start the server
+    router.Run(":8080")
+}
 }
 
 {{end}}

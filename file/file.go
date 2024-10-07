@@ -125,6 +125,8 @@ func ParseContent(tmpl *template.Template, fileName, dir, projectTitle string) (
 	case strings.Contains(strings.ToLower(fileName), "readme"):
 		templateName = "readme"
 		isFormat = false
+		// default:
+		// 	templateName = "unknown"
 	}
 
 	var output bytes.Buffer

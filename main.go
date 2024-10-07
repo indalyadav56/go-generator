@@ -24,27 +24,45 @@ func main() {
 	}
 
 	structure := file.DirectoryStructure{
-		fmt.Sprintf("cmd/%s", projectTitle): {fmt.Sprintf("%s.go", projectTitle)},
+		fmt.Sprintf("cmd/%s", projectTitle): {"main.go"},
 		"config":                            {"env.go"},
 		"database":                          {"postgres.go"},
-		"middlewares":                       {"auth_middleware.go"},
 		"scripts":                           {"setup.sh", "deploy.sh"},
-		// "deployments":                       {""},
-		"docs/architecture":    {""},
-		"internal":             {""},
-		"internal/constants":   {"constant.go"},
-		"internal/routes":      {"routes.go"},
-		"internal/dto":         {fmt.Sprintf("%s_dto.go", projectTitle)},
-		"internal/models":      {fmt.Sprintf("%s_model.go", projectTitle)},
-		"internal/services":    {fmt.Sprintf("%s_service.go", projectTitle)},
-		"internal/repository":  {fmt.Sprintf("%s_repository.go", projectTitle)},
-		"internal/controllers": {fmt.Sprintf("%s_controller.go", projectTitle)},
-		"logs":                 {"app.log"},
-		".":                    {"README.md", "Dockerfile", "docker-compose.yml", "Makefile"},
-		"web/static":           {""},
-		"web/templates":        {""},
-		"test/unit":            {""},
-		"test/integration":     {""},
+		"docs":                              {""},
+
+		// auth
+		"internal/auth/constants":   {"constant.go"},
+		"internal/auth/routes":      {"routes.go"},
+		"internal/auth/dto":         {fmt.Sprintf("%s_dto.go", projectTitle)},
+		"internal/auth/services":    {fmt.Sprintf("%s_service.go", projectTitle)},
+		"internal/auth/repository":  {fmt.Sprintf("%s_repository.go", projectTitle)},
+		"internal/auth/controllers": {fmt.Sprintf("%s_controller.go", projectTitle)},
+
+		// user
+		"internal/user/constants":   {"constant.go"},
+		"internal/user/routes":      {"routes.go"},
+		"internal/user/dto":         {fmt.Sprintf("%s_dto.go", projectTitle)},
+		"internal/user/models":      {fmt.Sprintf("%s_model.go", projectTitle)},
+		"internal/user/services":    {fmt.Sprintf("%s_service.go", projectTitle)},
+		"internal/user/repository":  {fmt.Sprintf("%s_repository.go", projectTitle)},
+		"internal/user/controllers": {fmt.Sprintf("%s_controller.go", projectTitle)},
+
+		// todo
+		"internal/todo/constants":   {"constant.go"},
+		"internal/todo/routes":      {"routes.go"},
+		"internal/todo/dto":         {fmt.Sprintf("%s_dto.go", projectTitle)},
+		"internal/todo/models":      {fmt.Sprintf("%s_model.go", projectTitle)},
+		"internal/todo/services":    {fmt.Sprintf("%s_service.go", projectTitle)},
+		"internal/todo/repository":  {fmt.Sprintf("%s_repository.go", projectTitle)},
+		"internal/todo/controllers": {fmt.Sprintf("%s_controller.go", projectTitle)},
+
+		//
+		"logs":             {"app.log"},
+		".":                {".gitignore", "README.md", "Dockerfile", "docker-compose.yml", "Makefile"},
+		"web/static":       {""},
+		"web/templates":    {""},
+		"test/unit":        {""},
+		"test/integration": {""},
 	}
 
 	// Call the createStructure function to create the directories and files

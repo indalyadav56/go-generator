@@ -377,3 +377,159 @@ project-root/
 ├── Makefile
 └── README.md
 ```
+
+
+
+.
+├── Dockerfile
+├── Makefile
+├── README.md
+├── cmd
+│   └── todo
+│       └── main.go                     # Entry point of your application
+├── config
+│   └── config.go                       # Application configurations (env and other settings)
+├── database
+│   └── postgres.go                     # Database connection and setup
+├── docker-compose.yml
+├── docs
+│   └── architecture
+│       └── system-architecture.md      # Documentation on system architecture
+├── go.mod
+├── go.sum
+├── internal                            # Private application logic
+│   ├── auth                            # Auth domain
+│   │   ├── domain                      # Domain layer (Entities, Aggregates)
+│   │   │   └── auth.go
+│   │   ├── application                 # Application services (Use cases)
+│   │   │   └── auth_service.go
+│   │   ├── infrastructure              # Infrastructure layer (Adapters, Database)
+│   │   │   ├── persistence
+│   │   │   │   └── auth_repository.go
+│   │   │   └── http                    # Controllers/Delivery (Incoming requests handling)
+│   │   │       ├── v1                  # API version 1
+│   │   │       │   └── auth_controller.go
+│   │   └── interfaces                  # Port (Repository interfaces, HTTP interfaces)
+│   │       ├── repository.go
+│   │       └── auth_routes.go
+│   ├── user                            # User domain (similar structure to auth)
+│   │   ├── domain
+│   │   │   └── user.go
+│   │   ├── application
+│   │   │   └── user_service.go
+│   │   ├── infrastructure
+│   │   │   ├── persistence
+│   │   │   │   └── user_repository.go
+│   │   │   └── http
+│   │   │       ├── v1
+│   │   │       │   └── user_controller.go
+│   │   └── interfaces
+│   │       ├── repository.go
+│   │       └── user_routes.go
+├── logs
+│   └── app.log                         # Logs storage
+├── middlewares
+│   └── auth_middleware.go              # Middleware for authentication, etc.
+├── pkg                                 # Shared libraries/utilities
+│   ├── utils
+│   │   └── response
+│   │       └── response.go             # Common response utilities
+│   ├── validator
+│   │   └── validator.go                # Common validators
+├── scripts
+│   ├── deploy.sh
+│   └── setup.sh
+├── test                                # Testing folder
+│   ├── integration
+│   └── unit
+└── web
+    ├── static
+    └── templates
+
+
+
+
+
+project-root/
+├── Dockerfile
+├── README.md
+├── docker-compose.yml
+├── go.mod
+├── go.sum
+├── Makefile                      # For common commands and build processes
+├── api                           # API versioning
+│   ├── v1
+│   │   ├── auth
+│   │   ├── user
+│   │   └── todo
+│   └── v2
+├── build                         # Build-related files
+│   ├── ci                        # CI/CD configurations
+│   └── package                   # Packaging scripts
+├── cmd                           # Each service's entry point
+│   ├── auth
+│   │   └── main.go
+│   ├── user
+│   │   └── main.go
+│   └── todo
+│       └── main.go
+├── config                        # Configuration files
+│   ├── auth
+│   ├── user
+│   ├── todo
+│   └── shared.go
+├── deployments                   # Deployment configurations (K8s manifests, etc.)
+├── docs                          # Documentation
+│   ├── api
+│   ├── architecture
+│   └── guides
+├── internal                      # Each service's internal structure
+│   ├── auth
+│   │   ├── controllers
+│   │   ├── dto
+│   │   ├── interfaces
+│   │   ├── models
+│   │   ├── repository
+│   │   └── services
+│   │   └── routes
+│   ├── user
+│   │   ├── controllers
+│   │   ├── dto
+│   │   ├── interfaces
+│   │   ├── models
+│   │   ├── repository
+│   │   └── services
+│   └── todo
+│       ├── controllers
+│       ├── dto
+│       ├── interfaces
+│       ├── models
+│       ├── repository
+│       └── services
+├── migrations                    # Database migrations
+├── pkg                           # Shared packages
+│   ├── constants
+│   ├── database
+│   ├── di                        # Dependency injection
+│   ├── errors
+│   ├── http
+│   ├── jwt
+│   ├── logger
+│   ├── messaging                 # Replaces specific messaging solution
+│   ├── middleware
+│   ├── monitoring                # For metrics and tracing
+│   ├── scheduler
+│   ├── storage                   # Generic storage interfaces (cache, object storage)
+│   ├── utils
+│   │   └── response
+│   ├── validator
+│   └── worker
+├── scripts                       # Utility scripts
+├── test                          # Integration and end-to-end tests
+│   ├── integration
+│   └── e2e
+└── web                           # If there's a web frontend
+    ├── static
+    └── templates
+
+
