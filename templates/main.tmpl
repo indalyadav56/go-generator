@@ -6,7 +6,8 @@ import (
 	"fmt"
 	"{{.ServiceName}}/pkg/logger"
     "github.com/gin-gonic/gin"
-    "myapp/routes"
+    "todo/pkg/middlewares/cors"
+    loggerMiddleware "{{.ServiceName}}/pkg/middlewares/logger"
 )
 
 func main() {
@@ -20,9 +21,11 @@ func main() {
 
     router := gin.Default()
 
+    router.Use(loggerMiddleware.LoggerMiddleware())
+    router.Use(cors.CorsMiddleware())
+
     // Start the server
     router.Run(":8080")
-}
 }
 
 {{end}}

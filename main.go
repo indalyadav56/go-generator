@@ -27,25 +27,24 @@ func main() {
 		fmt.Sprintf("cmd/%s", projectTitle): {"main.go"},
 		"config":                            {"env.go"},
 		"database":                          {"postgres.go"},
-		"scripts":                           {"setup.sh", "deploy.sh"},
 		"docs":                              {""},
 
 		// auth
 		"internal/auth/constants":   {"constant.go"},
 		"internal/auth/routes":      {"routes.go"},
-		"internal/auth/dto":         {fmt.Sprintf("%s_dto.go", projectTitle)},
-		"internal/auth/services":    {fmt.Sprintf("%s_service.go", projectTitle)},
-		"internal/auth/repository":  {fmt.Sprintf("%s_repository.go", projectTitle)},
-		"internal/auth/controllers": {fmt.Sprintf("%s_controller.go", projectTitle)},
+		"internal/auth/dto":         {"auth_dto.go"},
+		"internal/auth/services":    {"auth_service.go"},
+		"internal/auth/repository":  {"auth_repository.go"},
+		"internal/auth/controllers": {"auth_controller.go"},
 
 		// user
 		"internal/user/constants":   {"constant.go"},
 		"internal/user/routes":      {"routes.go"},
-		"internal/user/dto":         {fmt.Sprintf("%s_dto.go", projectTitle)},
-		"internal/user/models":      {fmt.Sprintf("%s_model.go", projectTitle)},
-		"internal/user/services":    {fmt.Sprintf("%s_service.go", projectTitle)},
-		"internal/user/repository":  {fmt.Sprintf("%s_repository.go", projectTitle)},
-		"internal/user/controllers": {fmt.Sprintf("%s_controller.go", projectTitle)},
+		"internal/user/dto":         {"user_dto.go"},
+		"internal/user/models":      {"user_model.go"},
+		"internal/user/services":    {"user_service.go"},
+		"internal/user/repository":  {"user_repository.go"},
+		"internal/user/controllers": {"user_controller.go"},
 
 		// todo
 		"internal/todo/constants":   {"constant.go"},
@@ -57,12 +56,14 @@ func main() {
 		"internal/todo/controllers": {fmt.Sprintf("%s_controller.go", projectTitle)},
 
 		//
-		"logs":             {"app.log"},
-		".":                {".gitignore", "README.md", "Dockerfile", "docker-compose.yml", "Makefile"},
-		"web/static":       {""},
-		"web/templates":    {""},
-		"test/unit":        {""},
-		"test/integration": {""},
+		"logs": {"app.log"},
+		".":    {".gitignore", "README.md", "Dockerfile", "docker-compose.yml", "Makefile", ".env"},
+
+		// "scripts":                           {"setup.sh", "deploy.sh"},
+		// "web/static":       {""},
+		// "web/templates":    {""},
+		// "test/unit":        {""},
+		// "test/integration": {""},
 	}
 
 	// Call the createStructure function to create the directories and files

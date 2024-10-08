@@ -12,7 +12,7 @@ type Config struct {
 
 var ConfigDefault = Config{
 	Debug:      false,
-	Filename:   "app.log",
+	Filename:   "logs/app.log",
 	MaxSize:    1, // megabytes
 	MaxBackups: 3,
 	MaxAge:     28, // days

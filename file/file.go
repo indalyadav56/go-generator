@@ -99,6 +99,18 @@ func ParseContent(tmpl *template.Template, fileName, dir, projectTitle string) (
 		"ServiceName":  projectTitle,
 	}
 
+	if strings.Contains(fileName, "auth") {
+		projectTitle = "auth"
+		data["IServiceName"] = "Auth"
+		data["ServiceName"] = projectTitle + "Service"
+	}
+
+	if strings.Contains(fileName, "user") {
+		projectTitle = "user"
+		data["IServiceName"] = "User"
+		data["ServiceName"] = projectTitle + "Service"
+	}
+
 	templateName := "main"
 	isFormat := true
 
@@ -122,6 +134,8 @@ func ParseContent(tmpl *template.Template, fileName, dir, projectTitle string) (
 		templateName = "middleware"
 	case strings.Contains(fileName, "routes"):
 		templateName = "routes"
+	case strings.Contains(fileName, "dto"):
+		templateName = "dto"
 	case strings.Contains(strings.ToLower(fileName), "readme"):
 		templateName = "readme"
 		isFormat = false
