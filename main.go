@@ -40,20 +40,20 @@ func main() {
 		// user
 		"internal/user/constants":   {"constant.go"},
 		"internal/user/routes":      {"routes.go"},
-		"internal/user/dto":         {"user_dto.go"},
-		"internal/user/models":      {"user_model.go"},
-		"internal/user/services":    {"user_service.go"},
-		"internal/user/repository":  {"user_repository.go"},
-		"internal/user/controllers": {"user_controller.go"},
+		"internal/user/dto":         {"user_dto.go", "user_dto_test.go"},
+		"internal/user/models":      {"user_model.go", "user_model_test.go"},
+		"internal/user/services":    {"user_service.go", "user_service_test.go"},
+		"internal/user/repository":  {"user_repository.go", "user_repository_test.go"},
+		"internal/user/controllers": {"user_controller.go", "user_controller_test.go"},
 
 		// todo
 		"internal/todo/constants":   {"constant.go"},
 		"internal/todo/routes":      {"routes.go"},
-		"internal/todo/dto":         {fmt.Sprintf("%s_dto.go", projectTitle)},
-		"internal/todo/models":      {fmt.Sprintf("%s_model.go", projectTitle)},
-		"internal/todo/services":    {fmt.Sprintf("%s_service.go", projectTitle)},
-		"internal/todo/repository":  {fmt.Sprintf("%s_repository.go", projectTitle)},
-		"internal/todo/controllers": {fmt.Sprintf("%s_controller.go", projectTitle)},
+		"internal/todo/dto":         {fmt.Sprintf("%s_dto.go", projectTitle), fmt.Sprintf("%s_dto_test.go", projectTitle)},
+		"internal/todo/models":      {fmt.Sprintf("%s_model.go", projectTitle), fmt.Sprintf("%s_model_test.go", projectTitle)},
+		"internal/todo/services":    {fmt.Sprintf("%s_service.go", projectTitle), fmt.Sprintf("%s_service_test.go", projectTitle)},
+		"internal/todo/repository":  {fmt.Sprintf("%s_repository.go", projectTitle), fmt.Sprintf("%s_repository_test.go", projectTitle)},
+		"internal/todo/controllers": {fmt.Sprintf("%s_controller.go", projectTitle), fmt.Sprintf("%s_controller_test.go", projectTitle)},
 
 		//
 		"logs": {"app.log"},
@@ -203,4 +203,16 @@ func copyFile(src, dst string) error {
 
 	fmt.Printf("Copied file: %s to %s\n", src, dst)
 	return nil
+}
+
+func AddApp(title string) map[string][]string {
+	return map[string][]string{
+		fmt.Sprintf("internal/%s/constants", title):   {"constant.go"},
+		fmt.Sprintf("internal/%s/routes", title):      {"routes.go"},
+		fmt.Sprintf("internal/%s/dto", title):         {fmt.Sprintf("%s_dto.go", title)},
+		fmt.Sprintf("internal/%s/models", title):      {fmt.Sprintf("%s_model.go", title)},
+		fmt.Sprintf("internal/%s/services", title):    {fmt.Sprintf("%s_service.go", title)},
+		fmt.Sprintf("internal/%s/repository", title):  {fmt.Sprintf("%s_repository.go", title)},
+		fmt.Sprintf("internal/%s/controllers", title): {fmt.Sprintf("%s_controller.go", title)},
+	}
 }

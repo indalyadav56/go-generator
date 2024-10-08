@@ -9,6 +9,12 @@ type {{.IServiceName}}Repository interface {
 type {{.ServiceName}}Repository struct {
 }
 
+
+func New{{.IServiceName}}Repository() *{{.ServiceName}}Repository {
+	return &{{.ServiceName}}Repository{}
+}
+
+
 func (r *{{.ServiceName}}Repository) Create(data string) error {
 	fmt.Println("Creating a new {{.ServiceName}}:", data)
 	return nil

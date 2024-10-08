@@ -1,0 +1,75 @@
+{{define "repository_test"}}
+package repository
+
+import (
+	"testing"
+)
+
+func TestNewTodoRepository(t *testing.T) {
+	s := New{{.IServiceName}}Repository()
+	if s == nil {
+		t.Error("Expected non-nil TodoRepository")
+	}
+}
+
+func TestTodoRepository_Create(t *testing.T) {
+	s := New{{.IServiceName}}Repository()
+	err := s.Create("test data")
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+}
+
+func TestTodoRepository_Read(t *testing.T) {
+	s := New{{.IServiceName}}Repository()
+	testCases := []struct {
+		name     string
+		id       string
+		expected string
+		wantErr  bool
+	}{
+		{
+			name:     "Valid ID",
+			id:       "123",
+			expected: "123",
+			wantErr:  false,
+		},
+		{
+			name:     "Empty ID",
+			id:       "",
+			expected: "",
+			wantErr:  false,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			result, err := s.Read(tc.id)
+			if (err != nil) != tc.wantErr {
+				t.Errorf("Read() error = %v, wantErr %v", err, tc.wantErr)
+				return
+			}
+			if result != tc.expected {
+				t.Errorf("Read() got = %v, want %v", result, tc.expected)
+			}
+		})
+	}
+}
+
+func TestTodoRepository_Update(t *testing.T) {
+	s := New{{.IServiceName}}Repository()
+	err := s.Update("123", "updated data")
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+}
+
+func TestTodoRepository_Delete(t *testing.T) {
+	s := New{{.IServiceName}}Repository()
+	err := s.Delete("123")
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+}
+
+{{end}}

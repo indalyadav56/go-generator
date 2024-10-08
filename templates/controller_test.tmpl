@@ -1,0 +1,74 @@
+{{define "controller_test"}}
+package controllers
+
+
+// func TestNew{{.IServiceName}}Controller(t *testing.T) {
+// 	s := New{{.IServiceName}}Controller()
+// 	if s == nil {
+// 		t.Error("Expected non-nil TodoService")
+// 	}
+// }
+
+// func Test{{.IServiceName}}Controller_Create(t *testing.T) {
+// 	s := New{{.IServiceName}}Controller()
+// 	err := s.Create{{.IServiceName}}("test data")
+// 	if err != nil {
+// 		t.Errorf("Unexpected error: %v", err)
+// 	}
+// }
+
+// func Test{{.IServiceName}}Controller_Read(t *testing.T) {
+// 	s := New{{.IServiceName}}Controller()
+// 	testCases := []struct {
+// 		name     string
+// 		id       string
+// 		expected string
+// 		wantErr  bool
+// 	}{
+// 		{
+// 			name:     "Valid ID",
+// 			id:       "123",
+// 			expected: "123",
+// 			wantErr:  false,
+// 		},
+// 		{
+// 			name:     "Empty ID",
+// 			id:       "",
+// 			expected: "",
+// 			wantErr:  false,
+// 		},
+// 	}
+
+// 	for _, tc := range testCases {
+// 		t.Run(tc.name, func(t *testing.T) {
+// 			result, err := s.Read(tc.id)
+// 			if (err != nil) != tc.wantErr {
+// 				t.Errorf("Read() error = %v, wantErr %v", err, tc.wantErr)
+// 				return
+// 			}
+// 			if result != tc.expected {
+// 				t.Errorf("Read() got = %v, want %v", result, tc.expected)
+// 			}
+// 		})
+// 	}
+// }
+
+// func Test{{.IServiceName}}Controller_Update(t *testing.T) {
+// 	s := New{{.IServiceName}}Controller()
+// 	err := s.Update{{.IServiceName}}("123", "updated data")
+// 	if err != nil {
+// 		t.Errorf("Unexpected error: %v", err)
+// 	}
+// }
+
+// func Test{{.IServiceName}}Controller_Delete(t *testing.T) {
+// 	s := New{{.IServiceName}}Controller()
+// 	err := s.Delete{{.IServiceName}}("123")
+// 	if err != nil {
+// 		t.Errorf("Unexpected error: %v", err)
+// 	}
+// }
+
+
+
+{{end}}

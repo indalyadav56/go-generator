@@ -2,10 +2,54 @@
 
 package config
 
-import "fmt"
+import (
+	"github.com/go-playground/validator/v10"
+	"github.com/spf13/viper"
+)
 
-func main() {
-fmt.Println("Hello, {{.ServiceName}}!");
+type Config struct {
+	DBHost     string `mapstructure:"DB_HOST" validate:"required"`
+	DBPort     string `mapstructure:"DB_PORT"`
+	DBUser     string `mapstructure:"DB_USER"`
+	DBPassword string `mapstructure:"DB_PASSWORD"`
+	DBName     string `mapstructure:"DB_NAME"`
+
+	RedisAddr string `mapstructure:"REDIS_ADDR"`
+
+	JWTSecretKey      string `mapstructure:"JWT_SECRET_KEY"`
+	JWTExpirationDays int    `mapstructure:"JWT_EXPIRATION_DAYS"`
+
+	ServerPort  int    `mapstructure:"SERVER_PORT"`
+	LogLevel    string `mapstructure:"LOG_LEVEL"`
+	LogFilePath string `mapstructure:"LOG_FILE_PATH"`
+	AppName     string `mapstructure:"APP_NAME"`
+
+	MONGO_DB string `mapstructure:"MONGO_DB"`
+}
+
+func LoadConfig() (Config, error) {
+	var config Config
+
+	viper.SetConfigFile(".env")
+
+	if err := viper.ReadInConfig(); err != nil {
+		return config, err
+	}
+
+	viper.AutomaticEnv()
+
+	if err := viper.Unmarshal(&config); err != nil {
+		return config, err
+	}
+
+	validate := validator.New()
+
+	// Validate the configuration struct
+	if err := validate.Struct(config); err != nil {
+		return config, err
+	}
+
+	return config, nil
 }
 
 {{end}}

@@ -2,10 +2,85 @@
 
 package controllers
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/gofiber/fiber/v2"
+	"{{.ServiceName}}/internal/{{.AppName}}/services"
+)
 
-func main() {
-fmt.Println("Hello, {{.ServiceName}}!");
+type {{.IServiceName}}Controller interface {
+}
+
+type {{.ServiceName}}Controller struct {
+	service services.{{.IServiceName}}Service
+}
+
+func New{{.IServiceName}}Controller(s services.{{.IServiceName}}Service) *{{.ServiceName}}Controller {
+	return &{{.ServiceName}}Controller{service: s}
+}
+
+// Login godoc
+// @Summary		login-user
+// @Description	Login user
+// @Tags			Auth
+// @Produce		json
+// @Param			user	body	dto.LoginRequest	true	"User login details"
+// @Router			/v1/auth/login [post]
+// @Success		200	"Login user successfully"
+// @Failure		400	"Bad request"
+// @Failure		500	"Internal server error"
+func (c *{{.ServiceName}}Controller) Create{{.IServiceName}}(ctx *fiber.Ctx) error {
+	// Implement Create Logic
+	fmt.Println("Creating {{.ServiceName}}")
+	return ctx.JSON(fiber.Map{"message": "Created {{.ServiceName}}"})
+}
+
+// Login godoc
+// @Summary		login-user
+// @Description	Login user
+// @Tags			Auth
+// @Produce		json
+// @Param			user	body	dto.LoginRequest	true	"User login details"
+// @Router			/v1/auth/login [post]
+// @Success		200	"Login user successfully"
+// @Failure		400	"Bad request"
+// @Failure		500	"Internal server error"
+func (c *{{.ServiceName}}Controller) Get{{.IServiceName}}(ctx *fiber.Ctx) error {
+	// Implement Read Logic
+	fmt.Println("Fetching {{.ServiceName}}")
+	return ctx.JSON(fiber.Map{"message": "Fetched {{.ServiceName}}"})
+}
+
+// Login godoc
+// @Summary		login-user
+// @Description	Login user
+// @Tags			Auth
+// @Produce		json
+// @Param			user	body	dto.LoginRequest	true	"User login details"
+// @Router			/v1/auth/login [post]
+// @Success		200	"Login user successfully"
+// @Failure		400	"Bad request"
+// @Failure		500	"Internal server error"
+func (c *{{.ServiceName}}Controller) Update{{.IServiceName}}(ctx *fiber.Ctx) error {
+	// Implement Update Logic
+	fmt.Println("Updating {{.ServiceName}}")
+	return ctx.JSON(fiber.Map{"message": "Updated {{.ServiceName}}"})
+}
+
+// Login godoc
+// @Summary		login-user
+// @Description	Login user
+// @Tags			Auth
+// @Produce		json
+// @Param			user	body	dto.LoginRequest	true	"User login details"
+// @Router			/v1/auth/login [post]
+// @Success		200	"Login user successfully"
+// @Failure		400	"Bad request"
+// @Failure		500	"Internal server error"
+func (c *{{.ServiceName}}Controller) Delete{{.IServiceName}}(ctx *fiber.Ctx) error {
+	// Implement Delete Logic
+	fmt.Println("Deleting {{.ServiceName}}")
+	return ctx.JSON(fiber.Map{"message": "Deleted {{.ServiceName}}"})
 }
 
 {{end}}

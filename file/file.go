@@ -97,21 +97,22 @@ func ParseContent(tmpl *template.Template, fileName, dir, projectTitle string) (
 	data := map[string]string{
 		"IServiceName": capitalized,
 		"ServiceName":  projectTitle,
+		"AppName":      projectTitle,
 	}
 	if strings.Contains(fileName, "log") {
 		return "", nil
 	}
 
 	if strings.Contains(fileName, "auth") {
-		projectTitle = "auth"
 		data["IServiceName"] = "Auth"
-		data["ServiceName"] = projectTitle + "Service"
+		data["ServiceName"] = projectTitle
+		data["AppName"] = "auth"
 	}
 
 	if strings.Contains(fileName, "user") {
-		projectTitle = "user"
 		data["IServiceName"] = "User"
-		data["ServiceName"] = projectTitle + "Service"
+		data["ServiceName"] = projectTitle
+		data["AppName"] = "user"
 	}
 
 	templateName := "main"
@@ -122,8 +123,20 @@ func ParseContent(tmpl *template.Template, fileName, dir, projectTitle string) (
 		isFormat = true
 		templateName = "main"
 
+	case strings.Contains(fileName, "service_test"):
+		templateName = "service_test"
+
+	case strings.Contains(fileName, "dto_test"):
+		templateName = "dto_test"
+
+	case strings.Contains(fileName, "controller_test"):
+		templateName = "controller_test"
+
 	case strings.Contains(fileName, "service"):
 		templateName = "service"
+
+	case strings.Contains(fileName, "repository_test"):
+		templateName = "repository_test"
 
 	case strings.Contains(fileName, "repository"):
 		templateName = "repository"

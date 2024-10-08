@@ -11,7 +11,7 @@ type {{.IServiceName}}Service interface {
 type {{.ServiceName}}Service struct {
 }
 
-func New{{.ServiceName}}Service() *{{.ServiceName}}Service {
+func New{{.IServiceName}}Service() *{{.ServiceName}}Service {
 	return &{{.ServiceName}}Service{}
 }
 
