@@ -11,6 +11,10 @@ type {{.IServiceName}}Service interface {
 type {{.ServiceName}}Service struct {
 }
 
+func New{{.ServiceName}}Service() *{{.ServiceName}}Service {
+	return &{{.ServiceName}}Service{}
+}
+
 func (s *{{.ServiceName}}Service) Create(data string) error {
 	fmt.Println("Creating new {{.ServiceName}}: ", data)
 	return nil

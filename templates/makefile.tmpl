@@ -1,0 +1,6 @@
+{{define "makefile"}}
+
+run-test:
+    GIN_MODE=test go test -v -cover -coverprofile=coverage.out ./....
+
+{{end}}

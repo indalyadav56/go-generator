@@ -1,0 +1,23 @@
+{{define "user_model"}}
+
+package models
+
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
+
+type User struct {
+	ID           uuid.UUID  `gorm:"type:uuid;primary_key;default:gen_random_uuid()" json:"id"`
+	Name         string     `json:"name"`
+	Email        string     `gorm:"uniqueIndex,index" json:"email"`
+	IsOnline        bool     `json:"is_online"`
+	Password     string     `gorm:"not null" json:"-"`
+	MobileNumber string     `json:"-"`
+	CreatedAt    time.Time  `json:"-"`
+	UpdatedAt    time.Time  `json:"-"`
+	DeletedAt    *time.Time `json:"-"`
+}
+
+{{end}}

@@ -1,0 +1,30 @@
+{{define "user_controller"}}
+
+package controllers
+
+import (
+	"github.com/gofiber/fiber/v2"
+)
+
+type UserController interface {
+	GetCurrentUser(ctx *fiber.Ctx) error
+	GetUsers(ctx *fiber.Ctx) error
+}
+
+type userController struct {
+	
+}
+
+func NewUserController() *userController {
+	return &userController{}
+}
+
+func (c *userController) GetCurrentUser(ctx *fiber.Ctx) error{
+    return nil
+}
+
+func (c *userController) GetUsers(ctx *fiber.Ctx) error{
+	return nil
+}
+
+{{end}}

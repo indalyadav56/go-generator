@@ -98,6 +98,9 @@ func ParseContent(tmpl *template.Template, fileName, dir, projectTitle string) (
 		"IServiceName": capitalized,
 		"ServiceName":  projectTitle,
 	}
+	if strings.Contains(fileName, "log") {
+		return "", nil
+	}
 
 	if strings.Contains(fileName, "auth") {
 		projectTitle = "auth"
@@ -118,24 +121,41 @@ func ParseContent(tmpl *template.Template, fileName, dir, projectTitle string) (
 	case strings.Contains(fileName, "cmd"):
 		isFormat = true
 		templateName = "main"
+
 	case strings.Contains(fileName, "service"):
 		templateName = "service"
+
 	case strings.Contains(fileName, "repository"):
 		templateName = "repository"
+
 	case strings.Contains(dir, "database"):
 		templateName = "database"
+
 	case strings.Contains(dir, "config"):
 		templateName = "config"
+
 	case strings.Contains(fileName, "constant"):
 		templateName = "constant"
+
 	case strings.Contains(fileName, "controller"):
 		templateName = "controller"
+
 	case strings.Contains(fileName, "middleware"):
 		templateName = "middleware"
+
 	case strings.Contains(fileName, "routes"):
 		templateName = "routes"
+
 	case strings.Contains(fileName, "dto"):
 		templateName = "dto"
+
+	case strings.Contains(fileName, "model"):
+		templateName = "model"
+
+	case strings.Contains(strings.ToLower(fileName), "makefile"):
+		templateName = "makefile"
+		isFormat = false
+
 	case strings.Contains(strings.ToLower(fileName), "readme"):
 		templateName = "readme"
 		isFormat = false
