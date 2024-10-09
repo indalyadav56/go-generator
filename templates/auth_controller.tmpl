@@ -1,16 +1,17 @@
+{{define "auth_controller"}}
+
 package controllers
 
-import (
-	"github.com/gofiber/fiber/v2"
-	"your_project/services"
-)
+import "github.com/gofiber/fiber/v2"
 
-type todoController struct {
-	service services.AuthService
+type {{.IServiceName}}Controller interface {
 }
 
-func NewAuthController(s services.AuthService) *todoController {
-	return &todoController{service: s}
+type {{.AppName}}Controller struct {
+}
+
+func NewAuthController() *{{.AppName}}Controller {
+	return &authController{}
 }
 
 // Register godoc
@@ -23,7 +24,7 @@ func NewAuthController(s services.AuthService) *todoController {
 // @Success 201 {object} models.User
 // @Failure 400 {object} fiber.Error
 // @Router /auth/register [post]
-func (tc *todoController) Register(c *fiber.Ctx) error {
+func (tc *authController) Register(c *fiber.Ctx) error {
 	// Method implementation
 	return nil
 }
@@ -38,7 +39,7 @@ func (tc *todoController) Register(c *fiber.Ctx) error {
 // @Success 200 {object} models.LoginResponse
 // @Failure 401 {object} fiber.Error
 // @Router /auth/login [post]
-func (tc *todoController) Login(c *fiber.Ctx) error {
+func (tc *authController) Login(c *fiber.Ctx) error {
 	// Method implementation
 	return nil
 }
@@ -53,7 +54,7 @@ func (tc *todoController) Login(c *fiber.Ctx) error {
 // @Success 200 {object} models.LoginResponse
 // @Failure 400 {object} fiber.Error
 // @Router /auth/refresh [post]
-func (tc *todoController) RefreshToken(c *fiber.Ctx) error {
+func (tc *authController) RefreshToken(c *fiber.Ctx) error {
 	// Method implementation
 	return nil
 }
@@ -68,7 +69,7 @@ func (tc *todoController) RefreshToken(c *fiber.Ctx) error {
 // @Success 200 {object} fiber.Map
 // @Failure 400 {object} fiber.Error
 // @Router /auth/logout [post]
-func (tc *todoController) Logout(c *fiber.Ctx) error {
+func (tc *authController) Logout(c *fiber.Ctx) error {
 	// Method implementation
 	return nil
 }
@@ -82,7 +83,7 @@ func (tc *todoController) Logout(c *fiber.Ctx) error {
 // @Success 200 {object} models.User
 // @Failure 401 {object} fiber.Error
 // @Router /auth/me [get]
-func (tc *todoController) GetCurrentUser(c *fiber.Ctx) error {
+func (tc *authController) GetCurrentUser(c *fiber.Ctx) error {
 	// Method implementation
 	return nil
 }
@@ -97,7 +98,7 @@ func (tc *todoController) GetCurrentUser(c *fiber.Ctx) error {
 // @Success 200 {object} fiber.Map
 // @Failure 400 {object} fiber.Error
 // @Router /auth/password-reset/request [post]
-func (tc *todoController) RequestPasswordReset(c *fiber.Ctx) error {
+func (tc *authController) RequestPasswordReset(c *fiber.Ctx) error {
 	// Method implementation
 	return nil
 }
@@ -112,7 +113,9 @@ func (tc *todoController) RequestPasswordReset(c *fiber.Ctx) error {
 // @Success 200 {object} fiber.Map
 // @Failure 400 {object} fiber.Error
 // @Router /auth/password-reset/confirm [post]
-func (tc *todoController) ResetPassword(c *fiber.Ctx) error {
+func (tc *authController) ResetPassword(c *fiber.Ctx) error {
 	// Method implementation
 	return nil
 }
+
+{{end}}

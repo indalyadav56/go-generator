@@ -9,7 +9,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Config holds all the configuration variables
 type Config struct {
 	DBHost            string `mapstructure:"DB_HOST" validate:"required"`
 	DBPort            string `mapstructure:"DB_PORT"`
@@ -26,21 +25,17 @@ type Config struct {
 	MongoDB           string `mapstructure:"MONGO_DB"`
 }
 
-// LoadConfig loads the configuration from the .env file and environment variables
 func LoadConfig(path string) (Config, error) {
 	var config Config
 
-	// Set up viper and load the configuration
 	if err := setupViper(path); err != nil {
 		return config, fmt.Errorf("error setting up viper: %w", err)
 	}
 
-	// Unmarshal the config into the Config struct
 	if err := viper.Unmarshal(&config); err != nil {
 		return config, fmt.Errorf("error unmarshalling config: %w", err)
 	}
 
-	// Validate the configuration
 	if err := validateConfig(config); err != nil {
 		return config, fmt.Errorf("error validating config: %w", err)
 	}
@@ -48,34 +43,28 @@ func LoadConfig(path string) (Config, error) {
 	return config, nil
 }
 
-// setupViper sets up viper for configuration management
 func setupViper(path string) error {
-	// If a custom path is provided, use it
 	if path != "" {
 		viper.SetConfigFile(path)
 	} else {
 		viper.SetConfigFile(".env") // Default to .env if no path is provided
 	}
 
-	// Set default values for optional configurations
 	viper.SetDefault("DB_PORT", "5432") // Default DB port for PostgreSQL
 	viper.SetDefault("REDIS_ADDR", "localhost:6379")
 	viper.SetDefault("LOG_LEVEL", "info")
 	viper.SetDefault("JWT_EXPIRATION_DAYS", 7)
 	viper.SetDefault("SERVER_PORT", 8080)
 
-	// Read in the config file
 	if err := viper.ReadInConfig(); err != nil {
 		return fmt.Errorf("error reading config file: %w", err)
 	}
 
-	// Automatically override config with environment variables if they exist
 	viper.AutomaticEnv()
 
 	return nil
 }
 
-// validateConfig validates the configuration using the validator package
 func validateConfig(config Config) error {
 	validate := validator.New()
 	if err := validate.Struct(config); err != nil {

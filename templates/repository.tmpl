@@ -6,31 +6,31 @@ import "gorm.io/gorm"
 type {{.IServiceName}}Repository interface {
 }
 
-type {{.ServiceName}}Repository struct {
+type {{.AppName}}Repository struct {
 	db *gorm.DB
 }
 
 
-func New{{.IServiceName}}Repository(db *gorm.DB) *{{.ServiceName}}Repository {
-	return &{{.ServiceName}}Repository{
+func New{{.IServiceName}}Repository(db *gorm.DB) *{{.AppName}}Repository {
+	return &{{.AppName}}Repository{
 		db: db,
 	}
 }
 
 
-func (r *{{.ServiceName}}Repository) Create(data string) error {
+func (r *{{.AppName}}Repository) Create(data string) error {
 	return nil
 }
 
-func (r *{{.ServiceName}}Repository) Read(id string) (string, error) {
+func (r *{{.AppName}}Repository) Read(id string) (string, error) {
 	return "some_data", nil
 }
 
-func (r *{{.ServiceName}}Repository) Update(id string, data string) error {
+func (r *{{.AppName}}Repository) Update(id string, data string) error {
 	return nil
 }
 
-func (r *{{.ServiceName}}Repository) Delete(id string) error {
+func (r *{{.AppName}}Repository) Delete(id string) error {
 	return nil
 }
 

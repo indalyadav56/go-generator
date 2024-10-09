@@ -1,5 +1,8 @@
 {{define "makefile"}}
 
+swagger:
+    swag init -o ./docs -d ./cmd/todo
+
 run-test:
     GIN_MODE=test go test -v -cover -coverprofile=coverage.out ./....
 

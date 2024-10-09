@@ -37,7 +37,6 @@ func main() {
 		"internal/auth/routes":      {"auth_routes.go"},
 		"internal/auth/dto":         {"auth_dto.go"},
 		"internal/auth/services":    {"auth_service.go"},
-		"internal/auth/repository":  {"auth_repository.go"},
 		"internal/auth/controllers": {"auth_controller.go"},
 
 		// user
@@ -82,6 +81,7 @@ func main() {
 
 	initGoModule(projectTitle)
 	copyCommonPkg(projectTitle)
+	runSwagInit(fmt.Sprintf("%s/cmd/%s/main.go", projectTitle, projectTitle))
 
 	// Run 'go mod tidy' to install dependencies and create the go.sum file
 	err = runGoModTidy("./" + projectTitle)
@@ -94,6 +94,17 @@ func main() {
 // runGoModTidy runs 'go mod tidy' to resolve dependencies and generate the go.sum file
 func runGoModTidy(basePath string) error {
 	cmd := exec.Command("go", "mod", "tidy")
+	cmd.Dir = basePath
+	err := cmd.Run()
+	if err != nil {
+		return fmt.Errorf("error running 'go mod tidy': %v", err)
+	}
+	fmt.Println("'go mod tidy' executed successfully, dependencies resolved.")
+	return nil
+}
+
+func runSwagInit(basePath string) error {
+	cmd := exec.Command("swag", "init")
 	cmd.Dir = basePath
 	err := cmd.Run()
 	if err != nil {

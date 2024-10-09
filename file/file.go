@@ -150,6 +150,9 @@ func ParseContent(tmpl *template.Template, fileName, dir, projectTitle string) (
 	case strings.Contains(fileName, "constant"):
 		templateName = "constant"
 
+	case strings.Contains(fileName, "auth_controller"):
+		templateName = "auth_controller"
+
 	case strings.Contains(fileName, "controller"):
 		templateName = "controller"
 

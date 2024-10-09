@@ -6,29 +6,29 @@ import "{{.ServiceName}}/internal/{{.AppName}}/repository"
 type {{.IServiceName}}Service interface {
 }
 
-type {{.ServiceName}}Service struct {
-	{{.ServiceName}}Repo repository.{{.IServiceName}}Repository
+type {{.AppName}}Service struct {
+	{{.AppName}}Repo repository.{{.IServiceName}}Repository
 }
 
-func New{{.IServiceName}}Service(repo repository.{{.IServiceName}}Repository) *{{.ServiceName}}Service {
-	return &todoService{
-		{{.ServiceName}}Repo: repo,
+func New{{.IServiceName}}Service(repo repository.{{.IServiceName}}Repository) *{{.AppName}}Service {
+	return &{{.AppName}}Service{
+		{{.AppName}}Repo: repo,
 	}
 }
 
-func (s *{{.ServiceName}}Service) Create(data string) error {
+func (s *{{.AppName}}Service) Create(data string) error {
 	return nil
 }
 
-func (s *{{.ServiceName}}Service) Read(id string) (string, error) {
+func (s *{{.AppName}}Service) Read(id string) (string, error) {
 	return id, nil
 }
 
-func (s *{{.ServiceName}}Service) Update(id string, data string) error {
+func (s *{{.AppName}}Service) Update(id string, data string) error {
 	return nil
 }
 
-func (s *{{.ServiceName}}Service) Delete(id string) error {
+func (s *{{.AppName}}Service) Delete(id string) error {
 	return nil
 }
 
