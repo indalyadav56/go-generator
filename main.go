@@ -15,6 +15,8 @@ import (
 func main() {
 	var projectTitle string
 
+	projectTitle = "todo"
+
 	fmt.Print("Enter your project title: ")
 	fmt.Scanln(&projectTitle)
 
@@ -27,11 +29,12 @@ func main() {
 		fmt.Sprintf("cmd/%s", projectTitle): {"main.go"},
 		"config":                            {"env.go"},
 		"database":                          {"postgres.go"},
+		"middlewares":                       {"logger_middleware.go"},
 		"docs":                              {""},
 
 		// auth
 		"internal/auth/constants":   {"constant.go"},
-		"internal/auth/routes":      {"routes.go"},
+		"internal/auth/routes":      {"auth_routes.go"},
 		"internal/auth/dto":         {"auth_dto.go"},
 		"internal/auth/services":    {"auth_service.go"},
 		"internal/auth/repository":  {"auth_repository.go"},
@@ -39,21 +42,20 @@ func main() {
 
 		// user
 		"internal/user/constants":   {"constant.go"},
-		"internal/user/routes":      {"routes.go"},
-		"internal/user/dto":         {"user_dto.go", "user_dto_test.go"},
-		"internal/user/models":      {"user_model.go", "user_model_test.go"},
-		"internal/user/services":    {"user_service.go", "user_service_test.go"},
-		"internal/user/repository":  {"user_repository.go", "user_repository_test.go"},
-		"internal/user/controllers": {"user_controller.go", "user_controller_test.go"},
+		"internal/user/routes":      {"user_routes.go"},
+		"internal/user/dto":         {"user_dto.go"},
+		"internal/user/models":      {"user_model.go"},
+		"internal/user/services":    {"user_service.go"},
+		"internal/user/repository":  {"user_repository.go"},
+		"internal/user/controllers": {"user_controller.go"},
 
-		// todo
 		"internal/todo/constants":   {"constant.go"},
-		"internal/todo/routes":      {"routes.go"},
-		"internal/todo/dto":         {fmt.Sprintf("%s_dto.go", projectTitle), fmt.Sprintf("%s_dto_test.go", projectTitle)},
-		"internal/todo/models":      {fmt.Sprintf("%s_model.go", projectTitle), fmt.Sprintf("%s_model_test.go", projectTitle)},
-		"internal/todo/services":    {fmt.Sprintf("%s_service.go", projectTitle), fmt.Sprintf("%s_service_test.go", projectTitle)},
-		"internal/todo/repository":  {fmt.Sprintf("%s_repository.go", projectTitle), fmt.Sprintf("%s_repository_test.go", projectTitle)},
-		"internal/todo/controllers": {fmt.Sprintf("%s_controller.go", projectTitle), fmt.Sprintf("%s_controller_test.go", projectTitle)},
+		"internal/todo/routes":      {fmt.Sprintf("%s_routes.go", projectTitle)},
+		"internal/todo/dto":         {fmt.Sprintf("%s_dto.go", projectTitle)},
+		"internal/todo/models":      {fmt.Sprintf("%s_model.go", projectTitle)},
+		"internal/todo/services":    {fmt.Sprintf("%s_service.go", projectTitle)},
+		"internal/todo/repository":  {fmt.Sprintf("%s_repository.go", projectTitle)},
+		"internal/todo/controllers": {fmt.Sprintf("%s_controller.go", projectTitle)},
 
 		//
 		"logs": {"app.log"},

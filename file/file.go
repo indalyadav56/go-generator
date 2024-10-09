@@ -99,7 +99,8 @@ func ParseContent(tmpl *template.Template, fileName, dir, projectTitle string) (
 		"ServiceName":  projectTitle,
 		"AppName":      projectTitle,
 	}
-	if strings.Contains(fileName, "log") {
+
+	if strings.Contains(fileName, "app.log") {
 		return "", nil
 	}
 
@@ -119,8 +120,7 @@ func ParseContent(tmpl *template.Template, fileName, dir, projectTitle string) (
 	isFormat := true
 
 	switch {
-	case strings.Contains(fileName, "cmd"):
-		isFormat = true
+	case strings.Contains(fileName, "main"):
 		templateName = "main"
 
 	case strings.Contains(fileName, "service_test"):
@@ -172,9 +172,12 @@ func ParseContent(tmpl *template.Template, fileName, dir, projectTitle string) (
 	case strings.Contains(strings.ToLower(fileName), "readme"):
 		templateName = "readme"
 		isFormat = false
-		// default:
-		// 	templateName = "unknown"
+	default:
+		templateName = "unknown"
+		isFormat = false
 	}
+
+	fmt.Println("templateName", templateName)
 
 	var output bytes.Buffer
 

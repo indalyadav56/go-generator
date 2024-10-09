@@ -1,11 +1,18 @@
 {{define "middleware"}}
-
 package middlewares
 
-import "fmt"
+import (
+	"{{.ServiceName}}/pkg/logger"
 
-func main() {
-fmt.Println("Hello, {{.ServiceName}}!");
+	"github.com/gofiber/fiber/v2"
+)
+
+func LoggerMiddleware(logger logger.Logger) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		logger.Info("Request: %s %s", c.Method(), c.Path())
+		return c.Next()
+	}
 }
+
 
 {{end}}

@@ -1,5 +1,3 @@
-package generator
-
 package main
 
 import (
@@ -36,7 +34,7 @@ var addAppCmd = &cobra.Command{
 	Use:   "addapp [title]",
 	Short: "Add a new app with a specific title",
 	Long:  `This command adds a new app by creating necessary folders and files dynamically based on the title.`,
-	Args:  cobra.ExactArgs(1), // Ensures exactly one argument (title) is passed
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		title := args[0]
 		fmt.Println("title: ", title)

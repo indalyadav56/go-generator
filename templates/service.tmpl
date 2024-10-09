@@ -3,16 +3,20 @@ package services
 
 import (
 	"fmt"
+	"{{.ServiceName}}/internal/{{.AppName}}/repository"
 )
 
 type {{.IServiceName}}Service interface {
 }
 
 type {{.ServiceName}}Service struct {
+	{{.ServiceName}}Repo repository.{{.IServiceName}}Repository
 }
 
-func New{{.IServiceName}}Service() *{{.ServiceName}}Service {
-	return &{{.ServiceName}}Service{}
+func New{{.IServiceName}}Service(repo repository.{{.IServiceName}}Repository) *{{.ServiceName}}Service {
+	return &todoService{
+		{{.ServiceName}}Repo: repo,
+	}
 }
 
 func (s *{{.ServiceName}}Service) Create(data string) error {

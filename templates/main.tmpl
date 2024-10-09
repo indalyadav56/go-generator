@@ -5,9 +5,29 @@ package main
 import (
 	"fmt"
 	"{{.ServiceName}}/pkg/logger"
-    "github.com/gin-gonic/gin"
-    "todo/pkg/middlewares/cors"
-    loggerMiddleware "{{.ServiceName}}/pkg/middlewares/logger"
+    "{{.ServiceName}}/middlewares"
+
+	authRepository "{{.ServiceName}}/internal/auth/repository"
+	todoRepository "{{.ServiceName}}/internal/{{.ServiceName}}/repository"
+	userRepository "{{.ServiceName}}/internal/user/repository"
+	
+	authServices "{{.ServiceName}}/internal/auth/services"
+	todoServices "{{.ServiceName}}/internal/{{.ServiceName}}/services"
+	userServices "{{.ServiceName}}/internal/user/services"
+
+	authControllers "{{.ServiceName}}/internal/auth/controllers"
+	todoControllers "{{.ServiceName}}/internal/{{.ServiceName}}/controllers"
+	userControllers "{{.ServiceName}}/internal/user/controllers"
+
+	authRoutes "{{.ServiceName}}/internal/auth/routes"
+	todoRoutes "{{.ServiceName}}/internal/todo/routes"
+	userRoutes "{{.ServiceName}}/internal/user/routes"
+
+    "github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/compress"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/healthcheck"
+	"github.com/gofiber/fiber/v2/middleware/requestid"
 )
 
 func main() {
@@ -17,15 +37,37 @@ func main() {
 		return
 	}
 
-	fmt.Println("Hello, todo!", logger)
+	app := fiber.New()
 
-    router := gin.Default()
+    app.Use(requestid.New())
+	app.Use(cors.New())
+	app.Use(middlewares.LoggerMiddleware(logger))
+	app.Use(compress.New())
+	app.Use(healthcheck.New())
 
-    router.Use(loggerMiddleware.LoggerMiddleware())
-    router.Use(cors.CorsMiddleware())
+	// repository
+	authRepo := authRepository.NewAuthRepository()
+	userRepo := userRepository.NewUserRepository()
+	todoRepo := todoRepository.NewTodoRepository()
 
-    // Start the server
-    router.Run(":8080")
+	// services
+	authSrv := authServices.NewAuthService(authRepo)
+	userSrv := userServices.NewUserService(userRepo)
+	todoSrv := todoServices.NewTodoService(todoRepo)
+
+	// controllers
+	authCtrl := authControllers.NewAuthController(authSrv)
+	userCtrl := userControllers.NewUserController(userSrv)
+	todoCtrl := todoControllers.NewTodoController(todoSrv)
+
+	// routes
+	authRoutes.AuthRoutes(app, authCtrl)
+	userRoutes.UserRoutes(app, userCtrl)
+	todoRoutes.TodoRoutes(app, todoCtrl)
+
+    if err := app.Listen(":8080"); err != nil {
+		logger.Fatal("Error starting server: %v", err)
+	}
 }
 
 {{end}}

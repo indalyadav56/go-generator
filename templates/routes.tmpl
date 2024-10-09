@@ -2,10 +2,19 @@
 
 package routes
 
-import "fmt"
+import (
+	"{{.ServiceName}}/internal/{{.AppName}}/controllers"
+	"github.com/gofiber/fiber/v2"
+)
 
-func {{.ServiceName}}Routes() {
-    fmt.Println("Hello, {{.ServiceName}}!");
+func {{.IServiceName}}Routes(a *fiber.App, c controllers.{{.IServiceName}}Controller) {
+	// {{.AppName}}V1 := a.Group("/v1/{{.AppName}}s")
+	// {
+	// 	{{.AppName}}V1.Get("", )
+	// 	{{.AppName}}V1.Post("", )
+	// 	{{.AppName}}V1.Patch("", )
+	// 	{{.AppName}}V1.Delete("", )
+	// }
 }
 
 {{end}}
