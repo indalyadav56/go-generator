@@ -4,6 +4,7 @@ package main
 
 import (
 	"fmt"
+	"{{.ServiceName}}/database"
 	"{{.ServiceName}}/pkg/logger"
     "{{.ServiceName}}/middlewares"
 
@@ -23,15 +24,54 @@ import (
 	todoRoutes "{{.ServiceName}}/internal/todo/routes"
 	userRoutes "{{.ServiceName}}/internal/user/routes"
 
+	_ "{{.ServiceName}}/docs"
+
     "github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/healthcheck"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
+	"github.com/gofiber/swagger"
 )
 
+
+// https://medium.com/@i.4erkasov/go-echo-framework-ddd-cqrs-part-1-637595917b3b
+
+// @title           MeetSpace API
+// @version         1.0
+// @description     MeetSpace API documentation.
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   API Support
+// @contact.url    http://www.swagger.io/support
+// @contact.email  support@swagger.io
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host      localhost:8080
+
+// @externalDocs.description  OpenAPI
+// @externalDocs.url          https://swagger.io/resources/open-api/
+//
+//	@securityDefinitions.apikey	Bearer
+//	@in							header
+//	@name						Authorization
+//	@description				Type "Bearer" followed by a space and JWT 
 func main() {
     logger, err := logger.New()
+	if err != nil {
+		fmt.Println("Error creating logger:", err)
+		return
+	}
+
+	db, err := database.Init(database.Config{
+		Host:     cfg.DBHost,
+		Port:     cfg.DBPort,
+		User:     cfg.DBUser,
+		Password: cfg.DBPassword,
+		Name:     cfg.DBName,
+	})
 	if err != nil {
 		fmt.Println("Error creating logger:", err)
 		return
@@ -46,9 +86,9 @@ func main() {
 	app.Use(healthcheck.New())
 
 	// repository
-	authRepo := authRepository.NewAuthRepository()
-	userRepo := userRepository.NewUserRepository()
-	todoRepo := todoRepository.NewTodoRepository()
+	authRepo := authRepository.NewAuthRepository(db)
+	userRepo := userRepository.NewUserRepository(db)
+	todoRepo := todoRepository.NewTodoRepository(db)
 
 	// services
 	authSrv := authServices.NewAuthService(authRepo)
@@ -64,6 +104,9 @@ func main() {
 	authRoutes.AuthRoutes(app, authCtrl)
 	userRoutes.UserRoutes(app, userCtrl)
 	todoRoutes.TodoRoutes(app, todoCtrl)
+
+
+	app.Get("/swagger/*", swagger.HandlerDefault)
 
     if err := app.Listen(":8080"); err != nil {
 		logger.Fatal("Error starting server: %v", err)

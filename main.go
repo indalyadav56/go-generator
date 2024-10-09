@@ -29,7 +29,7 @@ func main() {
 		fmt.Sprintf("cmd/%s", projectTitle): {"main.go"},
 		"config":                            {"env.go"},
 		"database":                          {"postgres.go"},
-		"middlewares":                       {"logger_middleware.go"},
+		"middlewares":                       {"logger_middleware.go", "auth_middleware.go"},
 		"docs":                              {""},
 
 		// auth
@@ -70,6 +70,12 @@ func main() {
 
 	// Call the createStructure function to create the directories and files
 	err = file.CreateStructure(projectTitle, structure, tmpl)
+	if err != nil {
+		log.Fatalf("Failed to create structure: %v\n", err)
+	}
+
+	// Call the createStructure function to create the directories and files
+	err = file.CreateStructure(projectTitle, AddApp("task"), tmpl)
 	if err != nil {
 		log.Fatalf("Failed to create structure: %v\n", err)
 	}
@@ -207,8 +213,8 @@ func copyFile(src, dst string) error {
 	return nil
 }
 
-func AddApp(title string) map[string][]string {
-	return map[string][]string{
+func AddApp(title string) file.DirectoryStructure {
+	return file.DirectoryStructure{
 		fmt.Sprintf("internal/%s/constants", title):   {"constant.go"},
 		fmt.Sprintf("internal/%s/routes", title):      {"routes.go"},
 		fmt.Sprintf("internal/%s/dto", title):         {fmt.Sprintf("%s_dto.go", title)},

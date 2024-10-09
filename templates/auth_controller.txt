@@ -1,0 +1,118 @@
+package controllers
+
+import (
+	"github.com/gofiber/fiber/v2"
+	"your_project/services"
+)
+
+type todoController struct {
+	service services.AuthService
+}
+
+func NewAuthController(s services.AuthService) *todoController {
+	return &todoController{service: s}
+}
+
+// Register godoc
+// @Summary Register a new user
+// @Description Register a new user with the provided details
+// @Tags Auth
+// @Accept  json
+// @Produce  json
+// @Param user body models.RegisterRequest true "Register User"
+// @Success 201 {object} models.User
+// @Failure 400 {object} fiber.Error
+// @Router /auth/register [post]
+func (tc *todoController) Register(c *fiber.Ctx) error {
+	// Method implementation
+	return nil
+}
+
+// Login godoc
+// @Summary Login a user
+// @Description Authenticate a user and return a JWT token
+// @Tags Auth
+// @Accept  json
+// @Produce  json
+// @Param credentials body models.LoginRequest true "User credentials"
+// @Success 200 {object} models.LoginResponse
+// @Failure 401 {object} fiber.Error
+// @Router /auth/login [post]
+func (tc *todoController) Login(c *fiber.Ctx) error {
+	// Method implementation
+	return nil
+}
+
+// RefreshToken godoc
+// @Summary Refresh the JWT token
+// @Description Refresh the JWT token using a valid refresh token
+// @Tags Auth
+// @Accept  json
+// @Produce  json
+// @Param refreshToken body models.RefreshTokenRequest true "Refresh Token"
+// @Success 200 {object} models.LoginResponse
+// @Failure 400 {object} fiber.Error
+// @Router /auth/refresh [post]
+func (tc *todoController) RefreshToken(c *fiber.Ctx) error {
+	// Method implementation
+	return nil
+}
+
+// Logout godoc
+// @Summary Logout a user
+// @Description Invalidate the refresh token to log the user out
+// @Tags Auth
+// @Accept  json
+// @Produce  json
+// @Param refreshToken body models.RefreshTokenRequest true "Refresh Token"
+// @Success 200 {object} fiber.Map
+// @Failure 400 {object} fiber.Error
+// @Router /auth/logout [post]
+func (tc *todoController) Logout(c *fiber.Ctx) error {
+	// Method implementation
+	return nil
+}
+
+// GetCurrentUser godoc
+// @Summary Get the current authenticated user
+// @Description Return details of the currently authenticated user
+// @Tags Auth
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} models.User
+// @Failure 401 {object} fiber.Error
+// @Router /auth/me [get]
+func (tc *todoController) GetCurrentUser(c *fiber.Ctx) error {
+	// Method implementation
+	return nil
+}
+
+// RequestPasswordReset godoc
+// @Summary Request password reset
+// @Description Send a password reset email to the user
+// @Tags Auth
+// @Accept  json
+// @Produce  json
+// @Param email body models.PasswordResetRequest true "User email"
+// @Success 200 {object} fiber.Map
+// @Failure 400 {object} fiber.Error
+// @Router /auth/password-reset/request [post]
+func (tc *todoController) RequestPasswordReset(c *fiber.Ctx) error {
+	// Method implementation
+	return nil
+}
+
+// ResetPassword godoc
+// @Summary Reset password
+// @Description Reset the user's password using a valid reset token
+// @Tags Auth
+// @Accept  json
+// @Produce  json
+// @Param resetPassword body models.PasswordResetConfirmRequest true "Password Reset Token"
+// @Success 200 {object} fiber.Map
+// @Failure 400 {object} fiber.Error
+// @Router /auth/password-reset/confirm [post]
+func (tc *todoController) ResetPassword(c *fiber.Ctx) error {
+	// Method implementation
+	return nil
+}

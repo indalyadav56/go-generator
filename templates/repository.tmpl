@@ -1,37 +1,36 @@
 {{define "repository"}}
 package repository
 
-import "fmt"
+import "gorm.io/gorm"
 
 type {{.IServiceName}}Repository interface {
 }
 
 type {{.ServiceName}}Repository struct {
+	db *gorm.DB
 }
 
 
-func New{{.IServiceName}}Repository() *{{.ServiceName}}Repository {
-	return &{{.ServiceName}}Repository{}
+func New{{.IServiceName}}Repository(db *gorm.DB) *{{.ServiceName}}Repository {
+	return &{{.ServiceName}}Repository{
+		db: db,
+	}
 }
 
 
 func (r *{{.ServiceName}}Repository) Create(data string) error {
-	fmt.Println("Creating a new {{.ServiceName}}:", data)
 	return nil
 }
 
 func (r *{{.ServiceName}}Repository) Read(id string) (string, error) {
-	fmt.Println("Reading {{.ServiceName}} with ID:", id)
 	return "some_data", nil
 }
 
 func (r *{{.ServiceName}}Repository) Update(id string, data string) error {
-	fmt.Println("Updating {{.ServiceName}} with ID:", id)
 	return nil
 }
 
 func (r *{{.ServiceName}}Repository) Delete(id string) error {
-	fmt.Println("Deleting {{.ServiceName}} with ID:", id)
 	return nil
 }
 

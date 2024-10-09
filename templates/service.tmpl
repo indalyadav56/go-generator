@@ -1,10 +1,7 @@
 {{define "service"}}
 package services
 
-import (
-	"fmt"
-	"{{.ServiceName}}/internal/{{.AppName}}/repository"
-)
+import "{{.ServiceName}}/internal/{{.AppName}}/repository"
 
 type {{.IServiceName}}Service interface {
 }
@@ -20,22 +17,18 @@ func New{{.IServiceName}}Service(repo repository.{{.IServiceName}}Repository) *{
 }
 
 func (s *{{.ServiceName}}Service) Create(data string) error {
-	fmt.Println("Creating new {{.ServiceName}}: ", data)
 	return nil
 }
 
 func (s *{{.ServiceName}}Service) Read(id string) (string, error) {
-	fmt.Println("Reading {{.ServiceName}} with ID: ", id)
 	return id, nil
 }
 
 func (s *{{.ServiceName}}Service) Update(id string, data string) error {
-	fmt.Println("Updating {{.ServiceName}} with ID: ", id)
 	return nil
 }
 
 func (s *{{.ServiceName}}Service) Delete(id string) error {
-	fmt.Println("Deleting {{.ServiceName}} with ID: ", id)
 	return nil
 }
 

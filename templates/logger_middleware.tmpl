@@ -1,4 +1,4 @@
-{{define "middleware"}}
+{{define "logger_middleware"}}
 package middlewares
 
 import (
@@ -13,6 +13,5 @@ func LoggerMiddleware(logger logger.Logger) fiber.Handler {
 		return c.Next()
 	}
 }
-
 
 {{end}}

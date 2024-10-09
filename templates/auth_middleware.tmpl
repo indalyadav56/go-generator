@@ -1,0 +1,16 @@
+{{define "auth_middleware"}}
+package middlewares
+
+import (
+	"{{.ServiceName}}/pkg/logger"
+
+	"github.com/gofiber/fiber/v2"
+)
+
+func AuthMiddleware(logger logger.Logger) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		return c.Next()
+	}
+}
+
+{{end}}

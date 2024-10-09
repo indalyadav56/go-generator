@@ -153,8 +153,11 @@ func ParseContent(tmpl *template.Template, fileName, dir, projectTitle string) (
 	case strings.Contains(fileName, "controller"):
 		templateName = "controller"
 
-	case strings.Contains(fileName, "middleware"):
-		templateName = "middleware"
+	case strings.Contains(fileName, "logger_middleware"):
+		templateName = "logger_middleware"
+
+	case strings.Contains(fileName, "auth_middleware"):
+		templateName = "auth_middleware"
 
 	case strings.Contains(fileName, "routes"):
 		templateName = "routes"
@@ -168,7 +171,9 @@ func ParseContent(tmpl *template.Template, fileName, dir, projectTitle string) (
 	case strings.Contains(strings.ToLower(fileName), "makefile"):
 		templateName = "makefile"
 		isFormat = false
-
+	case strings.Contains(strings.ToLower(fileName), "dockerfile"):
+		templateName = "dockerfile"
+		isFormat = false
 	case strings.Contains(strings.ToLower(fileName), "readme"):
 		templateName = "readme"
 		isFormat = false

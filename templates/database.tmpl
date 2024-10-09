@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-type DBConfig struct {
+type Config struct {
 	Host     string
 	Port     string
 	User     string
@@ -21,7 +21,7 @@ type DBConfig struct {
 	LogLevel logger.LogLevel
 }
 
-func InitDB(cfg DBConfig) (*gorm.DB, error) {
+func Init(cfg Config) (*gorm.DB, error) {
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Name, cfg.SSLMode)
 
