@@ -4,6 +4,10 @@ package repository
 import "gorm.io/gorm"
 
 type {{.IServiceName}}Repository interface {
+ 	// Insert(user *models.User) (*models.User, error)
+	// FindByEmail(email string) (*models.User, error)
+	// FindByID(id string) (*models.User, error)
+	// FindAll() ([]models.User, error)
 }
 
 type {{.AppName}}Repository struct {
@@ -15,23 +19,6 @@ func New{{.IServiceName}}Repository(db *gorm.DB) *{{.AppName}}Repository {
 	return &{{.AppName}}Repository{
 		db: db,
 	}
-}
-
-
-func (r *{{.AppName}}Repository) Create(data string) error {
-	return nil
-}
-
-func (r *{{.AppName}}Repository) Read(id string) (string, error) {
-	return "some_data", nil
-}
-
-func (r *{{.AppName}}Repository) Update(id string, data string) error {
-	return nil
-}
-
-func (r *{{.AppName}}Repository) Delete(id string) error {
-	return nil
 }
 
 {{end}}

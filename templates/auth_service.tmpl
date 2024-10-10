@@ -5,29 +5,11 @@ type {{.IServiceName}}Service interface {
 }
 
 type {{.AppName}}Service struct {
-	{{.ServiceName}}Repo repository.{{.IServiceName}}Repository
 }
 
-func New{{.IServiceName}}Service(repo repository.{{.IServiceName}}Repository) *{{.ServiceName}}Service {
+func New{{.IServiceName}}Service() *{{.AppName}}Service {
 	return &{{.AppName}}Service{
-		{{.AppName}}Repo: repo,
 	}
-}
-
-func (s *{{.ServiceName}}Service) Create(data string) error {
-	return nil
-}
-
-func (s *{{.ServiceName}}Service) Read(id string) (string, error) {
-	return id, nil
-}
-
-func (s *{{.ServiceName}}Service) Update(id string, data string) error {
-	return nil
-}
-
-func (s *{{.ServiceName}}Service) Delete(id string) error {
-	return nil
 }
 
 {{end}}

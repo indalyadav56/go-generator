@@ -17,8 +17,8 @@ func main() {
 
 	projectTitle = "todo"
 
-	fmt.Print("Enter your project title: ")
-	fmt.Scanln(&projectTitle)
+	// fmt.Print("Enter your project title: ")
+	// fmt.Scanln(&projectTitle)
 
 	tmpl, err := template.ParseGlob("templates/*.tmpl")
 	if err != nil {

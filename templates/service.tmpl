@@ -4,6 +4,10 @@ package services
 import "{{.ServiceName}}/internal/{{.AppName}}/repository"
 
 type {{.IServiceName}}Service interface {
+	// Create(user *models.User) (*models.User, error)
+	// GetByEmail(email string) (*models.User, error)
+	// GetByID(id string) (*models.User, error)
+	// List() ([]models.User, error)
 }
 
 type {{.AppName}}Service struct {
@@ -14,22 +18,6 @@ func New{{.IServiceName}}Service(repo repository.{{.IServiceName}}Repository) *{
 	return &{{.AppName}}Service{
 		{{.AppName}}Repo: repo,
 	}
-}
-
-func (s *{{.AppName}}Service) Create(data string) error {
-	return nil
-}
-
-func (s *{{.AppName}}Service) Read(id string) (string, error) {
-	return id, nil
-}
-
-func (s *{{.AppName}}Service) Update(id string, data string) error {
-	return nil
-}
-
-func (s *{{.AppName}}Service) Delete(id string) error {
-	return nil
 }
 
 {{end}}

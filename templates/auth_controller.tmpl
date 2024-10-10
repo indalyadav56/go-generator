@@ -5,13 +5,16 @@ package controllers
 import "github.com/gofiber/fiber/v2"
 
 type {{.IServiceName}}Controller interface {
+	Register(c *fiber.Ctx) error
 }
 
 type {{.AppName}}Controller struct {
+	service services.{{.IServiceName}}Service
 }
 
 func NewAuthController() *{{.AppName}}Controller {
-	return &authController{}
+	return &authController{
+	}
 }
 
 // Register godoc
