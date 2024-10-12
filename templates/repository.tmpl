@@ -3,7 +3,7 @@ package repository
 
 import "gorm.io/gorm"
 
-type {{.IServiceName}}Repository interface {
+type {{.IAppName}}Repository interface {
  	// Insert(user *models.User) (*models.User, error)
 	// FindByEmail(email string) (*models.User, error)
 	// FindByID(id string) (*models.User, error)
@@ -15,7 +15,7 @@ type {{.AppName}}Repository struct {
 }
 
 
-func New{{.IServiceName}}Repository(db *gorm.DB) *{{.AppName}}Repository {
+func New{{.IAppName}}Repository(db *gorm.DB) *{{.AppName}}Repository {
 	return &{{.AppName}}Repository{
 		db: db,
 	}

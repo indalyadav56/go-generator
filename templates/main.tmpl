@@ -89,7 +89,7 @@ func main() {
 	userRepo := userRepository.NewUserRepository(db)
 
 	// services
-	authSrv := authServices.NewAuthService(authRepo)
+	authSrv := authServices.NewAuthService()
 	userSrv := userServices.NewUserService(userRepo)
 
 	// controllers

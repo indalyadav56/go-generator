@@ -27,19 +27,15 @@ var appCmd = &cobra.Command{
 			dirPath = args[0]
 		}
 
-		name, _ := cmd.Flags().GetString("name")
-		if name == "" {
-			name = "task"
-		}
-		fmt.Printf("Project Name, %s!\n", name)
+		appName, _ := cmd.Flags().GetString("name")
 
 		tmpl, err := template.ParseGlob("templates/*.tmpl")
 		if err != nil {
 			panic(err)
 		}
 
-		dirData := AddApp(name)
-		err = file.CreateStructure(dirPath, dirData, tmpl)
+		dirData := AddApp(appName)
+		err = file.CreateStructure(dirPath, dirData, tmpl, appName)
 		if err != nil {
 			log.Fatalf("Failed to create structure: %v\n", err)
 		}

@@ -8,15 +8,15 @@ import (
 	"{{.ServiceName}}/internal/{{.AppName}}/services"
 )
 
-type {{.IServiceName}}Controller interface {
+type {{.IAppName}}Controller interface {
 }
 
-type {{.ServiceName}}Controller struct {
-	service services.{{.IServiceName}}Service
+type {{.AppName}}Controller struct {
+	service services.{{.IAppName}}Service
 }
 
-func New{{.IServiceName}}Controller(s services.{{.IServiceName}}Service) *{{.ServiceName}}Controller {
-	return &{{.ServiceName}}Controller{service: s}
+func New{{.IAppName}}Controller(s services.{{.IAppName}}Service) *{{.AppName}}Controller {
+	return &{{.AppName}}Controller{service: s}
 }
 
 // Login godoc
@@ -29,7 +29,7 @@ func New{{.IServiceName}}Controller(s services.{{.IServiceName}}Service) *{{.Ser
 // @Success		200	"Login user successfully"
 // @Failure		400	"Bad request"
 // @Failure		500	"Internal server error"
-func (c *{{.ServiceName}}Controller) Create{{.IServiceName}}(ctx *fiber.Ctx) error {
+func (c *{{.AppName}}Controller) Create(ctx *fiber.Ctx) error {
 	// Implement Create Logic
 	fmt.Println("Creating {{.ServiceName}}")
 	return ctx.JSON(fiber.Map{"message": "Created {{.ServiceName}}"})
@@ -45,7 +45,7 @@ func (c *{{.ServiceName}}Controller) Create{{.IServiceName}}(ctx *fiber.Ctx) err
 // @Success		200	"Login user successfully"
 // @Failure		400	"Bad request"
 // @Failure		500	"Internal server error"
-func (c *{{.ServiceName}}Controller) Get{{.IServiceName}}(ctx *fiber.Ctx) error {
+func (c *{{.AppName}}Controller) Get(ctx *fiber.Ctx) error {
 	// Implement Read Logic
 	fmt.Println("Fetching {{.ServiceName}}")
 	return ctx.JSON(fiber.Map{"message": "Fetched {{.ServiceName}}"})
@@ -61,7 +61,7 @@ func (c *{{.ServiceName}}Controller) Get{{.IServiceName}}(ctx *fiber.Ctx) error 
 // @Success		200	"Login user successfully"
 // @Failure		400	"Bad request"
 // @Failure		500	"Internal server error"
-func (c *{{.ServiceName}}Controller) Update{{.IServiceName}}(ctx *fiber.Ctx) error {
+func (c *{{.AppName}}Controller) Update(ctx *fiber.Ctx) error {
 	// Implement Update Logic
 	fmt.Println("Updating {{.ServiceName}}")
 	return ctx.JSON(fiber.Map{"message": "Updated {{.ServiceName}}"})
@@ -77,7 +77,7 @@ func (c *{{.ServiceName}}Controller) Update{{.IServiceName}}(ctx *fiber.Ctx) err
 // @Success		200	"Login user successfully"
 // @Failure		400	"Bad request"
 // @Failure		500	"Internal server error"
-func (c *{{.ServiceName}}Controller) Delete{{.IServiceName}}(ctx *fiber.Ctx) error {
+func (c *{{.AppName}}Controller) Delete(ctx *fiber.Ctx) error {
 	// Implement Delete Logic
 	fmt.Println("Deleting {{.ServiceName}}")
 	return ctx.JSON(fiber.Map{"message": "Deleted {{.ServiceName}}"})

@@ -51,7 +51,7 @@ func CreateProject(projectTitle string) {
 		".":                                 {".gitignore", "README.md", "Dockerfile", "docker-compose.yml", "Makefile", ".env"},
 	}
 
-	err = file.CreateStructure(projectTitle, structure, tmpl)
+	err = file.CreateStructure(projectTitle, structure, tmpl, "")
 	if err != nil {
 		log.Fatalf("Failed to create structure: %v\n", err)
 	}

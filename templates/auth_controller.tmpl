@@ -2,18 +2,22 @@
 
 package controllers
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/gofiber/fiber/v2"
+	"{{.ServiceName}}/internal/{{.AppName}}/services"
+)
 
 type AuthController interface {
 	Register(c *fiber.Ctx) error
 }
 
 type authController struct {
-	service services.{{.IServiceName}}Service
+	authService services.{{.IAppName}}Service
 }
 
-func NewAuthController() *authController {
+func NewAuthController(srv services.{{.IAppName}}Service) *authController {
 	return &authController{
+		authService: srv,
 	}
 }
 

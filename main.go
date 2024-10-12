@@ -36,7 +36,7 @@ func CreateProject(projectTitle string) {
 		"auth/routes": {"auth_routes.go"},
 	}
 
-	err = file.CreateStructure(projectTitle, structure, tmpl)
+	err = file.CreateStructure(projectTitle, structure, tmpl, "")
 	if err != nil {
 		log.Fatalf("Failed to create structure: %v\n", err)
 	}

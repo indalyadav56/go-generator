@@ -1,13 +1,13 @@
 {{define "auth_service"}}
 package services
 
-type {{.IServiceName}}Service interface {
+type {{.IAppName}}Service interface {
 }
 
 type {{.AppName}}Service struct {
 }
 
-func New{{.IServiceName}}Service() *{{.AppName}}Service {
+func New{{.IAppName}}Service() *{{.AppName}}Service {
 	return &{{.AppName}}Service{
 	}
 }

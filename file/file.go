@@ -10,11 +10,13 @@ import (
 	"text/template"
 
 	"github.com/indalyadav56/go-generator/format"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 type DirectoryStructure map[string][]string
 
-func CreateStructure(basePath string, structure DirectoryStructure, temp *template.Template) error {
+func CreateStructure(basePath string, structure DirectoryStructure, temp *template.Template, appName string) error {
 	for dir, files := range structure {
 		fullDirPath := filepath.Join(basePath, dir)
 
@@ -34,7 +36,7 @@ func CreateStructure(basePath string, structure DirectoryStructure, temp *templa
 				continue
 			}
 
-			contentData, _ := ParseContent(temp, file, dir, basePath)
+			contentData, _ := ParseContent(temp, file, dir, basePath, appName)
 			err = CreateFile(filepath.Join(fullDirPath, file), contentData)
 			if err != nil {
 				log.Fatalf("Failed to create file: %v", err)
@@ -75,14 +77,22 @@ func CreateFile(filePath, content string) error {
 }
 
 // ParseContent processes a Go template and returns the formatted Go code.
-func ParseContent(tmpl *template.Template, fileName, dir, projectTitle string) (string, error) {
-	// caser := cases.Title(language.English)
-	// capitalized := caser.String(projectTitle)
+func ParseContent(tmpl *template.Template, fileName, dir, projectTitle, appName string) (string, error) {
+
+	if strings.Contains(projectTitle, ".") {
+		data := strings.Split("./backend/internal", "/")
+		projectTitle = data[1]
+	}
+
+	caser := cases.Title(language.English)
+	capitalized := caser.String(projectTitle)
+	appCapitalized := caser.String(appName)
 
 	data := map[string]string{
-		"IServiceName": "User",
-		"ServiceName":  "backend",
-		"AppName":      "backend",
+		"IServiceName": capitalized,
+		"ServiceName":  projectTitle,
+		"IAppName":     appCapitalized,
+		"AppName":      appName,
 	}
 
 	if strings.Contains(fileName, "app.log") {
