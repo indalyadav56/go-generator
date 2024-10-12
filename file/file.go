@@ -10,8 +10,6 @@ import (
 	"text/template"
 
 	"github.com/indalyadav56/go-generator/format"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 )
 
 type DirectoryStructure map[string][]string
@@ -78,33 +76,20 @@ func CreateFile(filePath, content string) error {
 
 // ParseContent processes a Go template and returns the formatted Go code.
 func ParseContent(tmpl *template.Template, fileName, dir, projectTitle string) (string, error) {
-	caser := cases.Title(language.English)
-	capitalized := caser.String(projectTitle)
+	// caser := cases.Title(language.English)
+	// capitalized := caser.String(projectTitle)
 
 	data := map[string]string{
-		"IServiceName": capitalized,
-		"ServiceName":  projectTitle,
-		"AppName":      projectTitle,
+		"IServiceName": "User",
+		"ServiceName":  "backend",
+		"AppName":      "backend",
 	}
 
 	if strings.Contains(fileName, "app.log") {
 		return "", nil
 	}
 
-	if strings.Contains(fileName, "auth") {
-		data["IServiceName"] = "Auth"
-		data["ServiceName"] = projectTitle
-		data["AppName"] = "auth"
-	}
-
-	if strings.Contains(fileName, "user") {
-		data["IServiceName"] = "User"
-		data["ServiceName"] = projectTitle
-		data["AppName"] = "user"
-	}
-
 	templateName, isFormat := getTemplateName(fileName, dir)
-
 	var output bytes.Buffer
 
 	err := tmpl.ExecuteTemplate(&output, templateName, data)
@@ -151,7 +136,6 @@ func getTemplateName(fileName, dir string) (templateName string, isFormat bool) 
 		"readme":     "readme",
 	}
 
-	// Check if the fileName matches any of the non-format cases
 	for key, template := range nonFormattedPatterns {
 		if strings.Contains(strings.ToLower(fileName), key) {
 			return template, false

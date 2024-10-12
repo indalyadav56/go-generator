@@ -4,15 +4,15 @@ package controllers
 
 import "github.com/gofiber/fiber/v2"
 
-type {{.IServiceName}}Controller interface {
+type AuthController interface {
 	Register(c *fiber.Ctx) error
 }
 
-type {{.AppName}}Controller struct {
+type authController struct {
 	service services.{{.IServiceName}}Service
 }
 
-func NewAuthController() *{{.AppName}}Controller {
+func NewAuthController() *authController {
 	return &authController{
 	}
 }

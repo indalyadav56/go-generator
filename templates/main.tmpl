@@ -9,19 +9,15 @@ import (
 	"{{.ServiceName}}/pkg/logger"
     "{{.ServiceName}}/middlewares"
 
-	todoRepository "{{.ServiceName}}/internal/{{.ServiceName}}/repository"
 	userRepository "{{.ServiceName}}/internal/user/repository"
 	
 	authServices "{{.ServiceName}}/internal/auth/services"
-	todoServices "{{.ServiceName}}/internal/{{.ServiceName}}/services"
 	userServices "{{.ServiceName}}/internal/user/services"
 
 	authControllers "{{.ServiceName}}/internal/auth/controllers"
-	todoControllers "{{.ServiceName}}/internal/{{.ServiceName}}/controllers"
 	userControllers "{{.ServiceName}}/internal/user/controllers"
 
 	authRoutes "{{.ServiceName}}/internal/auth/routes"
-	todoRoutes "{{.ServiceName}}/internal/todo/routes"
 	userRoutes "{{.ServiceName}}/internal/user/routes"
 
     "github.com/gofiber/fiber/v2"
@@ -91,22 +87,18 @@ func main() {
 
 	// repository
 	userRepo := userRepository.NewUserRepository(db)
-	todoRepo := todoRepository.NewTodoRepository(db)
 
 	// services
 	authSrv := authServices.NewAuthService(authRepo)
 	userSrv := userServices.NewUserService(userRepo)
-	todoSrv := todoServices.NewTodoService(todoRepo)
 
 	// controllers
 	authCtrl := authControllers.NewAuthController(authSrv)
 	userCtrl := userControllers.NewUserController(userSrv)
-	todoCtrl := todoControllers.NewTodoController(todoSrv)
 
 	// routes
 	authRoutes.AuthRoutes(app, authCtrl)
 	userRoutes.UserRoutes(app, userCtrl)
-	todoRoutes.TodoRoutes(app, todoCtrl)
 
 
 	app.Get("/swagger/*", swagger.HandlerDefault)

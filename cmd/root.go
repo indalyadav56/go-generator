@@ -21,8 +21,3 @@ func Execute() {
 		os.Exit(1)
 	}
 }
-
-// func init() {
-// 	// Here you can add any global or persistent flags for all commands
-// 	rootCmd.PersistentFlags().StringP("config", "c", "", "Config file (default is $HOME/.yourcli.yaml)")
-// }
