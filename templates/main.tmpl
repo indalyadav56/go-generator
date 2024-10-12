@@ -20,6 +20,8 @@ import (
 	authRoutes "{{.ServiceName}}/internal/auth/routes"
 	userRoutes "{{.ServiceName}}/internal/user/routes"
 
+	_ "{{.ServiceName}}/docs"
+
     "github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -86,17 +88,18 @@ func main() {
 	app.Use(healthcheck.New())
 
 	// repository
-	userRepo := userRepository.NewUserRepository(db)
+	userRepo := userRepository.NewUserRepository(db, logger)
 
 	// services
 	authSrv := authServices.NewAuthService()
-	userSrv := userServices.NewUserService(userRepo)
+	userSrv := userServices.NewUserService(userRepo, logger)
 
 	// controllers
 	authCtrl := authControllers.NewAuthController(authSrv)
 	userCtrl := userControllers.NewUserController(userSrv)
 
 	// routes
+	app.Get("/swagger/*", swagger.HandlerDefault)
 	authRoutes.AuthRoutes(app, authCtrl)
 	userRoutes.UserRoutes(app, userCtrl)
 

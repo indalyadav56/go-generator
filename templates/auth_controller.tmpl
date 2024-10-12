@@ -8,7 +8,9 @@ import (
 )
 
 type AuthController interface {
+	Login(c *fiber.Ctx) error
 	Register(c *fiber.Ctx) error
+	Logout(c *fiber.Ctx) error
 }
 
 type authController struct {
@@ -27,9 +29,6 @@ func NewAuthController(srv services.{{.IAppName}}Service) *authController {
 // @Tags Auth
 // @Accept  json
 // @Produce  json
-// @Param user body models.RegisterRequest true "Register User"
-// @Success 201 {object} models.User
-// @Failure 400 {object} fiber.Error
 // @Router /auth/register [post]
 func (tc *authController) Register(c *fiber.Ctx) error {
 	// Method implementation
@@ -42,9 +41,6 @@ func (tc *authController) Register(c *fiber.Ctx) error {
 // @Tags Auth
 // @Accept  json
 // @Produce  json
-// @Param credentials body models.LoginRequest true "User credentials"
-// @Success 200 {object} models.LoginResponse
-// @Failure 401 {object} fiber.Error
 // @Router /auth/login [post]
 func (tc *authController) Login(c *fiber.Ctx) error {
 	// Method implementation
@@ -57,9 +53,6 @@ func (tc *authController) Login(c *fiber.Ctx) error {
 // @Tags Auth
 // @Accept  json
 // @Produce  json
-// @Param refreshToken body models.RefreshTokenRequest true "Refresh Token"
-// @Success 200 {object} models.LoginResponse
-// @Failure 400 {object} fiber.Error
 // @Router /auth/refresh [post]
 func (tc *authController) RefreshToken(c *fiber.Ctx) error {
 	// Method implementation
@@ -72,9 +65,6 @@ func (tc *authController) RefreshToken(c *fiber.Ctx) error {
 // @Tags Auth
 // @Accept  json
 // @Produce  json
-// @Param refreshToken body models.RefreshTokenRequest true "Refresh Token"
-// @Success 200 {object} fiber.Map
-// @Failure 400 {object} fiber.Error
 // @Router /auth/logout [post]
 func (tc *authController) Logout(c *fiber.Ctx) error {
 	// Method implementation
@@ -87,8 +77,6 @@ func (tc *authController) Logout(c *fiber.Ctx) error {
 // @Tags Auth
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} models.User
-// @Failure 401 {object} fiber.Error
 // @Router /auth/me [get]
 func (tc *authController) GetCurrentUser(c *fiber.Ctx) error {
 	// Method implementation
@@ -101,9 +89,6 @@ func (tc *authController) GetCurrentUser(c *fiber.Ctx) error {
 // @Tags Auth
 // @Accept  json
 // @Produce  json
-// @Param email body models.PasswordResetRequest true "User email"
-// @Success 200 {object} fiber.Map
-// @Failure 400 {object} fiber.Error
 // @Router /auth/password-reset/request [post]
 func (tc *authController) RequestPasswordReset(c *fiber.Ctx) error {
 	// Method implementation
@@ -116,9 +101,6 @@ func (tc *authController) RequestPasswordReset(c *fiber.Ctx) error {
 // @Tags Auth
 // @Accept  json
 // @Produce  json
-// @Param resetPassword body models.PasswordResetConfirmRequest true "Password Reset Token"
-// @Success 200 {object} fiber.Map
-// @Failure 400 {object} fiber.Error
 // @Router /auth/password-reset/confirm [post]
 func (tc *authController) ResetPassword(c *fiber.Ctx) error {
 	// Method implementation

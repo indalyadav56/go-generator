@@ -15,6 +15,41 @@ import (
 )
 
 type DirectoryStructure map[string][]string
+type templatePattern struct {
+	pattern  string
+	template string
+	isFormat bool
+}
+
+var templatePatterns = []templatePattern{
+	{"makefile", "makefile", false},
+	{"dockerfile", "dockerfile", false},
+	{"readme", "readme", false},
+
+	// Specific patterns
+	{"auth_routes", "auth_routes", true},
+	{"auth_service", "auth_service", true},
+	{"auth_controller", "auth_controller", true},
+	{"logger_middleware", "logger_middleware", true},
+	{"auth_middleware", "auth_middleware", true},
+
+	{"env", "env", false},
+	{"gitignore", "gitignore", false},
+	{"docker-compose", "compose", false},
+
+	{"_test", "test", true},
+
+	// General patterns
+	{"service", "service", true},
+	{"controller", "controller", true},
+	{"repository", "repository", true},
+	{"routes", "routes", true},
+	{"dto", "dto", true},
+	{"model", "model", true},
+	{"constant", "constant", true},
+
+	{"main", "main", true},
+}
 
 func CreateStructure(basePath string, structure DirectoryStructure, temp *template.Template, appName string) error {
 	for dir, files := range structure {
@@ -116,86 +151,6 @@ func ParseContent(tmpl *template.Template, fileName, dir, projectTitle, appName 
 	}
 
 	return output.String(), nil
-}
-
-// func getTemplateName(fileName, dir string) (templateName string, isFormat bool) {
-// 	isFormat = true
-
-// 	patterns := map[string]string{
-// 		"main":              "main",
-// 		"auth_service":      "auth_service",
-// 		"service_test":      "service_test",
-// 		"dto_test":          "dto_test",
-// 		"controller_test":   "controller_test",
-// 		"service":           "service",
-// 		"repository_test":   "repository_test",
-// 		"repository":        "repository",
-// 		"constant":          "constant",
-// 		"auth_controller":   "auth_controller",
-// 		"controller":        "controller",
-// 		"logger_middleware": "logger_middleware",
-// 		"auth_middleware":   "auth_middleware",
-// 		"routes":            "routes",
-// 		"dto":               "dto",
-// 		"model":             "model",
-// 	}
-
-// 	nonFormattedPatterns := map[string]string{
-// 		"makefile":   "makefile",
-// 		"dockerfile": "dockerfile",
-// 		"readme":     "readme",
-// 	}
-
-// 	for key, template := range nonFormattedPatterns {
-// 		if strings.Contains(strings.ToLower(fileName), key) {
-// 			return template, false
-// 		}
-// 	}
-
-// 	for pattern, template := range patterns {
-// 		if strings.Contains(fileName, pattern) {
-// 			return template, true
-// 		}
-// 	}
-
-// 	if strings.Contains(dir, "database") {
-// 		return "database", true
-// 	} else if strings.Contains(dir, "config") {
-// 		return "config", true
-// 	}
-
-// 	return "unknown", false
-// }
-
-type templatePattern struct {
-	pattern  string
-	template string
-	isFormat bool
-}
-
-var templatePatterns = []templatePattern{
-	{"makefile", "makefile", false},
-	{"dockerfile", "dockerfile", false},
-	{"readme", "readme", false},
-
-	// Specific patterns
-	{"auth_service", "auth_service", true},
-	{"auth_controller", "auth_controller", true},
-	{"logger_middleware", "logger_middleware", true},
-	{"auth_middleware", "auth_middleware", true},
-
-	{"_test", "test", true},
-
-	// General patterns
-	{"service", "service", true},
-	{"controller", "controller", true},
-	{"repository", "repository", true},
-	{"routes", "routes", true},
-	{"dto", "dto", true},
-	{"model", "model", true},
-	{"constant", "constant", true},
-
-	{"main", "main", true},
 }
 
 func getTemplateName(fileName, dir string) (templateName string, isFormat bool) {

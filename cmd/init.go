@@ -55,7 +55,6 @@ func CreateProject(projectTitle string) {
 		"middlewares":                       {"logger_middleware.go", "auth_middleware.go"},
 		"docs":                              {""},
 		"internal":                          {""},
-		"logs":                              {"app.log"},
 		".":                                 {".gitignore", "README.md", "Dockerfile", "docker-compose.yml", "Makefile", ".env"},
 	}
 
@@ -66,7 +65,6 @@ func CreateProject(projectTitle string) {
 
 	initGoModule(projectTitle)
 	copyCommonPkg(projectTitle)
-	runSwagInit(fmt.Sprintf("%s/cmd/%s/main.go", projectTitle, projectTitle))
 
 	err = runGoModTidy("./" + projectTitle)
 	if err != nil {
@@ -76,17 +74,6 @@ func CreateProject(projectTitle string) {
 
 func runGoModTidy(basePath string) error {
 	cmd := exec.Command("go", "mod", "tidy")
-	cmd.Dir = basePath
-	err := cmd.Run()
-	if err != nil {
-		return fmt.Errorf("error running 'go mod tidy': %v", err)
-	}
-	fmt.Println("'go mod tidy' executed successfully, dependencies resolved.")
-	return nil
-}
-
-func runSwagInit(basePath string) error {
-	cmd := exec.Command("swag", "init")
 	cmd.Dir = basePath
 	err := cmd.Run()
 	if err != nil {

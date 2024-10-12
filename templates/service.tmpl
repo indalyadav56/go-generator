@@ -1,23 +1,39 @@
 {{define "service"}}
 package services
 
-import "{{.ServiceName}}/internal/{{.AppName}}/repository"
+import (
+	"{{.ServiceName}}/internal/{{.AppName}}/repository"
+	"{{.ServiceName}}/internal/{{.AppName}}/models"
+	"{{.ServiceName}}/pkg/logger"
+)
 
 type {{.IAppName}}Service interface {
-	// Create(user *models.User) (*models.User, error)
-	// GetByEmail(email string) (*models.User, error)
-	// GetByID(id string) (*models.User, error)
-	// List() ([]models.User, error)
+	Create({{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error)
+	GetByID(id string) (*models.{{.IAppName}}, error)
 }
 
 type {{.AppName}}Service struct {
 	{{.AppName}}Repo repository.{{.IAppName}}Repository
+	log logger.Logger 
 }
 
-func New{{.IAppName}}Service(repo repository.{{.IAppName}}Repository) *{{.AppName}}Service {
+func New{{.IAppName}}Service(repo repository.{{.IAppName}}Repository, log logger.Logger ) *{{.AppName}}Service {
 	return &{{.AppName}}Service{
 		{{.AppName}}Repo: repo,
+		log: log,
 	}
 }
+
+
+// Create creates a new {{.AppName}}
+func (s *{{.AppName}}Service) Create({{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error) {
+	return s.{{.AppName}}Repo.Insert({{.AppName}})
+}
+
+
+func (s *{{.AppName}}Service) GetByID(id string) (*models.{{.IAppName}}, error) {
+	return s.{{.AppName}}Repo.FindByID(id)
+}
+
 
 {{end}}

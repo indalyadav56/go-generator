@@ -8,13 +8,13 @@ import (
 )
 
 func {{.IAppName}}Routes(a *fiber.App, c controllers.{{.IAppName}}Controller) {
-	// {{.AppName}}V1 := a.Group("/v1/{{.AppName}}s")
-	// {
-	// 	{{.AppName}}V1.Get("", )
-	// 	{{.AppName}}V1.Post("", )
-	// 	{{.AppName}}V1.Patch("", )
-	// 	{{.AppName}}V1.Delete("", )
-	// }
+	{{.AppName}}V1 := a.Group("/v1/{{.AppName}}s")
+	{
+		{{.AppName}}V1.Get("", c.Get)
+	 	{{.AppName}}V1.Post("", c.Create)
+	 	{{.AppName}}V1.Patch("", c.Update)
+	 	{{.AppName}}V1.Delete("",c.Delete )
+	}
 }
 
 {{end}}

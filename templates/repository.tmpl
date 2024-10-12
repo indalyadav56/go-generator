@@ -1,24 +1,55 @@
 {{define "repository"}}
 package repository
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+	"{{.ServiceName}}/internal/{{.AppName}}/models"
+	"{{.ServiceName}}/pkg/logger"
+)
 
 type {{.IAppName}}Repository interface {
- 	// Insert(user *models.User) (*models.User, error)
-	// FindByEmail(email string) (*models.User, error)
-	// FindByID(id string) (*models.User, error)
+ 	Insert({{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error)
+	FindByID(id string) (*models.{{.IAppName}}, error)
 	// FindAll() ([]models.User, error)
 }
 
 type {{.AppName}}Repository struct {
 	db *gorm.DB
+	log      logger.Logger
 }
 
 
-func New{{.IAppName}}Repository(db *gorm.DB) *{{.AppName}}Repository {
+func New{{.IAppName}}Repository(db *gorm.DB, log logger.Logger) *{{.AppName}}Repository {
 	return &{{.AppName}}Repository{
 		db: db,
+		log: log,
 	}
+}
+
+func (r *{{.AppName}}Repository)Insert({{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error){
+	if err := r.db.Create({{.AppName}}).Error; err != nil {
+		return nil, err
+	}
+	return {{.AppName}}, nil
+}
+
+func (r *{{.AppName}}Repository)FindByID(id string) (*models.{{.IAppName}}, error){
+	r.db.Get(id)
+	return nil, nil
+}
+
+func (r *{{.AppName}}Repository)Update({{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error){
+	if err := r.db.Create({{.AppName}}).Error; err != nil {
+		return nil, err
+	}
+	return {{.AppName}}, nil
+}
+
+func (r *{{.AppName}}Repository)Delete({{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error){
+	if err := r.db.Create({{.AppName}}).Error; err != nil {
+		return nil, err
+	}
+	return {{.AppName}}, nil
 }
 
 {{end}}

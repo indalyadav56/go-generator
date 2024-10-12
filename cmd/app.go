@@ -3,6 +3,8 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"os/exec"
+	"strings"
 	"text/template"
 
 	"github.com/indalyadav56/go-generator/file"
@@ -53,12 +55,17 @@ func CreateApp(appName, dirPath string) {
 		log.Fatalf("Failed to create structure: %v\n", err)
 	}
 
+	fmt.Println("dirPath", dirPath)
+	if err := runSwaggerInit(dirPath); err != nil {
+		log.Fatalf("Failed to run swag init: %v", err)
+	}
+
 }
 
 func AddApp(title string) file.DirectoryStructure {
 	structure := file.DirectoryStructure{
 		fmt.Sprintf("%s/constants", title):   {"constant.go"},
-		fmt.Sprintf("%s/routes", title):      {"routes.go"},
+		fmt.Sprintf("%s/routes", title):      {fmt.Sprintf("%s_routes.go.go", title)},
 		fmt.Sprintf("%s/dto", title):         {fmt.Sprintf("%s_dto.go", title)},
 		fmt.Sprintf("%s/models", title):      {fmt.Sprintf("%s_model.go", title)},
 		fmt.Sprintf("%s/services", title):    {fmt.Sprintf("%s_service.go", title)},
@@ -68,6 +75,26 @@ func AddApp(title string) file.DirectoryStructure {
 
 	if title == "auth" || title == "authentication" {
 		delete(structure, fmt.Sprintf("%s/repository", title))
+		delete(structure, fmt.Sprintf("%s/models", title))
 	}
 	return structure
+}
+
+func runSwaggerInit(dirPath string) error {
+	dirPath = "./backend/cmd/backend"
+	args := []string{"init", "-o", "../../docs", "./cmd/backend", dirPath}
+	cmd := exec.Command("swag", args...)
+	cmd.Dir = dirPath
+
+	fmt.Printf("Executing command: swag %s\n", strings.Join(args, " "))
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Printf("Error initializing swagger: %v", err)
+		log.Printf("Command output: %s", string(output))
+		return err
+	}
+
+	fmt.Printf("Swagger initialization successful. Output: %s\n", string(output))
+	return nil
 }

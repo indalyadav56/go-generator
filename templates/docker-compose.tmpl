@@ -1,0 +1,54 @@
+{{define "compose"}}
+services:
+  postgres_db:
+    image: postgres:latest
+    restart: always
+    container_name: meetspace_postgres
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_DB=meetspace_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  redis:
+    image: redis:latest
+    container_name: meetspace_redis
+    ports:
+      - "6371:6379"
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: meetspace_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  minio:
+    image: minio/minio
+    restart: unless-stopped
+    ports:
+      - 9000:9000
+      - 9001:9001
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: password
+    command: server /data --console-address ":9001"
+
+  livekit:
+    image: livekit/livekit-server
+    ports:
+      - 7880:7880
+      - 7881:7881
+      - 7882:7882/udp
+    volumes:
+      - ./livekit.yaml:/livekit.yaml
+    command:
+      - "--config"
+      - "/livekit.yaml"
+      - "--node-ip=127.0.0.1"
+
+{{end}}
