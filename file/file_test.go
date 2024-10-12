@@ -1,15 +1,23 @@
 package file
 
 import (
-	"fmt"
 	"testing"
 )
 
 func TestGetTemplateName(t *testing.T) {
+	testCases := []struct {
+		fileName, dir string
+	}{
+		{"auth/services/auth_service.go", ""},
+		{"user/controllers/user_controller_test.go", ""},
+		{"Makefile", ""},
+		{"config/config.go", "config"},
+		{"database/connection.go", "database"},
+		{"unknown_file.go", ""},
+	}
 
-	t.Run("get template name", func(t *testing.T) {
-		template, isFormat := getTemplateName("routes/routes.go", "")
-		fmt.Println("template:", template)
-		fmt.Println("isFormat:", isFormat)
-	})
+	for _, tc := range testCases {
+		template, isFormat := getTemplateName(tc.fileName, tc.dir)
+		println(tc.fileName, "->", template, isFormat)
+	}
 }

@@ -118,50 +118,105 @@ func ParseContent(tmpl *template.Template, fileName, dir, projectTitle, appName 
 	return output.String(), nil
 }
 
+// func getTemplateName(fileName, dir string) (templateName string, isFormat bool) {
+// 	isFormat = true
+
+// 	patterns := map[string]string{
+// 		"main":              "main",
+// 		"auth_service":      "auth_service",
+// 		"service_test":      "service_test",
+// 		"dto_test":          "dto_test",
+// 		"controller_test":   "controller_test",
+// 		"service":           "service",
+// 		"repository_test":   "repository_test",
+// 		"repository":        "repository",
+// 		"constant":          "constant",
+// 		"auth_controller":   "auth_controller",
+// 		"controller":        "controller",
+// 		"logger_middleware": "logger_middleware",
+// 		"auth_middleware":   "auth_middleware",
+// 		"routes":            "routes",
+// 		"dto":               "dto",
+// 		"model":             "model",
+// 	}
+
+// 	nonFormattedPatterns := map[string]string{
+// 		"makefile":   "makefile",
+// 		"dockerfile": "dockerfile",
+// 		"readme":     "readme",
+// 	}
+
+// 	for key, template := range nonFormattedPatterns {
+// 		if strings.Contains(strings.ToLower(fileName), key) {
+// 			return template, false
+// 		}
+// 	}
+
+// 	for pattern, template := range patterns {
+// 		if strings.Contains(fileName, pattern) {
+// 			return template, true
+// 		}
+// 	}
+
+// 	if strings.Contains(dir, "database") {
+// 		return "database", true
+// 	} else if strings.Contains(dir, "config") {
+// 		return "config", true
+// 	}
+
+// 	return "unknown", false
+// }
+
+type templatePattern struct {
+	pattern  string
+	template string
+	isFormat bool
+}
+
+var templatePatterns = []templatePattern{
+	{"makefile", "makefile", false},
+	{"dockerfile", "dockerfile", false},
+	{"readme", "readme", false},
+
+	// Specific patterns
+	{"auth_service", "auth_service", true},
+	{"auth_controller", "auth_controller", true},
+	{"logger_middleware", "logger_middleware", true},
+	{"auth_middleware", "auth_middleware", true},
+
+	{"_test", "test", true},
+
+	// General patterns
+	{"service", "service", true},
+	{"controller", "controller", true},
+	{"repository", "repository", true},
+	{"routes", "routes", true},
+	{"dto", "dto", true},
+	{"model", "model", true},
+	{"constant", "constant", true},
+
+	{"main", "main", true},
+}
+
 func getTemplateName(fileName, dir string) (templateName string, isFormat bool) {
-	isFormat = true
+	lowerFileName := strings.ToLower(fileName)
+	baseName := filepath.Base(lowerFileName)
 
-	patterns := map[string]string{
-		"main":              "main",
-		"service_test":      "service_test",
-		"dto_test":          "dto_test",
-		"controller_test":   "controller_test",
-		"auth_service":      "auth_service",
-		"service":           "service",
-		"repository_test":   "repository_test",
-		"repository":        "repository",
-		"constant":          "constant",
-		"auth_controller":   "auth_controller",
-		"controller":        "controller",
-		"logger_middleware": "logger_middleware",
-		"auth_middleware":   "auth_middleware",
-		"routes":            "routes",
-		"dto":               "dto",
-		"model":             "model",
-	}
-
-	nonFormattedPatterns := map[string]string{
-		"makefile":   "makefile",
-		"dockerfile": "dockerfile",
-		"readme":     "readme",
-	}
-
-	for key, template := range nonFormattedPatterns {
-		if strings.Contains(strings.ToLower(fileName), key) {
-			return template, false
-		}
-	}
-
-	for pattern, template := range patterns {
-		if strings.Contains(fileName, pattern) {
-			return template, true
-		}
-	}
-
-	if strings.Contains(dir, "database") {
+	switch {
+	case strings.Contains(dir, "database"):
 		return "database", true
-	} else if strings.Contains(dir, "config") {
+	case strings.Contains(dir, "config"):
 		return "config", true
+	}
+
+	for _, tp := range templatePatterns {
+		if strings.Contains(baseName, tp.pattern) {
+			return tp.template, tp.isFormat
+		}
+	}
+
+	if strings.HasSuffix(baseName, "_test.go") {
+		return filepath.Base(strings.TrimSuffix(baseName, "_test.go")) + "_test", true
 	}
 
 	return "unknown", false

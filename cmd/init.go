@@ -20,18 +20,26 @@ var initCmd = &cobra.Command{
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("args", args)
+		apps, _ := cmd.Flags().GetStringSlice("app")
+		fmt.Println("apps", apps)
+
 		if len(args) == 0 {
 			fmt.Println("provide the name of the project")
 			return
 		}
 		name := args[0]
 		CreateProject(strings.ToLower(name))
+
+		// create apps
+		for _, v := range apps {
+			CreateApp(strings.ToLower(v), fmt.Sprintf("./%s/internal", name))
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(initCmd)
-	initCmd.Flags().StringP("name", "n", "", "project name to initialize")
+	initCmd.Flags().StringSliceP("app", "", []string{}, "app names to initialize")
 }
 
 func CreateProject(projectTitle string) {
