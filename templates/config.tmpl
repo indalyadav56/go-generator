@@ -18,7 +18,7 @@ type Config struct {
 	RedisAddr         string `mapstructure:"REDIS_ADDR"`
 	JWTSecretKey      string `mapstructure:"JWT_SECRET_KEY" validate:"required"`
 	JWTExpirationDays int    `mapstructure:"JWT_EXPIRATION_DAYS" validate:"required,gt=0"`
-	ServerPort        int    `mapstructure:"SERVER_PORT" validate:"required"`
+	ServerPort        string    `mapstructure:"SERVER_PORT" validate:"required"`
 	LogLevel          string `mapstructure:"LOG_LEVEL"`
 	LogFilePath       string `mapstructure:"LOG_FILE_PATH"`
 	AppName           string `mapstructure:"APP_NAME"`
@@ -47,10 +47,10 @@ func setupViper(path string) error {
 	if path != "" {
 		viper.SetConfigFile(path)
 	} else {
-		viper.SetConfigFile(".env") // Default to .env if no path is provided
+		viper.SetConfigFile(".env")
 	}
 
-	viper.SetDefault("DB_PORT", "5432") // Default DB port for PostgreSQL
+	viper.SetDefault("DB_PORT", "5432")
 	viper.SetDefault("REDIS_ADDR", "localhost:6379")
 	viper.SetDefault("LOG_LEVEL", "info")
 	viper.SetDefault("JWT_EXPIRATION_DAYS", 7)

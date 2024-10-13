@@ -27,6 +27,7 @@ var templatePatterns = []templatePattern{
 	{"readme", "readme", false},
 
 	// Specific patterns
+	{"auth_constant", "auth_constant", true},
 	{"auth_service_test", "auth_service_test", true},
 	{"auth_controller_test", "controller_test", true},
 	{"auth_integration_test", "controller_test", true},
@@ -60,6 +61,8 @@ var templatePatterns = []templatePattern{
 	{"model", "model", true},
 	{"constant", "constant", true},
 
+	{"db_logger", "db_logger", true},
+	{"postgres", "postgres_db", true},
 	{"main", "main", true},
 	{"env", "env", false},
 }
@@ -167,16 +170,8 @@ func ParseContent(tmpl *template.Template, fileName, dir, projectTitle, appName 
 }
 
 func getTemplateName(fileName, dir string) (templateName string, isFormat bool) {
-	fmt.Println(">>>>>>>>>>>>>>>>>>>>>>>fileName>>>>>>>>>>>>>>>>>>>>", fileName)
 	lowerFileName := strings.ToLower(fileName)
 	baseName := filepath.Base(lowerFileName)
-
-	switch {
-	case strings.Contains(dir, "database"):
-		return "database", true
-		// case strings.Contains(dir, "config"):
-		// 	return "config", true
-	}
 
 	for _, tp := range templatePatterns {
 		if strings.Contains(baseName, tp.pattern) {

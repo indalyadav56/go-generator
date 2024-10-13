@@ -4,6 +4,7 @@ package controllers
 
 import (
 	"{{.ServiceName}}/pkg/logger"
+	"{{.ServiceName}}/pkg/utils/response"
 	"github.com/gofiber/fiber/v2"
 	"{{.ServiceName}}/internal/{{.AppName}}/services"
 )
@@ -37,8 +38,9 @@ func New{{.IAppName}}Controller( log logger.Logger, s services.{{.IAppName}}Serv
 // @Failure		400	"Bad request"
 // @Failure		500	"Internal server error"
 func (c *{{.AppName}}Controller) Create(ctx *fiber.Ctx) error {
-	// c.service.Create()
-	return ctx.JSON(fiber.Map{"message": "Created {{.ServiceName}}"})
+	// c.{{.AppName}}Srv.Create()
+	resp := response.Created("Successfully Created", nil)
+	return ctx.Status(resp.Status).JSON(resp)
 }
 
 // Login godoc
@@ -51,7 +53,8 @@ func (c *{{.AppName}}Controller) Create(ctx *fiber.Ctx) error {
 // @Failure		400	"Bad request"
 // @Failure		500	"Internal server error"
 func (c *{{.AppName}}Controller) Get(ctx *fiber.Ctx) error {
-	return ctx.JSON(fiber.Map{"message": "Fetched {{.ServiceName}}"})
+	resp := response.Success("Successfully fetch data", nil)
+	return ctx.Status(resp.Status).JSON(resp)
 }
 
 // Login godoc

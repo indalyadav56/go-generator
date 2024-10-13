@@ -11,7 +11,7 @@ type APIResponse struct {
 	Errors  interface{} `json:"errors,omitempty"`
 }
 
-func Success(data interface{}, message string) APIResponse {
+func Success(message string, data interface{}) APIResponse {
 	return APIResponse{
 		Data:    data,
 		Message: message,
@@ -19,11 +19,12 @@ func Success(data interface{}, message string) APIResponse {
 	}
 }
 
-func Error(message string, statusCode int) APIResponse {
+func Error(message string, data interface{}) APIResponse {
 	return APIResponse{
 		Data:    nil,
 		Message: message,
-		Status:  statusCode,
+		Status:  http.StatusBadRequest,
+		Errors:  data,
 	}
 }
 
@@ -59,7 +60,7 @@ func Forbidden(message string) APIResponse {
 	}
 }
 
-func Created(data interface{}, message string) APIResponse {
+func Created(message string, data interface{}) APIResponse {
 	return APIResponse{
 		Data:    data,
 		Message: message,

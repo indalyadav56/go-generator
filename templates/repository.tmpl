@@ -9,6 +9,7 @@ import (
 
 type {{.IAppName}}Repository interface {
  	Insert({{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error)
+	Update({{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error)
 	FindByID(id string) (*models.{{.IAppName}}, error)
 	List(page, pageSize int) ([]models.{{.IAppName}}, error)
 }

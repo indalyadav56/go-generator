@@ -3,11 +3,12 @@ package middlewares
 
 import (
 	"{{.ServiceName}}/pkg/logger"
+	"{{.ServiceName}}/pkg/jwt"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-func LoggerMiddleware(logger logger.Logger) fiber.Handler {
+func LoggerMiddleware(logger logger.Logger, jwt jwt.JWT) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		logger.Info("Request: %s %s", c.Method(), c.Path())
 		return c.Next()

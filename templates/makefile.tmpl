@@ -1,6 +1,6 @@
 {{define "makefile"}}
 run:
-	go run cmd/meetspace/main.go
+	go run cmd/{{.ServiceName}}/main.go
 	
 swagger:
     swag init -o ./docs -d ./cmd/todo
@@ -55,7 +55,7 @@ tools:
 # Run all the tests and check formatting
 ci: fmt test lint
 
-.PHONY: all build run test fmt lint clean tidy tools ci
+# .PHONY: all build run test fmt lint clean tidy tools ci
 
 
 {{end}}
