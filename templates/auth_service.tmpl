@@ -1,15 +1,39 @@
 {{define "auth_service"}}
 package services
 
+import (
+	"{{.ServiceName}}/pkg/logger"
+	"{{.ServiceName}}/pkg/jwt"
+	"{{.ServiceName}}/internal/user/services"
+	"{{.ServiceName}}/internal/auth/dto"
+)
+
 type {{.IAppName}}Service interface {
+	Register(req *dto.RegisterRequest) (interface{}, error)
+	Login(req *dto.LoginRequest) (interface{}, error)
 }
 
 type {{.AppName}}Service struct {
+	log logger.Logger 
+	jwt jwt.JWT
+	userSrv services.UserService
 }
 
-func New{{.IAppName}}Service() *{{.AppName}}Service {
+func New{{.IAppName}}Service(log logger.Logger, jwt jwt.JWT, userSrv services.UserService) *{{.AppName}}Service {
 	return &{{.AppName}}Service{
+		log: log,
+		jwt: jwt,
+		userSrv: userSrv,
 	}
+}
+
+func (s *{{.AppName}}Service) Register(req *dto.RegisterRequest) (interface{}, error){
+	return nil, nil
+}
+
+
+func (s *{{.AppName}}Service) Login(req *dto.LoginRequest) (interface{}, error){
+	return nil, nil
 }
 
 {{end}}

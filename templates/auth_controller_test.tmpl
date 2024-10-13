@@ -1,27 +1,24 @@
-{{define "service_test"}}
-package services
+{{define "auth_controller_test"}}
+package controllers
 
-// import (
-// 	"testing"
-// )
 
-// func TestNewTodoService(t *testing.T) {
-// 	s := New{{.IServiceName}}Service()
+// func TestNew{{.IServiceName}}Controller(t *testing.T) {
+// 	s := New{{.IServiceName}}Controller()
 // 	if s == nil {
 // 		t.Error("Expected non-nil TodoService")
 // 	}
 // }
 
-// func TestTodoService_Create(t *testing.T) {
-// 	s := New{{.IServiceName}}Service()
-// 	err := s.Create("test data")
+// func Test{{.IServiceName}}Controller_Create(t *testing.T) {
+// 	s := New{{.IServiceName}}Controller()
+// 	err := s.Create{{.IServiceName}}("test data")
 // 	if err != nil {
 // 		t.Errorf("Unexpected error: %v", err)
 // 	}
 // }
 
-// func TestTodoService_Read(t *testing.T) {
-// 	s := New{{.IServiceName}}Service()
+// func Test{{.IServiceName}}Controller_Read(t *testing.T) {
+// 	s := New{{.IServiceName}}Controller()
 // 	testCases := []struct {
 // 		name     string
 // 		id       string
@@ -56,20 +53,22 @@ package services
 // 	}
 // }
 
-// func TestTodoService_Update(t *testing.T) {
-// 	s := New{{.IServiceName}}Service()
-// 	err := s.Update("123", "updated data")
+// func Test{{.IServiceName}}Controller_Update(t *testing.T) {
+// 	s := New{{.IServiceName}}Controller()
+// 	err := s.Update{{.IServiceName}}("123", "updated data")
 // 	if err != nil {
 // 		t.Errorf("Unexpected error: %v", err)
 // 	}
 // }
 
-// func TestTodoService_Delete(t *testing.T) {
-// 	s := New{{.IServiceName}}Service()
-// 	err := s.Delete("123")
+// func Test{{.IServiceName}}Controller_Delete(t *testing.T) {
+// 	s := New{{.IServiceName}}Controller()
+// 	err := s.Delete{{.IServiceName}}("123")
 // 	if err != nil {
 // 		t.Errorf("Unexpected error: %v", err)
 // 	}
 // }
+
+
 
 {{end}}

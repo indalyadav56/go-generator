@@ -3,23 +3,27 @@
 package controllers
 
 import (
+	"{{.ServiceName}}/pkg/logger"
 	"github.com/gofiber/fiber/v2"
 	"{{.ServiceName}}/internal/{{.AppName}}/services"
+	"{{.ServiceName}}/internal/auth/dto"
 )
 
 type AuthController interface {
-	Login(c *fiber.Ctx) error
-	Register(c *fiber.Ctx) error
-	Logout(c *fiber.Ctx) error
+	Login(ctx *fiber.Ctx) error
+	Register(ctx *fiber.Ctx) error
+	Logout(ctx *fiber.Ctx) error
 }
 
 type authController struct {
-	authService services.{{.IAppName}}Service
+	log logger.Logger 
+	authSrv services.{{.IAppName}}Service
 }
 
-func NewAuthController(srv services.{{.IAppName}}Service) *authController {
+func NewAuthController(log logger.Logger, srv services.{{.IAppName}}Service) *authController {
 	return &authController{
-		authService: srv,
+		authSrv: srv,
+		log: log,
 	}
 }
 
@@ -30,9 +34,17 @@ func NewAuthController(srv services.{{.IAppName}}Service) *authController {
 // @Accept  json
 // @Produce  json
 // @Router /auth/register [post]
-func (tc *authController) Register(c *fiber.Ctx) error {
-	// Method implementation
-	return nil
+func (c *authController) Register(ctx *fiber.Ctx) error {
+	req := new(dto.RegisterRequest)
+	if err := ctx.BodyParser(req); err != nil {
+		return err
+	}
+	
+	respData, err := c.authSrv.Register(req)
+	if err != nil {
+		return err
+	}
+	return ctx.JSON(respData)
 }
 
 // Login godoc
@@ -42,9 +54,18 @@ func (tc *authController) Register(c *fiber.Ctx) error {
 // @Accept  json
 // @Produce  json
 // @Router /auth/login [post]
-func (tc *authController) Login(c *fiber.Ctx) error {
-	// Method implementation
-	return nil
+func (c *authController) Login(ctx *fiber.Ctx) error {
+	req := new(dto.LoginRequest)
+
+	if err := ctx.BodyParser(req); err != nil {
+		return err
+	}
+
+	respData, err := c.authSrv.Login(req)
+	if err != nil {
+		return err
+	}
+	return ctx.JSON(respData)
 }
 
 // RefreshToken godoc
@@ -54,8 +75,7 @@ func (tc *authController) Login(c *fiber.Ctx) error {
 // @Accept  json
 // @Produce  json
 // @Router /auth/refresh [post]
-func (tc *authController) RefreshToken(c *fiber.Ctx) error {
-	// Method implementation
+func (c *authController) RefreshToken(ctx *fiber.Ctx) error {
 	return nil
 }
 
@@ -66,7 +86,7 @@ func (tc *authController) RefreshToken(c *fiber.Ctx) error {
 // @Accept  json
 // @Produce  json
 // @Router /auth/logout [post]
-func (tc *authController) Logout(c *fiber.Ctx) error {
+func (c *authController) Logout(ctx *fiber.Ctx) error {
 	// Method implementation
 	return nil
 }
@@ -78,8 +98,7 @@ func (tc *authController) Logout(c *fiber.Ctx) error {
 // @Accept  json
 // @Produce  json
 // @Router /auth/me [get]
-func (tc *authController) GetCurrentUser(c *fiber.Ctx) error {
-	// Method implementation
+func (c *authController) GetCurrentUser(ctx *fiber.Ctx) error {
 	return nil
 }
 
@@ -90,7 +109,7 @@ func (tc *authController) GetCurrentUser(c *fiber.Ctx) error {
 // @Accept  json
 // @Produce  json
 // @Router /auth/password-reset/request [post]
-func (tc *authController) RequestPasswordReset(c *fiber.Ctx) error {
+func (c *authController) RequestPasswordReset(ctx *fiber.Ctx) error {
 	// Method implementation
 	return nil
 }
@@ -102,8 +121,7 @@ func (tc *authController) RequestPasswordReset(c *fiber.Ctx) error {
 // @Accept  json
 // @Produce  json
 // @Router /auth/password-reset/confirm [post]
-func (tc *authController) ResetPassword(c *fiber.Ctx) error {
-	// Method implementation
+func (c *authController) ResetPassword(ctx *fiber.Ctx) error {
 	return nil
 }
 

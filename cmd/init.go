@@ -50,7 +50,7 @@ func CreateProject(projectTitle string) {
 
 	structure := file.DirectoryStructure{
 		fmt.Sprintf("cmd/%s", projectTitle): {"main.go"},
-		"config":                            {"env.go"},
+		"config":                            {"env.go", "app.go", "router.go"},
 		"database":                          {"postgres.go"},
 		"middlewares":                       {"logger_middleware.go", "auth_middleware.go"},
 		"docs":                              {""},

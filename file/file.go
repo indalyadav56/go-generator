@@ -27,19 +27,31 @@ var templatePatterns = []templatePattern{
 	{"readme", "readme", false},
 
 	// Specific patterns
+	{"auth_service_test", "auth_service_test", true},
+	{"auth_controller_test", "controller_test", true},
+	{"auth_integration_test", "controller_test", true},
+
+	{"auth_dto", "auth_dto", true},
 	{"auth_routes", "auth_routes", true},
 	{"auth_service", "auth_service", true},
 	{"auth_controller", "auth_controller", true},
 	{"logger_middleware", "logger_middleware", true},
 	{"auth_middleware", "auth_middleware", true},
 
-	{"env", "env", false},
 	{"gitignore", "gitignore", false},
 	{"docker-compose", "compose", false},
 
-	{"_test", "test", true},
-
 	// General patterns
+	{"env.go", "config", true},
+	{"app.go", "app_config", true},
+	{"router.go", "app_config_router", true},
+
+	{"controller_test", "controller_test", true},
+	{"integration_test", "controller_test", true},
+	{"service_test", "service_test", true},
+	{"repository_test", "repository_test", true},
+	{"model_test", "model_test", true},
+
 	{"service", "service", true},
 	{"controller", "controller", true},
 	{"repository", "repository", true},
@@ -49,6 +61,7 @@ var templatePatterns = []templatePattern{
 	{"constant", "constant", true},
 
 	{"main", "main", true},
+	{"env", "env", false},
 }
 
 func CreateStructure(basePath string, structure DirectoryStructure, temp *template.Template, appName string) error {
@@ -115,7 +128,7 @@ func CreateFile(filePath, content string) error {
 func ParseContent(tmpl *template.Template, fileName, dir, projectTitle, appName string) (string, error) {
 
 	if strings.Contains(projectTitle, ".") {
-		data := strings.Split("./backend/internal", "/")
+		data := strings.Split(projectTitle, "/")
 		projectTitle = data[1]
 	}
 
@@ -154,14 +167,15 @@ func ParseContent(tmpl *template.Template, fileName, dir, projectTitle, appName 
 }
 
 func getTemplateName(fileName, dir string) (templateName string, isFormat bool) {
+	fmt.Println(">>>>>>>>>>>>>>>>>>>>>>>fileName>>>>>>>>>>>>>>>>>>>>", fileName)
 	lowerFileName := strings.ToLower(fileName)
 	baseName := filepath.Base(lowerFileName)
 
 	switch {
 	case strings.Contains(dir, "database"):
 		return "database", true
-	case strings.Contains(dir, "config"):
-		return "config", true
+		// case strings.Contains(dir, "config"):
+		// 	return "config", true
 	}
 
 	for _, tp := range templatePatterns {

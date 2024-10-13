@@ -10,7 +10,7 @@ import (
 type {{.IAppName}}Repository interface {
  	Insert({{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error)
 	FindByID(id string) (*models.{{.IAppName}}, error)
-	// FindAll() ([]models.User, error)
+	List(page, pageSize int) ([]models.{{.IAppName}}, error)
 }
 
 type {{.AppName}}Repository struct {
@@ -36,6 +36,19 @@ func (r *{{.AppName}}Repository)Insert({{.AppName}} *models.{{.IAppName}}) (*mod
 func (r *{{.AppName}}Repository)FindByID(id string) (*models.{{.IAppName}}, error){
 	r.db.Get(id)
 	return nil, nil
+}
+
+func (r *{{.AppName}}Repository) List(page, pageSize int) ([]models.{{.IAppName}}, error){
+	var {{.AppName}}s []models.{{.IAppName}}
+
+	offset := (page - 1) * pageSize
+
+	result := r.db.Limit(pageSize).Offset(offset).Find(&{{.AppName}}s)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return {{.AppName}}s, nil
 }
 
 func (r *{{.AppName}}Repository)Update({{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error){

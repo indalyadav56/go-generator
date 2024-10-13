@@ -1,0 +1,58 @@
+{{define "app_config_router"}}
+package config
+
+import (
+	"{{.ServiceName}}/middlewares"
+
+	userRepository "{{.ServiceName}}/internal/user/repository"
+	
+	authServices "{{.ServiceName}}/internal/auth/services"
+	userServices "{{.ServiceName}}/internal/user/services"
+
+	authControllers "{{.ServiceName}}/internal/auth/controllers"
+	userControllers "{{.ServiceName}}/internal/user/controllers"
+
+	authRoutes "{{.ServiceName}}/internal/auth/routes"
+	userRoutes "{{.ServiceName}}/internal/user/routes"
+
+	_ "{{.ServiceName}}/docs"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/compress"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/healthcheck"
+	"github.com/gofiber/fiber/v2/middleware/requestid"
+	"github.com/gofiber/swagger"
+)
+
+// SetupRouter initializes and returns a configured Fiber app
+func SetupRouter(config *AppConfig) *fiber.App {
+	app := fiber.New()
+
+	// Middlewares
+	app.Use(requestid.New())
+	app.Use(cors.New())
+	app.Use(middlewares.LoggerMiddleware(config.Logger))
+	app.Use(compress.New())
+	app.Use(healthcheck.New())
+
+	// Repository
+	userRepo := userRepository.NewUserRepository(config.DB, config.Logger)
+
+	// Services
+	userSrv := userServices.NewUserService(userRepo, config.Logger)
+	authSrv := authServices.NewAuthService(config.Logger, config.JWT, userSrv)
+
+	// Controllers
+	authCtrl := authControllers.NewAuthController(config.Logger, authSrv)
+	userCtrl := userControllers.NewUserController(config.Logger, userSrv)
+
+	// Routes
+	app.Get("/swagger/*", swagger.HandlerDefault)
+	authRoutes.AuthRoutes(app, authCtrl)
+	userRoutes.UserRoutes(app, userCtrl)
+
+	return app
+}
+
+{{end}}

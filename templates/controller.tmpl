@@ -3,6 +3,7 @@
 package controllers
 
 import (
+	"{{.ServiceName}}/pkg/logger"
 	"github.com/gofiber/fiber/v2"
 	"{{.ServiceName}}/internal/{{.AppName}}/services"
 )
@@ -15,19 +16,21 @@ type {{.IAppName}}Controller interface {
 }
 
 type {{.AppName}}Controller struct {
+	log logger.Logger 
 	{{.AppName}}Srv services.{{.IAppName}}Service
 }
 
-func New{{.IAppName}}Controller(s services.{{.IAppName}}Service) *{{.AppName}}Controller {
+func New{{.IAppName}}Controller( log logger.Logger, s services.{{.IAppName}}Service) *{{.AppName}}Controller {
 	return &{{.AppName}}Controller{
 	{{.AppName}}Srv: s,
+	log: log,
 }
 }
 
 // Login godoc
 // @Summary		login-user
 // @Description	Login user
-// @Tags			Auth
+// @Tags			{{.IAppName}}
 // @Produce		json
 // @Router			/v1/{{.AppName}}s [post]
 // @Success		200	"Login user successfully"
@@ -41,7 +44,7 @@ func (c *{{.AppName}}Controller) Create(ctx *fiber.Ctx) error {
 // Login godoc
 // @Summary		login-user
 // @Description	Login user
-// @Tags			Auth
+// @Tags			{{.IAppName}}
 // @Produce		json
 // @Router			/v1/{{.AppName}}s [get]
 // @Success		200	"Login user successfully"
@@ -54,7 +57,7 @@ func (c *{{.AppName}}Controller) Get(ctx *fiber.Ctx) error {
 // Login godoc
 // @Summary		login-user
 // @Description	Login user
-// @Tags			Auth
+// @Tags			{{.IAppName}}
 // @Produce		json
 // @Router			/v1/{{.AppName}}s [patch]
 // @Success		200	"Login user successfully"
@@ -67,7 +70,7 @@ func (c *{{.AppName}}Controller) Update(ctx *fiber.Ctx) error {
 // Login godoc
 // @Summary		login-user
 // @Description	Login user
-// @Tags			Auth
+// @Tags			{{.IAppName}}
 // @Produce		json
 // @Router			/v1/{{.AppName}}s [delete]
 // @Success		200	"Login user successfully"

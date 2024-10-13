@@ -7,6 +7,7 @@ import (
 	"{{.ServiceName}}/config"
 	"{{.ServiceName}}/database"
 	"{{.ServiceName}}/pkg/logger"
+	"{{.ServiceName}}/pkg/jwt"
     "{{.ServiceName}}/middlewares"
 
 	userRepository "{{.ServiceName}}/internal/user/repository"
@@ -79,6 +80,12 @@ func main() {
 		return
 	}
 
+	// jwt
+	jwtConfig := jwt.JWTConfig{
+		SecretKey: []byte(cfg.JWTSecretKey),
+	}
+	jwt := jwt.New(jwtConfig)
+
 	app := fiber.New()
 
     app.Use(requestid.New())
@@ -91,15 +98,16 @@ func main() {
 	userRepo := userRepository.NewUserRepository(db, logger)
 
 	// services
-	authSrv := authServices.NewAuthService()
 	userSrv := userServices.NewUserService(userRepo, logger)
+	authSrv := authServices.NewAuthService(logger,jwt, userSrv)
 
 	// controllers
-	authCtrl := authControllers.NewAuthController(authSrv)
-	userCtrl := userControllers.NewUserController(userSrv)
+	authCtrl := authControllers.NewAuthController(logger, authSrv)
+	userCtrl := userControllers.NewUserController(logger, userSrv)
 
 	// routes
 	app.Get("/swagger/*", swagger.HandlerDefault)
+
 	authRoutes.AuthRoutes(app, authCtrl)
 	userRoutes.UserRoutes(app, userCtrl)
 

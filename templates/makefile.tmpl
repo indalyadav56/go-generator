@@ -1,7 +1,10 @@
 {{define "makefile"}}
-
+run:
+	go run cmd/meetspace/main.go
+	
 swagger:
     swag init -o ./docs -d ./cmd/todo
+	swag init -g ./cmd/meetspace/main.go -o ./docs
 
 run-test:
     GIN_MODE=test go test -v -cover -coverprofile=coverage.out ./....

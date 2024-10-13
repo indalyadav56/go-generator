@@ -55,7 +55,6 @@ func CreateApp(appName, dirPath string) {
 		log.Fatalf("Failed to create structure: %v\n", err)
 	}
 
-	fmt.Println("dirPath", dirPath)
 	if err := runSwaggerInit(dirPath); err != nil {
 		log.Fatalf("Failed to run swag init: %v", err)
 	}
@@ -67,10 +66,11 @@ func AddApp(title string) file.DirectoryStructure {
 		fmt.Sprintf("%s/constants", title):   {"constant.go"},
 		fmt.Sprintf("%s/routes", title):      {fmt.Sprintf("%s_routes.go.go", title)},
 		fmt.Sprintf("%s/dto", title):         {fmt.Sprintf("%s_dto.go", title)},
-		fmt.Sprintf("%s/models", title):      {fmt.Sprintf("%s_model.go", title)},
-		fmt.Sprintf("%s/services", title):    {fmt.Sprintf("%s_service.go", title)},
-		fmt.Sprintf("%s/repository", title):  {fmt.Sprintf("%s_repository.go", title)},
-		fmt.Sprintf("%s/controllers", title): {fmt.Sprintf("%s_controller.go", title)},
+		fmt.Sprintf("%s/models", title):      {fmt.Sprintf("%s_model.go", title), fmt.Sprintf("%s_model_test.go", title)},
+		fmt.Sprintf("%s/services", title):    {fmt.Sprintf("%s_service.go", title), fmt.Sprintf("%s_service_test.go", title)},
+		fmt.Sprintf("%s/repository", title):  {fmt.Sprintf("%s_repository.go", title), fmt.Sprintf("%s_repository_test.go", title)},
+		fmt.Sprintf("%s/controllers", title): {fmt.Sprintf("%s_controller.go", title), fmt.Sprintf("%s_controller_test.go", title)},
+		fmt.Sprintf("%s/controllers", title): {fmt.Sprintf("%s_controller.go", title), fmt.Sprintf("%s_controller_test.go", title), fmt.Sprintf("%s_integration_test.go", title)},
 	}
 
 	if title == "auth" || title == "authentication" {
@@ -81,8 +81,16 @@ func AddApp(title string) file.DirectoryStructure {
 }
 
 func runSwaggerInit(dirPath string) error {
-	dirPath = "./backend/cmd/backend"
-	args := []string{"init", "-o", "../../docs", "./cmd/backend", dirPath}
+	var projectTitle string
+
+	if strings.Contains(dirPath, "/") {
+		data := strings.Split(dirPath, "/")
+		projectTitle = data[1]
+	}
+
+	// dirPath = "./backend/cmd/backend"
+	dirPath = fmt.Sprintf("./%s/cmd/%s", projectTitle, projectTitle)
+	args := []string{"init", "-o", "../../docs", fmt.Sprintf("./cmd/%s", projectTitle), dirPath}
 	cmd := exec.Command("swag", args...)
 	cmd.Dir = dirPath
 

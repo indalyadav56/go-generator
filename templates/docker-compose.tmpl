@@ -27,28 +27,6 @@ services:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
 
-  minio:
-    image: minio/minio
-    restart: unless-stopped
-    ports:
-      - 9000:9000
-      - 9001:9001
-    environment:
-      MINIO_ROOT_USER: admin
-      MINIO_ROOT_PASSWORD: password
-    command: server /data --console-address ":9001"
 
-  livekit:
-    image: livekit/livekit-server
-    ports:
-      - 7880:7880
-      - 7881:7881
-      - 7882:7882/udp
-    volumes:
-      - ./livekit.yaml:/livekit.yaml
-    command:
-      - "--config"
-      - "/livekit.yaml"
-      - "--node-ip=127.0.0.1"
 
 {{end}}
