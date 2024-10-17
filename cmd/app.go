@@ -66,7 +66,7 @@ func AddApp(title string) file.DirectoryStructure {
 		fmt.Sprintf("%s/constants", title):   {fmt.Sprintf("%s_constant.go", title)},
 		fmt.Sprintf("%s/routes", title):      {fmt.Sprintf("%s_routes.go", title)},
 		fmt.Sprintf("%s/dto", title):         {fmt.Sprintf("%s_dto.go", title)},
-		fmt.Sprintf("%s/models", title):      {fmt.Sprintf("%s_model.go", title), fmt.Sprintf("%s_model_test.go", title)},
+		fmt.Sprintf("%s/models", title):      {fmt.Sprintf("%s_model.go", title)},
 		fmt.Sprintf("%s/services", title):    {fmt.Sprintf("%s_service.go", title), fmt.Sprintf("%s_service_test.go", title)},
 		fmt.Sprintf("%s/repository", title):  {fmt.Sprintf("%s_repository.go", title), fmt.Sprintf("%s_repository_test.go", title)},
 		fmt.Sprintf("%s/controllers", title): {fmt.Sprintf("%s_controller.go", title), fmt.Sprintf("%s_controller_test.go", title)},

@@ -17,7 +17,7 @@ func AuthMiddleware(logger logger.Logger, jwt jwt.JWT) fiber.Handler {
 		token, err := extractBearerToken(c)
 		if err != nil {
 			logger.Error(fmt.Sprintf("Authorization error: %s | IP: %s", err.Error(), c.IP()))
-			resp := response.Error("Authorization error:-", err.Error())
+			resp := response.Unauthorized(fmt.Sprintf("Authorization error:-%s", err.Error()))
 			return c.Status(resp.Status).JSON(resp)
 		}
 
@@ -28,7 +28,20 @@ func AuthMiddleware(logger logger.Logger, jwt jwt.JWT) fiber.Handler {
 			return c.Status(resp.Status).JSON(resp)
 		}
 
-		fmt.Println("claims", claims)
+		tokenData, err := jwt.GetClaims(claims)
+		if err != nil {
+			logger.Error(fmt.Sprintf("Invalid token: %v | IP: %s", err, c.IP()))
+			resp := response.Error("Invalid token", err.Error())
+			return c.Status(resp.Status).JSON(resp)
+		}
+
+		userId, ok := tokenData["user_id"].(string)
+		if !ok {
+			resp := response.Error("Invalid token", nil)
+			return c.Status(resp.Status).JSON(resp)
+		}
+
+		c.Locals("user_id", userId)
 		
 		return c.Next()
 	}

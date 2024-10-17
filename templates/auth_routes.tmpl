@@ -7,8 +7,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func {{.IAppName}}Routes(a *fiber.App, c controllers.{{.IAppName}}Controller) {
-	authV1 := a.Group("/v1/auth")
+func {{.IAppName}}Routes(app *fiber.App, c controllers.{{.IAppName}}Controller) {
+	authV1 := app.Group("/v1/auth")
 	{
 		authV1.Post("/register", c.Register)
 		authV1.Post("/login", c.Login)

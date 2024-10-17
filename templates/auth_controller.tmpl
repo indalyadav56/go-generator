@@ -96,17 +96,6 @@ func (c *authController) Logout(ctx *fiber.Ctx) error {
 	return nil
 }
 
-// GetCurrentUser godoc
-// @Summary Get the current authenticated user
-// @Description Return details of the currently authenticated user
-// @Tags Auth
-// @Accept  json
-// @Produce  json
-// @Router /auth/me [get]
-func (c *authController) GetCurrentUser(ctx *fiber.Ctx) error {
-	return nil
-}
-
 // RequestPasswordReset godoc
 // @Summary Request password reset
 // @Description Send a password reset email to the user

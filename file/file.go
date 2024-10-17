@@ -51,7 +51,7 @@ var templatePatterns = []templatePattern{
 	{"integration_test", "controller_test", true},
 	{"service_test", "service_test", true},
 	{"repository_test", "repository_test", true},
-	{"model_test", "model_test", true},
+	// {"model_test", "model_test", true},
 
 	{"service", "service", true},
 	{"controller", "controller", true},

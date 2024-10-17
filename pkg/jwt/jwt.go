@@ -13,9 +13,9 @@ var (
 )
 
 type JWT interface {
-	GenerateToken(claims map[string]interface{}, duration time.Duration) (string, error)
+	GenerateToken(claims map[string]interface{}) (string, error)
 	ValidateToken(tokenString string) (*jwt.Token, error)
-	GetClaims(token *jwt.Token) (jwt.MapClaims, error)
+	GetClaims(token *jwt.Token) (map[string]interface{}, error)
 }
 
 type jwtHandler struct {
@@ -29,10 +29,10 @@ func New(config JWTConfig) JWT {
 }
 
 // GenerateToken generates a new JWT token with customizable claims
-func (j *jwtHandler) GenerateToken(claims map[string]interface{}, duration time.Duration) (string, error) {
+func (j *jwtHandler) GenerateToken(claims map[string]interface{}) (string, error) {
 	jwtClaims := jwt.MapClaims(claims)
 
-	jwtClaims["exp"] = time.Now().Add(duration).Unix()
+	jwtClaims["exp"] = time.Now().Add(j.config.TokenDuration).Unix()
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwtClaims)
 	return token.SignedString(j.config.SecretKey)
@@ -49,7 +49,7 @@ func (j *jwtHandler) ValidateToken(tokenString string) (*jwt.Token, error) {
 }
 
 // GetClaims extracts the claims from a valid token
-func (j *jwtHandler) GetClaims(token *jwt.Token) (jwt.MapClaims, error) {
+func (j *jwtHandler) GetClaims(token *jwt.Token) (map[string]interface{}, error) {
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok || !token.Valid {
 		return nil, ErrInvalidTokenOrClaims
