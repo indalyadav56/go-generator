@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"text/template"
 
@@ -33,6 +34,7 @@ var appCmd = &cobra.Command{
 			fmt.Println("Please provide the name of the app")
 			return
 		}
+		// apiFramework, _ := cmd.Flags().GetString("framework")
 		CreateApp(appName, dirPath)
 
 	},
@@ -44,7 +46,27 @@ func init() {
 }
 
 func CreateApp(appName, dirPath string) {
-	tmpl, err := template.ParseGlob("templates/*.tmpl")
+	// tmpl, err := template.ParseGlob("templates/**/*.tmpl")
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+	patterns := []string{
+		"templates/*.tmpl",
+		"templates/**/*.tmpl",
+	}
+
+	var allFiles []string
+	for _, pattern := range patterns {
+		files, err := filepath.Glob(pattern)
+		if err != nil {
+			panic(err)
+		}
+		allFiles = append(allFiles, files...)
+	}
+
+	// Parse the templates
+	tmpl, err := template.ParseFiles(allFiles...)
 	if err != nil {
 		panic(err)
 	}
@@ -63,14 +85,14 @@ func CreateApp(appName, dirPath string) {
 
 func AddApp(title string) file.DirectoryStructure {
 	structure := file.DirectoryStructure{
-		fmt.Sprintf("%s/constants", title):   {fmt.Sprintf("%s_constant.go", title)},
-		fmt.Sprintf("%s/routes", title):      {fmt.Sprintf("%s_routes.go", title)},
-		fmt.Sprintf("%s/dto", title):         {fmt.Sprintf("%s_dto.go", title)},
-		fmt.Sprintf("%s/models", title):      {fmt.Sprintf("%s_model.go", title)},
-		fmt.Sprintf("%s/services", title):    {fmt.Sprintf("%s_service.go", title), fmt.Sprintf("%s_service_test.go", title)},
-		fmt.Sprintf("%s/repository", title):  {fmt.Sprintf("%s_repository.go", title), fmt.Sprintf("%s_repository_test.go", title)},
-		fmt.Sprintf("%s/controllers", title): {fmt.Sprintf("%s_controller.go", title), fmt.Sprintf("%s_controller_test.go", title)},
-		fmt.Sprintf("%s/controllers", title): {fmt.Sprintf("%s_controller.go", title), fmt.Sprintf("%s_controller_test.go", title), fmt.Sprintf("%s_integration_test.go", title)},
+		// fmt.Sprintf("%s/constants", title):   {"constants.go"},
+		// fmt.Sprintf("%s/routes", title):      {"routes.go"},
+		// fmt.Sprintf("%s/dto", title):         {"dto.go"},
+		// fmt.Sprintf("%s/models", title):      {"model.go"},
+		fmt.Sprintf("%s/services", title): {"service.go"},
+		// fmt.Sprintf("%s/services", title):    {"service.go", "service_test.go"},
+		// fmt.Sprintf("%s/repository", title):  {"repository.go", "repository_test.go"},
+		// fmt.Sprintf("%s/controllers", title): {"controller.go", "controller_test.go"},
 	}
 
 	if title == "auth" || title == "authentication" {

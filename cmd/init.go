@@ -43,7 +43,22 @@ func init() {
 }
 
 func CreateProject(projectTitle string) {
-	tmpl, err := template.ParseGlob("templates/*.tmpl")
+	patterns := []string{
+		"templates/*.tmpl",
+		"templates/**/*.tmpl",
+	}
+
+	var allFiles []string
+	for _, pattern := range patterns {
+		files, err := filepath.Glob(pattern)
+		if err != nil {
+			panic(err)
+		}
+		allFiles = append(allFiles, files...)
+	}
+
+	// Parse the templates
+	tmpl, err := template.ParseFiles(allFiles...)
 	if err != nil {
 		panic(err)
 	}
@@ -51,11 +66,13 @@ func CreateProject(projectTitle string) {
 	structure := file.DirectoryStructure{
 		fmt.Sprintf("cmd/%s", projectTitle): {"main.go"},
 		"config":                            {"env.go", "app.go", "router.go"},
-		"database":                          {"postgres.go", "db_logger.go"},
-		"middlewares":                       {"logger_middleware.go", "auth_middleware.go"},
-		"docs":                              {""},
-		"internal":                          {""},
-		".":                                 {".gitignore", "README.md", "Dockerfile", "docker-compose.yml", "Makefile", ".env"},
+		// "db/postgres":                       {"postgres.go", "db_logger.go"},
+		"db":          {"postgres.go"},
+		"migrations":  {""},
+		"middlewares": {"logger_middleware.go", "auth_middleware.go"},
+		"docs":        {""},
+		"internal":    {""},
+		".":           {".gitignore", "README.md", "Dockerfile", "docker-compose.yml", "Makefile", ".env"},
 	}
 
 	err = file.CreateStructure(projectTitle, structure, tmpl, "")

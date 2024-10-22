@@ -1,0 +1,86 @@
+{{define "gin_controller"}}
+
+package controllers
+
+import (
+	"{{.ServiceName}}/pkg/logger"
+	"{{.ServiceName}}/pkg/utils/response"
+	"github.com/gin-gonic/gin"
+	"{{.ServiceName}}/internal/{{.AppName}}/services"
+)
+
+type {{.IAppName}}Controller interface {
+	Create(ctx *gin.Context)
+	Get(ctx *gin.Context)
+	Update(ctx *gin.Context)
+	Delete(ctx *gin.Context)
+}
+
+type {{.AppName}}Controller struct {
+	log logger.Logger 
+	{{.AppName}}Srv services.{{.IAppName}}Service
+}
+
+func New{{.IAppName}}Controller( log logger.Logger, s services.{{.IAppName}}Service) *{{.AppName}}Controller {
+	return &{{.AppName}}Controller{
+		{{.AppName}}Srv: s,
+		log: log,
+	}
+}
+
+// Create godoc
+// @Summary		Create a resource
+// @Description	Create a new {{.AppName}}
+// @Tags			{{.IAppName}}
+// @Produce		json
+// @Router			/v1/{{.AppName}}s [post]
+// @Success		200	"Resource created successfully"
+// @Failure		400	"Bad request"
+// @Failure		500	"Internal server error"
+func (c *{{.AppName}}Controller) Create(ctx *gin.Context) {
+	// c.{{.AppName}}Srv.Create()
+	resp := response.Created("Successfully Created", nil)
+	ctx.JSON(resp.Status, resp)
+}
+
+// Get godoc
+// @Summary		Get a resource
+// @Description	Fetch a {{.AppName}}
+// @Tags			{{.IAppName}}
+// @Produce		json
+// @Router			/v1/{{.AppName}}s [get]
+// @Success		200	"Resource fetched successfully"
+// @Failure		400	"Bad request"
+// @Failure		500	"Internal server error"
+func (c *{{.AppName}}Controller) Get(ctx *gin.Context) {
+	resp := response.Success("Successfully fetched data", nil)
+	ctx.JSON(resp.Status, resp)
+}
+
+// Update godoc
+// @Summary		Update a resource
+// @Description	Update a {{.AppName}}
+// @Tags			{{.IAppName}}
+// @Produce		json
+// @Router			/v1/{{.AppName}}s [patch]
+// @Success		200	"Resource updated successfully"
+// @Failure		400	"Bad request"
+// @Failure		500	"Internal server error"
+func (c *{{.AppName}}Controller) Update(ctx *gin.Context) {
+	ctx.JSON(200, gin.H{"message": "Updated {{.ServiceName}}"})
+}
+
+// Delete godoc
+// @Summary		Delete a resource
+// @Description	Delete a {{.AppName}}
+// @Tags			{{.IAppName}}
+// @Produce		json
+// @Router			/v1/{{.AppName}}s [delete]
+// @Success		200	"Resource deleted successfully"
+// @Failure		400	"Bad request"
+// @Failure		500	"Internal server error"
+func (c *{{.AppName}}Controller) Delete(ctx *gin.Context) {
+	ctx.JSON(200, gin.H{"message": "Deleted {{.ServiceName}}"})
+}
+
+{{end}}

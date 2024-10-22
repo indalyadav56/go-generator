@@ -1,0 +1,18 @@
+{{define "gin_auth_routes"}}
+
+package routes
+
+import (
+	"{{.ServiceName}}/internal/{{.AppName}}/controllers"
+	"github.com/gin-gonic/gin"
+)
+
+func {{.IAppName}}Routes(router *gin.Engine, c controllers.{{.IAppName}}Controller) {
+	authV1 := router.Group("/v1/auth")
+	{
+		authV1.POST("/register", c.Register)
+		authV1.POST("/login", c.Login)
+	}
+}
+
+{{end}}

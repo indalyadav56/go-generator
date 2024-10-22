@@ -54,3 +54,45 @@ func AddApp(title string) file.DirectoryStructure {
 		fmt.Sprintf("%s/controllers", title): {fmt.Sprintf("%s_controller.go", title)},
 	}
 }
+
+// package main
+
+// import (
+// 	"fmt"
+// 	"html/template"
+// 	"path/filepath"
+// )
+
+// func main() {
+// 	patterns := []string{
+// 		"templates/*.tmpl",
+// 		"templates/**/*.tmpl",
+// 	}
+
+// 	var allFiles []string
+// 	for _, pattern := range patterns {
+// 		files, err := filepath.Glob(pattern)
+// 		if err != nil {
+// 			panic(err)
+// 		}
+// 		allFiles = append(allFiles, files...)
+// 	}
+
+// 	// Print the list of files
+// 	fmt.Println("Templates found:")
+// 	for _, file := range allFiles {
+// 		fmt.Println(file)
+// 	}
+
+// 	// Parse the templates
+// 	tmpl, err := template.ParseFiles(allFiles...)
+// 	if err != nil {
+// 		panic(err)
+// 	}
+
+// 	// Print the names of the templates in the template set
+// 	fmt.Println("\nTemplate names in the set:")
+// 	for _, t := range tmpl.Templates() {
+// 		fmt.Println(t.Name())
+// 	}
+// }

@@ -1,0 +1,20 @@
+{{define "gin_routes"}}
+
+package routes
+
+import (
+	"{{.ServiceName}}/internal/{{.AppName}}/controllers"
+	"github.com/gin-gonic/gin"
+)
+
+func {{.IAppName}}Routes(router *gin.Engine, c controllers.{{.IAppName}}Controller) {
+	{{.AppName}}V1 := router.Group("/v1/{{.AppName}}s")
+	{
+		{{.AppName}}V1.GET("", c.Get)
+	 	{{.AppName}}V1.POST("", c.Create)
+	 	{{.AppName}}V1.PATCH("", c.Update)
+	 	{{.AppName}}V1.DELETE("", c.Delete)
+	}
+}
+
+{{end}}
