@@ -8,13 +8,13 @@ import (
 	"{{.ServiceName}}/pkg/logger"
 	"time"
 
-	"gorm.io/gorm"
+	"database/sql"
 )
 
 type AppConfig struct {
 	Logger logger.Logger
 	Config Config
-	DB     *gorm.DB
+	DB     *sql.DB
 	JWT    jwt.JWT
 }
 

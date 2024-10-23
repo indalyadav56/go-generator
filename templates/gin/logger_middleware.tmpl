@@ -2,17 +2,17 @@
 package middlewares
 
 import (
-	"{{.ServiceName}}/pkg/logger"
-	"{{.ServiceName}}/pkg/jwt"
+	"backend/pkg/jwt"
+	"backend/pkg/logger"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gin-gonic/gin"
 )
 
-func LoggerMiddleware(logger logger.Logger, jwt jwt.JWT) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		logger.Info("Request: %s %s", c.Method(), c.Path())
-		return c.Next()
+func LoggerMiddleware(logger logger.Logger, jwt jwt.JWT) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Next()
 	}
 }
+
 
 {{end}}

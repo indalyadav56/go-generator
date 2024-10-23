@@ -2,68 +2,102 @@
 package repository
 
 import (
-	"gorm.io/gorm"
+	"database/sql"
+	"fmt"
 	"{{.ServiceName}}/internal/{{.AppName}}/models"
 	"{{.ServiceName}}/pkg/logger"
 )
 
 type {{.IAppName}}Repository interface {
- 	Insert({{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error)
+	Insert({{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error)
 	Update({{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error)
 	FindByID(id string) (*models.{{.IAppName}}, error)
 	List(page, pageSize int) ([]models.{{.IAppName}}, error)
+	Delete(id string) error
 }
 
 type {{.AppName}}Repository struct {
-	db *gorm.DB
-	log      logger.Logger
+	db  *sql.DB
+	log logger.Logger
 }
 
-
-func New{{.IAppName}}Repository(db *gorm.DB, log logger.Logger) *{{.AppName}}Repository {
+func New{{.IAppName}}Repository(db *sql.DB, log logger.Logger) *{{.AppName}}Repository {
 	return &{{.AppName}}Repository{
-		db: db,
+		db:  db,
 		log: log,
 	}
 }
 
-func (r *{{.AppName}}Repository)Insert({{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error){
-	if err := r.db.Create({{.AppName}}).Error; err != nil {
+// Insert inserts a new record into the database
+func (r *{{.AppName}}Repository) Insert({{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error) {
+	query := "INSERT INTO {{.AppName}}s (field1, field2) VALUES (?, ?) RETURNING id"
+	err := r.db.QueryRow(query, {{.AppName}}.Field1, {{.AppName}}.Field2).Scan(&{{.AppName}}.ID)
+	if err != nil {
 		return nil, err
 	}
 	return {{.AppName}}, nil
 }
 
-func (r *{{.AppName}}Repository)FindByID(id string) (*models.{{.IAppName}}, error){
-	r.db.Get(id)
-	return nil, nil
+// FindByID retrieves a record by its ID from the database
+func (r *{{.AppName}}Repository) FindByID(id string) (*models.{{.IAppName}}, error) {
+	query := "SELECT id, field1, field2 FROM {{.AppName}}s WHERE id = ?"
+	row := r.db.QueryRow(query, id)
+
+	var {{.AppName}} models.{{.IAppName}}
+	if err := row.Scan(&{{.AppName}}.ID, &{{.AppName}}.Field1, &{{.AppName}}.Field2); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &{{.AppName}}, nil
 }
 
-func (r *{{.AppName}}Repository) List(page, pageSize int) ([]models.{{.IAppName}}, error){
-	var {{.AppName}}s []models.{{.IAppName}}
-
+// List retrieves a paginated list of records from the database
+func (r *{{.AppName}}Repository) List(page, pageSize int) ([]models.{{.IAppName}}, error) {
 	offset := (page - 1) * pageSize
+	query := "SELECT id, field1, field2 FROM {{.AppName}}s LIMIT ? OFFSET ?"
+	rows, err := r.db.Query(query, pageSize, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
 
-	result := r.db.Limit(pageSize).Offset(offset).Find(&{{.AppName}}s)
-	if result.Error != nil {
-		return nil, result.Error
+	var {{.AppName}}s []models.{{.IAppName}}
+	for rows.Next() {
+		var {{.AppName}} models.{{.IAppName}}
+		if err := rows.Scan(&{{.AppName}}.ID, &{{.AppName}}.Field1, &{{.AppName}}.Field2); err != nil {
+			return nil, err
+		}
+		{{.AppName}}s = append({{.AppName}}s, {{.AppName}})
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 
 	return {{.AppName}}s, nil
 }
 
-func (r *{{.AppName}}Repository)Update({{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error){
-	if err := r.db.Create({{.AppName}}).Error; err != nil {
+// Update updates an existing record in the database
+func (r *{{.AppName}}Repository) Update({{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error) {
+	query := "UPDATE {{.AppName}}s SET field1 = ?, field2 = ? WHERE id = ?"
+	_, err := r.db.Exec(query, {{.AppName}}.Field1, {{.AppName}}.Field2, {{.AppName}}.ID)
+	if err != nil {
 		return nil, err
 	}
 	return {{.AppName}}, nil
 }
 
-func (r *{{.AppName}}Repository)Delete({{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error){
-	if err := r.db.Create({{.AppName}}).Error; err != nil {
-		return nil, err
+// Delete removes a record from the database by ID
+func (r *{{.AppName}}Repository) Delete(id string) error {
+	query := "DELETE FROM {{.AppName}}s WHERE id = ?"
+	_, err := r.db.Exec(query, id)
+	if err != nil {
+		return err
 	}
-	return {{.AppName}}, nil
+	return nil
 }
 
 {{end}}

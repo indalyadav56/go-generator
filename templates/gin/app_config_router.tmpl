@@ -20,9 +20,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/requestid"
-	"github.com/gin-gonic/gin/middleware/logger"
 	"github.com/swaggo/gin-swagger"
-	"github.com/swaggo/gin-swagger/swaggerFiles"
+	// "github.com/swaggo/gin-swagger/swaggerFiles"
 )
 
 // https://medium.com/@i.4erkasov/go-echo-framework-ddd-cqrs-part-1-637595917b3b
@@ -49,7 +48,7 @@ import (
 //	@name						Authorization
 //	@description				Type "Bearer" followed by a space and JWT 
 func SetupRouter(config *AppConfig) *gin.Engine {
-	router := gin.New()
+	router := gin.Default()
 
 	// Middlewares
 	router.Use(logger.SetLogger())          // Equivalent to logger middleware

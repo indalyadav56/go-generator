@@ -39,7 +39,7 @@ var templatePatterns = []templatePattern{
 	{"auth_controller", "gin_auth_controller", true},
 	// {"logger_middleware", "logger_middleware", true},
 	{"logger_middleware", "gin_logger_middleware", true},
-	{"auth_middleware", "auth_middleware", true},
+	{"auth_middleware", "gin_auth_middleware", true},
 
 	{"gitignore", "gitignore", false},
 	{"docker-compose", "compose", false},
@@ -88,7 +88,9 @@ var ginTemplatePatterns = []templatePattern{
 	{"auth_routes", "auth_routes", true},
 	{"auth_service", "auth_service", true},
 	{"auth_controller", "gin_auth_controller", true},
+
 	{"logger_middleware", "gin_logger_middleware", true},
+	{"auth_middleware", "gin_auth_middleware", true},
 
 	{"gitignore", "gitignore", false},
 	{"docker-compose", "compose", false},

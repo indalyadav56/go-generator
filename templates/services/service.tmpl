@@ -10,6 +10,10 @@ import (
 type {{.IAppName}}Service interface {
 	Create({{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error)
 	GetByID(id string) (*models.{{.IAppName}}, error)
+	Update(id string, {{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error)
+	Delete(id string) error
+	GetAll() ([]*models.{{.IAppName}}, error)
+	Search(query string) ([]*models.{{.IAppName}}, error)
 }
 
 type {{.AppName}}Service struct {
@@ -24,15 +28,43 @@ func New{{.IAppName}}Service(repo repository.{{.IAppName}}Repository, log logger
 	}
 }
 
-
+// Create creates a new {{.AppName}}
 func (s *{{.AppName}}Service) Create({{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error) {
 	return s.{{.AppName}}Repo.Insert({{.AppName}})
 }
 
-
+// GetByID retrieves a {{.AppName}} by its ID
 func (s *{{.AppName}}Service) GetByID(id string) (*models.{{.IAppName}}, error) {
 	return s.{{.AppName}}Repo.FindByID(id)
 }
 
+// Update updates an existing {{.AppName}} by its ID
+func (s *{{.AppName}}Service) Update(id string, {{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error) {
+	existing{{.IAppName}}, err := s.{{.AppName}}Repo.FindByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	// Update fields (example: only certain fields are updated)
+	existing{{.IAppName}}.Field1 = {{.AppName}}.Field1
+	existing{{.IAppName}}.Field2 = {{.AppName}}.Field2
+
+	return s.{{.AppName}}Repo.Update(id, existing{{.IAppName}})
+}
+
+// Delete removes a {{.AppName}} by its ID
+func (s *{{.AppName}}Service) Delete(id string) error {
+	return s.{{.AppName}}Repo.Delete(id)
+}
+
+// GetAll retrieves all {{.AppName}} records
+func (s *{{.AppName}}Service) GetAll() ([]*models.{{.IAppName}}, error) {
+	return s.{{.AppName}}Repo.FindAll()
+}
+
+// Search allows searching for {{.AppName}} entities based on a query
+func (s *{{.AppName}}Service) Search(query string) ([]*models.{{.IAppName}}, error) {
+	return s.{{.AppName}}Repo.Search(query)
+}
 
 {{end}}

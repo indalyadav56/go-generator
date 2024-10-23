@@ -1,0 +1,14 @@
+package middlewares
+
+import (
+	"backend/pkg/jwt"
+	"backend/pkg/logger"
+
+	"github.com/gin-gonic/gin"
+)
+
+func LoggerMiddleware(logger logger.Logger, jwt jwt.JWT) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Next()
+	}
+}

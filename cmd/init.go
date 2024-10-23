@@ -105,8 +105,12 @@ func initGoModule(projectTitle string) error {
 	if err != nil {
 		log.Fatalf("Error getting current directory: %v", err)
 	}
+	fmt.Println("projectTitle", projectTitle)
+
+	fmt.Println("currentDir", currentDir)
 
 	customDir := filepath.Join(currentDir, projectTitle)
+	fmt.Println("customDir", customDir)
 
 	err = os.MkdirAll(customDir, os.ModePerm)
 	if err != nil {

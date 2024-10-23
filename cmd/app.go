@@ -85,14 +85,14 @@ func CreateApp(appName, dirPath string) {
 
 func AddApp(title string) file.DirectoryStructure {
 	structure := file.DirectoryStructure{
-		// fmt.Sprintf("%s/constants", title):   {"constants.go"},
-		// fmt.Sprintf("%s/routes", title):      {"routes.go"},
-		// fmt.Sprintf("%s/dto", title):         {"dto.go"},
-		// fmt.Sprintf("%s/models", title):      {"model.go"},
-		fmt.Sprintf("%s/services", title): {"service.go"},
-		// fmt.Sprintf("%s/services", title):    {"service.go", "service_test.go"},
-		// fmt.Sprintf("%s/repository", title):  {"repository.go", "repository_test.go"},
-		// fmt.Sprintf("%s/controllers", title): {"controller.go", "controller_test.go"},
+		fmt.Sprintf("%s/constants", title):   {"constants.go"},
+		fmt.Sprintf("%s/routes", title):      {"routes.go"},
+		fmt.Sprintf("%s/dto", title):         {"dto.go"},
+		fmt.Sprintf("%s/models", title):      {"model.go"},
+		fmt.Sprintf("%s/services", title):    {"service.go"},
+		fmt.Sprintf("%s/services", title):    {"service.go", "service_test.go"},
+		fmt.Sprintf("%s/repository", title):  {"repository.go", "repository_test.go"},
+		fmt.Sprintf("%s/controllers", title): {"controller.go", "controller_test.go"},
 	}
 
 	if title == "auth" || title == "authentication" {

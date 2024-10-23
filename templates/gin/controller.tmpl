@@ -67,7 +67,8 @@ func (c *{{.AppName}}Controller) Get(ctx *gin.Context) {
 // @Failure		400	"Bad request"
 // @Failure		500	"Internal server error"
 func (c *{{.AppName}}Controller) Update(ctx *gin.Context) {
-	ctx.JSON(200, gin.H{"message": "Updated {{.ServiceName}}"})
+	resp := response.Success("Successfully updated data", nil)
+	ctx.JSON(resp.Status, resp)
 }
 
 // Delete godoc
@@ -80,7 +81,8 @@ func (c *{{.AppName}}Controller) Update(ctx *gin.Context) {
 // @Failure		400	"Bad request"
 // @Failure		500	"Internal server error"
 func (c *{{.AppName}}Controller) Delete(ctx *gin.Context) {
-	ctx.JSON(200, gin.H{"message": "Deleted {{.ServiceName}}"})
+	resp := response.Success("Successfully deleted data", nil)
+	ctx.JSON(resp.Status, resp)
 }
 
 {{end}}
