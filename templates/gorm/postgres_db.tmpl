@@ -1,0 +1,53 @@
+{{define "postgres_db"}}
+
+package database
+
+import (
+	"fmt"
+	"log"
+	appLogger "{{.ServiceName}}/pkg/logger"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+)
+
+type Config struct {
+	Host     string
+	Port     string
+	User     string
+	Password string
+	Name     string
+	SSLMode  string
+	LogLevel logger.LogLevel
+}
+
+func Init(cfg Config, log appLogger.Logger) (*gorm.DB, error) {
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.Name, cfg.SSLMode)
+
+	newLogger := &CustomGormLogger{
+		LogLevel: logger.Info,
+		Logger:   log,
+	}
+
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: newLogger,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to connect to database: %w", err)
+	}
+
+	log.Info("Database connection successfully established")
+
+	return db, nil
+}
+
+func RunMigrations(db *gorm.DB, models ...interface{}) error {
+	if err := db.AutoMigrate(models...); err != nil {
+		return fmt.Errorf("failed to run migrations: %w", err)
+	}
+	log.Println("Database migration successfully completed")
+	return nil
+}
+
+{{end}}

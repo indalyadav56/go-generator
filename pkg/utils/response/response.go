@@ -11,7 +11,7 @@ type APIResponse struct {
 	Errors  interface{} `json:"errors,omitempty"`
 }
 
-func Success(message string, data interface{}) APIResponse {
+func Success(message string, data ...interface{}) APIResponse {
 	return APIResponse{
 		Data:    data,
 		Message: message,

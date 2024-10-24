@@ -1,0 +1,72 @@
+package middlewares
+
+import (
+	"backend/pkg/jwt"
+	"backend/pkg/logger"
+	"backend/pkg/utils/response"
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"strings"
+)
+
+const BearerTokenPrefix = "Bearer"
+
+func AuthMiddleware(logger logger.Logger, jwt jwt.JWT) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token, err := extractBearerToken(c)
+		if err != nil {
+			logger.Error(fmt.Sprintf("Authorization error: %s | IP: %s", err.Error(), c.ClientIP()))
+			resp := response.Unauthorized(fmt.Sprintf("Authorization error: %s", err.Error()))
+			c.JSON(resp.Status, resp)
+			c.Abort()
+			return
+		}
+
+		claims, err := jwt.ValidateToken(token)
+		if err != nil {
+			logger.Error(fmt.Sprintf("Invalid token: %v | IP: %s", err, c.ClientIP()))
+			resp := response.Error("Invalid token", err.Error())
+			c.JSON(resp.Status, resp)
+			c.Abort()
+			return
+		}
+
+		tokenData, err := jwt.GetClaims(claims)
+		if err != nil {
+			logger.Error(fmt.Sprintf("Invalid token: %v | IP: %s", err, c.ClientIP()))
+			resp := response.Error("Invalid token", err.Error())
+			c.JSON(resp.Status, resp)
+			c.Abort()
+			return
+		}
+
+		userId, ok := tokenData["user_id"].(string)
+		if !ok {
+			resp := response.Error("Invalid token", nil)
+			c.JSON(resp.Status, resp)
+			c.Abort()
+			return
+		}
+
+		// Set user ID in the context for the request lifecycle
+		c.Set("user_id", userId)
+
+		c.Next()
+	}
+}
+
+// extractBearerToken extracts the JWT token from the Authorization header.
+func extractBearerToken(c *gin.Context) (string, error) {
+	authHeader := c.GetHeader("Authorization")
+	if authHeader == "" {
+		return "", fmt.Errorf("Authorization header missing")
+	}
+
+	// Split and validate the header format: "Bearer {token}"
+	tokenParts := strings.Split(authHeader, " ")
+	if len(tokenParts) != 2 || tokenParts[0] != BearerTokenPrefix {
+		return "", fmt.Errorf("Invalid authorization format")
+	}
+
+	return tokenParts[1], nil
+}

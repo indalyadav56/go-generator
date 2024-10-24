@@ -11,6 +11,7 @@ import (
 	"text/template"
 
 	"github.com/indalyadav56/go-generator/file"
+	"github.com/indalyadav56/go-generator/templates"
 	"github.com/spf13/cobra"
 )
 
@@ -43,7 +44,24 @@ func init() {
 }
 
 func CreateProject(projectTitle string) {
-	tmpl, err := template.ParseGlob("templates/*.tmpl")
+	patterns := []string{
+		"templates/*.tmpl",
+		"templates/**/*.tmpl",
+	}
+
+	var allFiles []string
+	for _, pattern := range patterns {
+		files, err := filepath.Glob(pattern)
+		if err != nil {
+			panic(err)
+		}
+		allFiles = append(allFiles, files...)
+	}
+
+	fmt.Println("Creating project", templates.TemplateFS)
+
+	// Parse the templates
+	tmpl, err := template.ParseFS(templates.TemplateFS, allFiles...)
 	if err != nil {
 		panic(err)
 	}
@@ -51,11 +69,13 @@ func CreateProject(projectTitle string) {
 	structure := file.DirectoryStructure{
 		fmt.Sprintf("cmd/%s", projectTitle): {"main.go"},
 		"config":                            {"env.go", "app.go", "router.go"},
-		"database":                          {"postgres.go", "db_logger.go"},
-		"middlewares":                       {"logger_middleware.go", "auth_middleware.go"},
-		"docs":                              {""},
-		"internal":                          {""},
-		".":                                 {".gitignore", "README.md", "Dockerfile", "docker-compose.yml", "Makefile", ".env"},
+		// "db/postgres":                       {"postgres.go", "db_logger.go"},
+		"db":          {"postgres.go"},
+		"migrations":  {""},
+		"middlewares": {"logger_middleware.go", "auth_middleware.go"},
+		"docs":        {""},
+		"internal":    {""},
+		".":           {".gitignore", "README.md", "Dockerfile", "docker-compose.yml", "Makefile", ".env"},
 	}
 
 	err = file.CreateStructure(projectTitle, structure, tmpl, "")
@@ -88,8 +108,12 @@ func initGoModule(projectTitle string) error {
 	if err != nil {
 		log.Fatalf("Error getting current directory: %v", err)
 	}
+	fmt.Println("projectTitle", projectTitle)
+
+	fmt.Println("currentDir", currentDir)
 
 	customDir := filepath.Join(currentDir, projectTitle)
+	fmt.Println("customDir", customDir)
 
 	err = os.MkdirAll(customDir, os.ModePerm)
 	if err != nil {

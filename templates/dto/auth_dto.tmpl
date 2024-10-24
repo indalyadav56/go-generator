@@ -1,0 +1,16 @@
+{{define "auth_dto"}}
+
+package dto
+
+type RegisterRequest struct {
+	Name     string `json:"name" validate:"required,not_blank"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=6,not_blank"`
+}
+
+type LoginRequest struct {
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=6,not_blank"`
+}
+
+{{end}}

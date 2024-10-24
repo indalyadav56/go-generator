@@ -1,0 +1,66 @@
+{{define "fiber_auth_middleware"}}
+package middlewares
+
+import (
+	"{{.ServiceName}}/pkg/logger"
+	"{{.ServiceName}}/pkg/jwt"
+	"{{.ServiceName}}/pkg/utils/response"
+	"github.com/gofiber/fiber/v2"
+	"fmt"
+	"strings"
+)
+
+const BearerTokenPrefix = "Bearer"
+
+func AuthMiddleware(logger logger.Logger, jwt jwt.JWT) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		token, err := extractBearerToken(c)
+		if err != nil {
+			logger.Error(fmt.Sprintf("Authorization error: %s | IP: %s", err.Error(), c.IP()))
+			resp := response.Unauthorized(fmt.Sprintf("Authorization error:-%s", err.Error()))
+			return c.Status(resp.Status).JSON(resp)
+		}
+
+		claims, err := jwt.ValidateToken(token)
+		if err != nil {
+			logger.Error(fmt.Sprintf("Invalid token: %v | IP: %s", err, c.IP()))
+			resp := response.Error("Invalid token", err.Error())
+			return c.Status(resp.Status).JSON(resp)
+		}
+
+		tokenData, err := jwt.GetClaims(claims)
+		if err != nil {
+			logger.Error(fmt.Sprintf("Invalid token: %v | IP: %s", err, c.IP()))
+			resp := response.Error("Invalid token", err.Error())
+			return c.Status(resp.Status).JSON(resp)
+		}
+
+		userId, ok := tokenData["user_id"].(string)
+		if !ok {
+			resp := response.Error("Invalid token", nil)
+			return c.Status(resp.Status).JSON(resp)
+		}
+
+		c.Locals("user_id", userId)
+		
+		return c.Next()
+	}
+}
+
+// extractBearerToken extracts the JWT token from the Authorization header.
+func extractBearerToken(c *fiber.Ctx) (string, error) {
+	authHeader := c.Get("Authorization")
+	if authHeader == "" {
+		return "", fmt.Errorf("Authorization header missing")
+	}
+
+	// Split and validate the header format: "Bearer {token}"
+	tokenParts := strings.Split(authHeader, " ")
+	if len(tokenParts) != 2 || tokenParts[0] != BearerTokenPrefix {
+		return "", fmt.Errorf("Invalid authorization format")
+	}
+
+	return tokenParts[1], nil
+}
+
+{{end}}
