@@ -11,6 +11,7 @@ import (
 	"text/template"
 
 	"github.com/indalyadav56/go-generator/file"
+	"github.com/indalyadav56/go-generator/templates"
 	"github.com/spf13/cobra"
 )
 
@@ -57,8 +58,10 @@ func CreateProject(projectTitle string) {
 		allFiles = append(allFiles, files...)
 	}
 
+	fmt.Println("Creating project", templates.TemplateFS)
+
 	// Parse the templates
-	tmpl, err := template.ParseFiles(allFiles...)
+	tmpl, err := template.ParseFS(templates.TemplateFS, allFiles...)
 	if err != nil {
 		panic(err)
 	}

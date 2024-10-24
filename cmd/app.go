@@ -9,10 +9,10 @@ import (
 	"text/template"
 
 	"github.com/indalyadav56/go-generator/file"
+	"github.com/indalyadav56/go-generator/templates"
 	"github.com/spf13/cobra"
 )
 
-// appCmd represents the app command
 var appCmd = &cobra.Command{
 	Use:   "app",
 	Short: "to create a new app",
@@ -66,9 +66,9 @@ func CreateApp(appName, dirPath string) {
 	}
 
 	// Parse the templates
-	tmpl, err := template.ParseFiles(allFiles...)
+	tmpl, err := template.ParseFS(templates.TemplateFS, allFiles...)
 	if err != nil {
-		panic(err)
+		fmt.Println(err.Error())
 	}
 
 	dirData := AddApp(appName)
