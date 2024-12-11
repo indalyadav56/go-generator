@@ -11,4 +11,4 @@ test-run:
 # govulncheck ./...
 
 build:
-	go build -o ./bin/app
+	go build -o ./bin/go-generator

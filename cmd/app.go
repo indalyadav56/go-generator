@@ -77,9 +77,9 @@ func CreateApp(appName, dirPath string) {
 		log.Fatalf("Failed to create structure: %v\n", err)
 	}
 
-	if err := runSwaggerInit(dirPath); err != nil {
-		log.Fatalf("Failed to run swag init: %v", err)
-	}
+	// if err := runSwaggerInit(dirPath); err != nil {
+	// 	log.Fatalf("Failed to run swag init: %v", err)
+	// }
 
 }
 
