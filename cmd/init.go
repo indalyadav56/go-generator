@@ -157,9 +157,15 @@ func initGoModule(projectTitle string) error {
 }
 
 func copyCommonPkg(projectTitle string) {
-	srcDir := "./pkg"
+	currentDir, err := os.Getwd()
+	if err != nil {
+		log.Fatalf("Error getting current directory: %v", err)
+	}
+	// Get the absolute path to the project root directory
+	projectRoot := filepath.Dir(filepath.Dir(currentDir))
+	srcDir := filepath.Join(projectRoot, "pkg")
 
-	err := CopyFolder(srcDir, projectTitle+"/pkg")
+	err = CopyFolder(srcDir, projectTitle+"/pkg")
 	if err != nil {
 		log.Fatalf("Failed to copy folder: %v", err)
 	}
