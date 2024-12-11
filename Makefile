@@ -8,4 +8,7 @@ test-run:
 
 # go run main.go init backend --app=auth --app=user --app=todo
 
-govulncheck ./...
+# govulncheck ./...
+
+build:
+	go build -o ./bin/app
