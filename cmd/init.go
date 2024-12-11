@@ -44,24 +44,50 @@ func init() {
 }
 
 func CreateProject(projectTitle string) {
-	patterns := []string{
-		"templates/*.tmpl",
-		"templates/**/*.tmpl",
-	}
+	fmt.Println("Creating project")
 
-	var allFiles []string
-	for _, pattern := range patterns {
-		files, err := filepath.Glob(pattern)
-		if err != nil {
-			panic(err)
+	// Debug: List all files in embedded FS
+	entries, err := templates.TemplateFS.ReadDir(".")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Available templates:")
+	for _, entry := range entries {
+		fmt.Printf("- %s\n", entry.Name())
+		if entry.IsDir() {
+			subEntries, err := templates.TemplateFS.ReadDir(entry.Name())
+			if err != nil {
+				panic(err)
+			}
+			for _, subEntry := range subEntries {
+				fmt.Printf("  - %s/%s\n", entry.Name(), subEntry.Name())
+			}
 		}
-		allFiles = append(allFiles, files...)
 	}
 
-	fmt.Println("Creating project", templates.TemplateFS)
-
-	// Parse the templates
-	tmpl, err := template.ParseFS(templates.TemplateFS, allFiles...)
+	// Parse the templates using the embedded file system
+	tmpl, err := template.ParseFS(templates.TemplateFS,
+		"templates/app/app_config.tmpl",
+		"templates/app/app_config_router.tmpl",
+		"templates/app/gorm_app_config.tmpl",
+		"templates/config/config.tmpl",
+		"templates/docker/dockerfile.tmpl",
+		"templates/docker/docker-compose.tmpl",
+		"templates/env/env.tmpl",
+		"templates/makefile/makefile.tmpl",
+		"templates/readme/readme.tmpl",
+		"templates/models/model.tmpl",
+		"templates/models/model_test.tmpl",
+		"templates/gin/main.tmpl",
+		"templates/gin/routes.tmpl",
+		"templates/gin/controller.tmpl",
+		"templates/gin/auth_middleware.tmpl",
+		"templates/gin/logger_middleware.tmpl",
+		"templates/gin/app_config_router.tmpl",
+		"templates/constants/constant.tmpl",
+		"templates/gorm/postgres_db.tmpl",
+		"templates/gorm/db_logger.tmpl",
+	)
 	if err != nil {
 		panic(err)
 	}
@@ -69,13 +95,13 @@ func CreateProject(projectTitle string) {
 	structure := file.DirectoryStructure{
 		fmt.Sprintf("cmd/%s", projectTitle): {"main.go"},
 		"config":                            {"env.go", "app.go", "router.go"},
-		// "db/postgres":                       {"postgres.go", "db_logger.go"},
-		"db":          {"postgres.go"},
-		"migrations":  {""},
-		"middlewares": {"logger_middleware.go", "auth_middleware.go"},
-		"docs":        {""},
-		"internal":    {""},
-		".":           {".gitignore", "README.md", "Dockerfile", "docker-compose.yml", "Makefile", ".env"},
+		"db/postgres":                       {"postgres.go", "db_logger.go"},
+		"db":                                {"postgres.go"},
+		"migrations":                        {""},
+		"middlewares":                       {"logger_middleware.go", "auth_middleware.go"},
+		"docs":                              {""},
+		"internal":                          {""},
+		".":                                 {".gitignore", "README.md", "Dockerfile", "docker-compose.yml", "Makefile", ".env"},
 	}
 
 	err = file.CreateStructure(projectTitle, structure, tmpl, "")

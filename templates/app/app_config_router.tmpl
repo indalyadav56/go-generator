@@ -53,7 +53,6 @@ func SetupRouter(config *AppConfig) *fiber.App {
 	app := fiber.New()
 
 	// Middlewares
-	app.Use(logger.New())
 	app.Use(requestid.New())
 	app.Use(cors.New())
 	app.Use(middlewares.LoggerMiddleware(config.Logger, config.JWT))
