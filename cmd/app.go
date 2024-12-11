@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"io/fs"
 	"log"
 	"os/exec"
 	"path/filepath"
@@ -31,7 +32,6 @@ var appCmd = &cobra.Command{
 
 		appName, _ := cmd.Flags().GetString("name")
 		if appName == "" {
-			fmt.Println("Please provide the name of the app")
 			return
 		}
 		// apiFramework, _ := cmd.Flags().GetString("framework")
@@ -46,29 +46,28 @@ func init() {
 }
 
 func CreateApp(appName, dirPath string) {
-	// tmpl, err := template.ParseGlob("templates/**/*.tmpl")
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	patterns := []string{
-		"templates/*.tmpl",
-		"templates/**/*.tmpl",
-	}
-
-	var allFiles []string
-	for _, pattern := range patterns {
-		files, err := filepath.Glob(pattern)
+	// Parse all templates from the embedded filesystem
+	tmpl := template.New("")
+	
+	err := fs.WalkDir(templates.TemplateFS, ".", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
-			panic(err)
+			return err
 		}
-		allFiles = append(allFiles, files...)
-	}
-
-	// Parse the templates
-	tmpl, err := template.ParseFS(templates.TemplateFS, allFiles...)
+		if !d.IsDir() && strings.HasSuffix(path, ".tmpl") {
+			content, err := templates.TemplateFS.ReadFile(path)
+			if err != nil {
+				return err
+			}
+			_, err = tmpl.New(filepath.Base(path)).Parse(string(content))
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Fatalf("Failed to parse templates: %v", err)
 	}
 
 	dirData := AddApp(appName)
@@ -76,11 +75,6 @@ func CreateApp(appName, dirPath string) {
 	if err != nil {
 		log.Fatalf("Failed to create structure: %v\n", err)
 	}
-
-	// if err := runSwaggerInit(dirPath); err != nil {
-	// 	log.Fatalf("Failed to run swag init: %v", err)
-	// }
-
 }
 
 func AddApp(title string) file.DirectoryStructure {
@@ -116,8 +110,6 @@ func runSwaggerInit(dirPath string) error {
 	cmd := exec.Command("swag", args...)
 	cmd.Dir = dirPath
 
-	fmt.Printf("Executing command: swag %s\n", strings.Join(args, " "))
-
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Printf("Error initializing swagger: %v", err)
@@ -125,6 +117,5 @@ func runSwaggerInit(dirPath string) error {
 		return err
 	}
 
-	fmt.Printf("Swagger initialization successful. Output: %s\n", string(output))
 	return nil
 }

@@ -20,10 +20,7 @@ var initCmd = &cobra.Command{
 	Short: "This command initializes a golang project",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("args", args)
 		apps, _ := cmd.Flags().GetStringSlice("app")
-		fmt.Println("apps", apps)
-
 		if len(args) == 0 {
 			fmt.Println("provide the name of the project")
 			return
@@ -44,16 +41,12 @@ func init() {
 }
 
 func CreateProject(projectTitle string) {
-	fmt.Println("Creating project")
-
 	// Debug: List all files in embedded FS
 	entries, err := templates.TemplateFS.ReadDir(".")
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Available templates:")
 	for _, entry := range entries {
-		fmt.Printf("- %s\n", entry.Name())
 		if entry.IsDir() {
 			subEntries, err := templates.TemplateFS.ReadDir(entry.Name())
 			if err != nil {
@@ -95,13 +88,11 @@ func CreateProject(projectTitle string) {
 	structure := file.DirectoryStructure{
 		fmt.Sprintf("cmd/%s", projectTitle): {"main.go"},
 		"config":                            {"env.go", "app.go", "router.go"},
-		"db/postgres":                       {"postgres.go", "db_logger.go"},
 		"db":                                {"postgres.go"},
 		"migrations":                        {""},
-		"middlewares":                       {"logger_middleware.go", "auth_middleware.go"},
 		"docs":                              {""},
 		"internal":                          {""},
-		".":                                 {".gitignore", "README.md", "Dockerfile", "docker-compose.yml", "Makefile", ".env"},
+		".":                                 []string{".gitignore", "README.md", "Dockerfile", "docker-compose.yml", "Makefile", ".env"},
 	}
 
 	err = file.CreateStructure(projectTitle, structure, tmpl, "")
@@ -110,7 +101,7 @@ func CreateProject(projectTitle string) {
 	}
 
 	initGoModule(projectTitle)
-	copyCommonPkg(projectTitle)
+	downloadPkgFromGithub(projectTitle)
 
 	err = runGoModTidy("./" + projectTitle)
 	if err != nil {
@@ -156,21 +147,54 @@ func initGoModule(projectTitle string) error {
 	return nil
 }
 
-func copyCommonPkg(projectTitle string) {
-	currentDir, err := os.Getwd()
-	if err != nil {
-		log.Fatalf("Error getting current directory: %v", err)
-	}
-	// Get the absolute path to the project root directory
-	projectRoot := filepath.Dir(filepath.Dir(currentDir))
-	srcDir := filepath.Join(projectRoot, "pkg")
+func downloadPkgFromGithub(projectTitle string) {
+	repoURL := "https://github.com/indalyadav56/go-generator"
+	pkgPath := "pkg"
+	targetDir := filepath.Join(projectTitle, "pkg")
 
-	err = CopyFolder(srcDir, projectTitle+"/pkg")
-	if err != nil {
-		log.Fatalf("Failed to copy folder: %v", err)
+	// Remove existing pkg directory if it exists
+	if err := os.RemoveAll(targetDir); err != nil {
+		log.Fatalf("Error removing existing pkg directory: %v", err)
 	}
 
-	fmt.Println("Folder copied successfully!")
+	// Create the target directory
+	err := os.MkdirAll(filepath.Dir(targetDir), 0755)
+	if err != nil {
+		log.Fatalf("Error creating target directory: %v", err)
+	}
+
+	// Run git sparse-checkout to download only the pkg directory
+	cmd := exec.Command("git", "clone", "--depth", "1", "--filter=blob:none", "--sparse", repoURL, targetDir+"_temp")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		log.Fatalf("Error cloning repository: %v", err)
+	}
+
+	// Change to the temp directory
+	tempDir := targetDir + "_temp"
+	cmd = exec.Command("git", "sparse-checkout", "set", pkgPath)
+	cmd.Dir = tempDir
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		log.Fatalf("Error setting sparse-checkout: %v", err)
+	}
+
+	// Move the pkg directory to the target location
+	srcPath := filepath.Join(tempDir, pkgPath)
+	err = os.Rename(srcPath, targetDir)
+	if err != nil {
+		log.Fatalf("Error moving pkg directory: %v", err)
+	}
+
+	// Clean up the temp directory
+	err = os.RemoveAll(tempDir)
+	if err != nil {
+		log.Printf("Warning: Error cleaning up temp directory: %v", err)
+	}
+
+	fmt.Println("Successfully downloaded pkg directory from GitHub!")
 }
 
 func CopyFolder(src, dst string) error {

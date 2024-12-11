@@ -225,15 +225,13 @@ func getTemplateName(fileName, dir string) (templateName string, isFormat bool) 
 	lowerFileName := strings.ToLower(fileName)
 	baseName := filepath.Base(lowerFileName)
 
-	for _, tp := range ginTemplatePatterns {
+	for _, tp := range templatePatterns {
 		if strings.Contains(baseName, tp.pattern) {
 			return tp.template, tp.isFormat
 		}
 	}
 
-	if strings.HasSuffix(baseName, "_test.go") {
-		return filepath.Base(strings.TrimSuffix(baseName, "_test.go")) + "_test", true
-	}
-
-	return "unknown", false
+	// If no pattern matches, use the base name without extension as template name
+	templateName = strings.TrimSuffix(baseName, filepath.Ext(baseName))
+	return templateName, true
 }
