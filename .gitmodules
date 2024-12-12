@@ -1,0 +1,3 @@
+[submodule "go-common"]
+	path = go-common
+	url = https://github.com/indalyadav56/go-common

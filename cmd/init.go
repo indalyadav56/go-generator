@@ -8,7 +8,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"sync"
 	"text/template"
 
 	"github.com/indalyadav56/go-generator/file"
@@ -91,11 +90,8 @@ func CreateProject(projectTitle string) {
 	structure := file.DirectoryStructure{
 		fmt.Sprintf("cmd/%s", projectTitle): {"main.go"},
 		"config":                            {"config.go"},
-		// "db":                                {"postgres.go"},
-		// "migrations":                        {""},
-		// "docs":                              {""},
-		"internal/app": {"app.go", "deps.go"},
-		".":            {".gitignore", "README.md", "Dockerfile", "docker-compose.yml", "Makefile", ".env"},
+		"internal/app":                      {"app.go", "deps.go"},
+		".":                                 {".gitignore", "README.md", "Dockerfile", "docker-compose.yml", "Makefile", ".env"},
 	}
 
 	err = file.CreateStructure(projectTitle, structure, tmpl, "")
@@ -103,49 +99,79 @@ func CreateProject(projectTitle string) {
 		log.Fatalf("Failed to create structure: %v\n", err)
 	}
 
-	initGoModule(projectTitle)
+	// Initialize Go module first
+	err = initGoModule(projectTitle)
+	if err != nil {
+		log.Fatalf("Failed to initialize go module: %v", err)
+	}
 
-	wg := new(sync.WaitGroup)
+	// Initialize Git and add common as submodule synchronously
+	repoURL := "https://github.com/indalyadav56/go-common"
 
-	wg.Add(1)
-	go downloadPkgFromGithub(projectTitle, wg)
+	// Remove existing common directory if it exists
+	commonDir := filepath.Join(projectTitle, "common")
+	if err := os.RemoveAll(commonDir); err != nil {
+		log.Fatalf("Error removing existing common directory: %v", err)
+	}
 
-	err = runGoModTidy("./" + projectTitle)
+	// Initialize git repository
+	initCmd := exec.Command("git", "init")
+	initCmd.Dir = projectTitle
+	initCmd.Stdout = os.Stdout
+	initCmd.Stderr = os.Stderr
+	if err := initCmd.Run(); err != nil {
+		log.Fatalf("Error initializing git repository: %v", err)
+	}
+
+	// Add submodule
+	cmd := exec.Command("git", "submodule", "add", repoURL, "common")
+	cmd.Dir = projectTitle
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		log.Fatalf("Error adding common submodule: %v", err)
+	}
+
+	// Initialize submodule
+	initSubCmd := exec.Command("git", "submodule", "update", "--init", "--recursive")
+	initSubCmd.Dir = projectTitle
+	initSubCmd.Stdout = os.Stdout
+	initSubCmd.Stderr = os.Stderr
+	if err := initSubCmd.Run(); err != nil {
+		log.Fatalf("Error initializing submodule: %v", err)
+	}
+
+	// Run go mod tidy after submodule is set up
+	err = runGoModTidy(projectTitle)
 	if err != nil {
 		log.Fatalf("Failed to run 'go mod tidy': %v", err)
 	}
-
-	wg.Wait()
 }
 
 func runGoModTidy(basePath string) error {
 	cmd := exec.Command("go", "mod", "tidy")
 	cmd.Dir = basePath
-	err := cmd.Run()
-	if err != nil {
-		return fmt.Errorf("error running 'go mod tidy': %v", err)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("error running 'go mod tidy': %w", err)
 	}
-	fmt.Println("'go mod tidy' executed successfully, dependencies resolved.")
+
 	return nil
 }
 
 func initGoModule(projectTitle string) error {
 	currentDir, err := os.Getwd()
 	if err != nil {
-		log.Fatalf("Error getting current directory: %v", err)
+		return fmt.Errorf("error getting current directory: %v", err)
 	}
 	fmt.Println("projectTitle", projectTitle)
-
-	fmt.Println("currentDir", currentDir)
 
 	customDir := filepath.Join(currentDir, projectTitle)
 	fmt.Println("customDir", customDir)
 
-	err = os.MkdirAll(customDir, os.ModePerm)
-	if err != nil {
-		log.Fatalf("Error creating directory: %v", err)
-	}
-
+	// Initialize go.mod file
 	cmd := exec.Command("go", "mod", "init", projectTitle)
 	cmd.Dir = customDir
 	cmd.Stdout = os.Stdout
@@ -154,78 +180,27 @@ func initGoModule(projectTitle string) error {
 	if err := cmd.Run(); err != nil {
 		// Try to clean up if initialization fails
 		os.RemoveAll(customDir)
-		log.Fatalf("Error initializing Go module: %v", err)
+		return fmt.Errorf("failed to initialize go module: %w", err)
 	}
 
-	// Create go.mod file with required dependencies
-	goModContent := `module ` + projectTitle + `
+	// Add common module replacement and requirement to main go.mod
+	goModContent := fmt.Sprintf(`module %s
 
-go 1.21
+go 1.23.1
+
+replace common => ./common
 
 require (
-	github.com/go-chi/chi/v5 v5.0.11
-	github.com/golang-jwt/jwt/v5 v5.2.0
-	github.com/jackc/pgx/v5 v5.5.1
-	golang.org/x/crypto v0.17.0
+	common v1.0.0
 )
-`
+`, projectTitle)
+
 	err = os.WriteFile(filepath.Join(customDir, "go.mod"), []byte(goModContent), 0644)
 	if err != nil {
-		log.Fatalf("Error writing go.mod file: %v", err)
+		return fmt.Errorf("error writing go.mod file: %v", err)
 	}
 
 	return nil
-}
-
-func downloadPkgFromGithub(projectTitle string, wg *sync.WaitGroup) {
-	defer wg.Done()
-	repoURL := "https://github.com/indalyadav56/go-generator"
-	commonPath := "common"
-	targetDir := filepath.Join(projectTitle, "common")
-
-	// Remove existing common directory if it exists
-	if err := os.RemoveAll(targetDir); err != nil {
-		log.Fatalf("Error removing existing common directory: %v", err)
-	}
-
-	// Create the target directory
-	err := os.MkdirAll(filepath.Dir(targetDir), 0755)
-	if err != nil {
-		log.Fatalf("Error creating target directory: %v", err)
-	}
-
-	// Run git sparse-checkout to download only the common directory
-	cmd := exec.Command("git", "clone", "--depth", "1", "--filter=blob:none", "--sparse", repoURL, targetDir+"_temp")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
-		log.Fatalf("Error cloning repository: %v", err)
-	}
-
-	// Change to the temp directory
-	tempDir := targetDir + "_temp"
-	cmd = exec.Command("git", "sparse-checkout", "set", commonPath)
-	cmd.Dir = tempDir
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
-		log.Fatalf("Error setting sparse-checkout: %v", err)
-	}
-
-	// Move the common directory to the target location
-	srcPath := filepath.Join(tempDir, commonPath)
-	err = os.Rename(srcPath, targetDir)
-	if err != nil {
-		log.Fatalf("Error moving common directory: %v", err)
-	}
-
-	// Clean up the temp directory
-	err = os.RemoveAll(tempDir)
-	if err != nil {
-		log.Printf("Warning: Error cleaning up temp directory: %v", err)
-	}
-
-	fmt.Println("Successfully downloaded common directory from GitHub!")
 }
 
 func CopyFolder(src, dst string) error {

@@ -3,8 +3,7 @@
 package main
 
 import (
-	"{{.ServiceName}}/config"
-	"log"
+	"{{.ServiceName}}/internal/app"
 	"fmt"
 )
 
@@ -20,11 +19,6 @@ func main() {
 		return
 	}
 
-	defer func() {
-		if err := application.Shutdown(context.Background()); err != nil {
-			fmt.Printf("Error shutting down application: %v\n", err)
-		}
-	}()
 }
 
 {{end}}

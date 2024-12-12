@@ -2,115 +2,25 @@
 package app
 
 import (
-	"context"
-	"fmt"
-	"log"
+	"backend/config"
 	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
-
-	"{{.ServiceName}}/config"
-	"{{.ServiceName}}/common/logger"
-	"{{.ServiceName}}/common/database"
-	"{{.ServiceName}}/common/jwt"
-	"{{.ServiceName}}/internal/auth/handlers"
-	"{{.ServiceName}}/internal/auth/services"
-	"{{.ServiceName}}/internal/auth/routes"
 )
 
 type App struct {
 	config *config.Config
-	logger logger.Logger
-	db     *database.DB
-	jwt    *jwt.JWT
 	server *http.Server
 }
 
-func NewApp(cfg *config.Config) (*App, error) {
-	// Initialize logger
-	logger := logger.New()
-
-	// Initialize database
-	db, err := database.New(cfg.DatabaseURL)
-	if err != nil {
-		return nil, fmt.Errorf("failed to initialize database: %w", err)
-	}
-
-	// Initialize JWT
-	jwt := jwt.New(cfg.JWTSecret, cfg.JWTExpiry)
-
-	// Initialize HTTP server
-	server := &http.Server{
-		Addr:         cfg.ServerAddr,
-		ReadTimeout:  time.Second * 5,
-		WriteTimeout: time.Second * 10,
-		IdleTimeout:  time.Second * 60,
-	}
-
-	return &App{
-		config: cfg,
-		logger: logger,
-		db:     db,
-		jwt:    jwt,
-		server: server,
-	}, nil
+func New() (*App, error) {
+	return nil, nil
 }
 
 func (a *App) Run() error {
-	// Initialize dependencies
-	authService := services.NewAuthService(a.db, a.jwt)
-	authHandler := handlers.NewAuthHandler(authService)
-	authRoutes := routes.NewAuthRoutes(authHandler)
-
-	// Set up routes
-	mux := http.NewServeMux()
-	authRoutes.Setup(mux)
-
-	// Set server handler
-	a.server.Handler = mux
-
-	// Channel to listen for errors coming from the listener.
-	serverErrors := make(chan error, 1)
-
-	// Start the service listening for requests.
-	go func() {
-		a.logger.Info("api listening on", "addr", a.server.Addr)
-		serverErrors <- a.server.ListenAndServe()
-	}()
-
-	// Channel to listen for an interrupt or terminate signal from the OS.
-	shutdown := make(chan os.Signal, 1)
-	signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
-
-	// Blocking select waiting for either a server error or a signal.
-	select {
-	case err := <-serverErrors:
-		return fmt.Errorf("server error: %w", err)
-
-	case sig := <-shutdown:
-		a.logger.Info("shutdown", "status", "shutdown started", "signal", sig)
-		defer a.logger.Info("shutdown", "status", "shutdown complete", "signal", sig)
-
-		// Give outstanding requests a deadline for completion.
-		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-		defer cancel()
-
-		// Asking listener to shut down and shed load.
-		if err := a.server.Shutdown(ctx); err != nil {
-			a.server.Close()
-			return fmt.Errorf("could not stop server gracefully: %w", err)
-		}
-	}
 
 	return nil
 }
 
 func (a *App) Close() error {
-	if err := a.db.Close(); err != nil {
-		return fmt.Errorf("failed to close database: %w", err)
-	}
 	return nil
 }
 {{end}}
