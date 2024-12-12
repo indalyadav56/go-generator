@@ -29,95 +29,89 @@ var templatePatterns = []templatePattern{
 	// Specific patterns
 	{"auth_constant", "auth_constant", true},
 	{"auth_service_test", "auth_service_test", true},
-	{"auth_controller_test", "controller_test", true},
-	{"auth_integration_test", "controller_test", true},
+	{"auth_handler_test", "handler_test", true},
+	{"auth_integration_test", "handler_test", true},
 
 	{"auth_dto", "auth_dto", true},
 	{"auth_routes", "auth_routes", true},
 	{"auth_service", "auth_service", true},
-	// {"auth_controller", "auth_controller", true},
-	{"auth_controller", "gin_auth_controller", true},
-	// {"logger_middleware", "logger_middleware", true},
-	{"logger_middleware", "gin_logger_middleware", true},
-	{"auth_middleware", "gin_auth_middleware", true},
+	{"auth_handler", "auth_handler", true},
+
+	{"logger_middleware", "logger_middleware", true},
+	{"auth_middleware", "auth_middleware", true},
 
 	{"gitignore", "gitignore", false},
 	{"docker-compose", "compose", false},
 
 	// General patterns
 	{"env.go", "config", true},
-	{"app.go", "app_config", true},
-	{"router.go", "gin_app_config_router", true},
-	// {"router.go", "app_config_router", true},
+	{"app.go", "app", true},
+	{"router.go", "router", true},
 
-	{"controller_test", "controller_test", true},
-	{"integration_test", "controller_test", true},
+	{"handler_test", "handler_test", true},
+	{"integration_test", "handler_test", true},
 	{"service_test", "service_test", true},
 	{"repository_test", "repository_test", true},
-	// {"model_test", "model_test", true},
 
 	{"service", "service", true},
-	// {"controller", "controller", true},
-	{"controller", "gin_controller", true},
+	{"handler", "handler", true},
 	{"repository", "repository", true},
-	// {"routes", "routes", true},
-	{"routes", "gin_routes", true},
+	{"routes", "routes", true},
 	{"dto", "dto", true},
 	{"model", "model", true},
 	{"constant", "constant", true},
 
 	{"db_logger", "db_logger", true},
 	{"postgres", "postgres_db", true},
-	{"main", "gin_main", true},
-	// {"main", "main", true},
+	{"main", "main", true},
 	{"env", "env", false},
 }
 
-var ginTemplatePatterns = []templatePattern{
-	{"makefile", "makefile", false},
-	{"dockerfile", "dockerfile", false},
-	{"readme", "readme", false},
+// var ginTemplatePatterns = []templatePattern{
+// 	{"makefile", "makefile", false},
+// 	{"dockerfile", "dockerfile", false},
+// 	{"readme", "readme", false},
 
-	// Specific patterns
-	{"auth_constant", "auth_constant", true},
-	{"auth_service_test", "auth_service_test", true},
-	{"auth_controller_test", "controller_test", true},
-	{"auth_integration_test", "controller_test", true},
+// 	// Specific patterns
+// 	{"auth_constant", "auth_constant", true},
+// 	{"auth_service_test", "auth_service_test", true},
+// 	{"auth_handler_test", "handler_test", true},
+// 	{"auth_integration_test", "handler_test", true},
 
-	{"auth_dto", "auth_dto", true},
-	{"auth_routes", "auth_routes", true},
-	{"auth_service", "auth_service", true},
-	{"auth_controller", "gin_auth_controller", true},
+// 	{"auth_dto", "auth_dto", true},
+// 	{"auth_routes", "auth_routes", true},
+// 	{"auth_service", "auth_service", true},
+// 	{"auth_handler", "auth_handler", true},
 
-	{"logger_middleware", "gin_logger_middleware", true},
-	{"auth_middleware", "gin_auth_middleware", true},
+// 	{"logger_middleware", "logger_middleware", true},
+// 	{"auth_middleware", "auth_middleware", true},
 
-	{"gitignore", "gitignore", false},
-	{"docker-compose", "compose", false},
+// 	{"gitignore", "gitignore", false},
+// 	{"docker-compose", "compose", false},
 
-	// General patterns
-	{"env.go", "config", true},
-	{"app.go", "app_config", true},
-	{"router.go", "gin_app_config_router", true},
+// 	// General patterns
+// 	{"env.go", "config", true},
+// 	{"app.go", "app", true},
+// 	{"router.go", "router", true},
 
-	{"controller_test", "controller_test", true},
-	{"integration_test", "controller_test", true},
-	{"service_test", "service_test", true},
-	{"repository_test", "repository_test", true},
+// 	{"handler_test", "handler_test", true},
+// 	{"integration_test", "handler_test", true},
+// 	{"service_test", "service_test", true},
+// 	{"repository_test", "repository_test", true},
 
-	{"service", "service", true},
-	{"controller", "gin_controller", true},
-	{"repository", "repository", true},
-	{"routes", "gin_routes", true},
-	{"dto", "dto", true},
-	{"model", "model", true},
-	{"constant", "constant", true},
+// 	{"service", "service", true},
+// 	{"handler", "handler", true},
+// 	{"repository", "repository", true},
+// 	{"routes", "routes", true},
+// 	{"dto", "dto", true},
+// 	{"model", "model", true},
+// 	{"constant", "constant", true},
 
-	{"db_logger", "db_logger", true},
-	{"postgres", "sql_db", true},
-	{"main", "gin_main", true},
-	{"env", "env", false},
-}
+// 	{"db_logger", "db_logger", true},
+// 	{"postgres", "sql_db", true},
+// 	{"main", "main", true},
+// 	{"env", "env", false},
+// }
 
 func CreateStructure(basePath string, structure DirectoryStructure, temp *template.Template, appName string) error {
 	for dir, files := range structure {

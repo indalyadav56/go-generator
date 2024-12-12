@@ -1,0 +1,35 @@
+{{define "auth_handler"}}
+package handlers
+
+import (
+	"{{.ServiceName}}/internal/{{.AppName}}/services"
+)
+
+type {{.IAppName}}Handler interface {
+	Register(ctx context.Context, req *dto.RegisterRequest) (*dto.RegisterResponse, error)
+	Login(ctx context.Context, req *dto.LoginRequest) (*dto.LoginResponse, error)
+	RefreshToken(ctx context.Context, req *dto.RefreshTokenRequest) (*dto.RefreshTokenResponse, error)
+}
+
+type {{.AppName}}Handler struct {
+	service services.{{.IAppName}}Service
+}
+
+func New{{.IAppName}}Handler(service services.{{.IAppName}}Service) {{.IAppName}}Handler {
+	return &{{.AppName}}Handler{
+		service: service,
+	}
+}
+
+func (h *{{.AppName}}Handler) Register(ctx context.Context, req *dto.RegisterRequest) (*dto.RegisterResponse, error) {
+	return h.service.Register(ctx, req)
+}
+
+func (h *{{.AppName}}Handler) Login(ctx context.Context, req *dto.LoginRequest) (*dto.LoginResponse, error) {
+	return h.service.Login(ctx, req)
+}
+
+func (h *{{.AppName}}Handler) RefreshToken(ctx context.Context, req *dto.RefreshTokenRequest) (*dto.RefreshTokenResponse, error) {
+	return h.service.RefreshToken(ctx, req)
+}
+{{end}}

@@ -1,0 +1,23 @@
+{{define "handler"}}
+package handlers
+
+import (
+	"{{.ServiceName}}/internal/{{.AppName}}/services"
+)
+
+type {{.IAppName}}Handler interface {
+	// Add your handler methods here
+}
+
+type {{.AppName}}Handler struct {
+	service services.{{.IAppName}}Service
+}
+
+func New{{.IAppName}}Handler(service services.{{.IAppName}}Service) {{.IAppName}}Handler {
+	return &{{.AppName}}Handler{
+		service: service,
+	}
+}
+
+// Add your handler implementations here
+{{end}}

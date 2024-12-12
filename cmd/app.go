@@ -48,7 +48,7 @@ func init() {
 func CreateApp(appName, dirPath string) {
 	// Parse all templates from the embedded filesystem
 	tmpl := template.New("")
-	
+
 	err := fs.WalkDir(templates.TemplateFS, ".", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -65,7 +65,7 @@ func CreateApp(appName, dirPath string) {
 		}
 		return nil
 	})
-	
+
 	if err != nil {
 		log.Fatalf("Failed to parse templates: %v", err)
 	}
@@ -79,14 +79,13 @@ func CreateApp(appName, dirPath string) {
 
 func AddApp(title string) file.DirectoryStructure {
 	structure := file.DirectoryStructure{
-		fmt.Sprintf("%s/constants", title):   {"constants.go"},
-		fmt.Sprintf("%s/routes", title):      {"routes.go"},
-		fmt.Sprintf("%s/dto", title):         {"dto.go"},
-		fmt.Sprintf("%s/models", title):      {"model.go"},
-		fmt.Sprintf("%s/services", title):    {"service.go"},
-		fmt.Sprintf("%s/services", title):    {"service.go", "service_test.go"},
-		fmt.Sprintf("%s/repository", title):  {"repository.go", "repository_test.go"},
-		fmt.Sprintf("%s/controllers", title): {"controller.go", "controller_test.go"},
+		fmt.Sprintf("%s/constants", title):  {"constants.go"},
+		fmt.Sprintf("%s/routes", title):     {"routes.go"},
+		fmt.Sprintf("%s/dto", title):        {"dto.go"},
+		fmt.Sprintf("%s/models", title):     {"model.go"},
+		fmt.Sprintf("%s/services", title):   {"service.go"},
+		fmt.Sprintf("%s/repository", title): {"repository.go"},
+		fmt.Sprintf("%s/handlers", title):   {"handler.go"},
 	}
 
 	if title == "auth" || title == "authentication" {

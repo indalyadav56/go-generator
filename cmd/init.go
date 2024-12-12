@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync"
 	"text/template"
 
 	"github.com/indalyadav56/go-generator/file"
@@ -71,7 +72,7 @@ func CreateProject(projectTitle string) {
 		"templates/readme/readme.tmpl",
 		"templates/models/model.tmpl",
 		"templates/models/model_test.tmpl",
-		"templates/gin/main.tmpl",
+		"templates/main.tmpl",
 		"templates/gin/routes.tmpl",
 		"templates/gin/controller.tmpl",
 		"templates/gin/auth_middleware.tmpl",
@@ -87,12 +88,12 @@ func CreateProject(projectTitle string) {
 
 	structure := file.DirectoryStructure{
 		fmt.Sprintf("cmd/%s", projectTitle): {"main.go"},
-		"config":                            {"env.go", "app.go", "router.go"},
-		"db":                                {"postgres.go"},
-		"migrations":                        {""},
-		"docs":                              {""},
-		"internal":                          {""},
-		".":                                 []string{".gitignore", "README.md", "Dockerfile", "docker-compose.yml", "Makefile", ".env"},
+		"config":                            {"config.go"},
+		// "db":                                {"postgres.go"},
+		// "migrations":                        {""},
+		// "docs":                              {""},
+		"internal/app": {"app.go", "deps.go"},
+		".":            {".gitignore", "README.md", "Dockerfile", "docker-compose.yml", "Makefile", ".env"},
 	}
 
 	err = file.CreateStructure(projectTitle, structure, tmpl, "")
@@ -101,12 +102,18 @@ func CreateProject(projectTitle string) {
 	}
 
 	initGoModule(projectTitle)
-	downloadPkgFromGithub(projectTitle)
 
-	err = runGoModTidy("./" + projectTitle)
-	if err != nil {
-		log.Fatalf("Failed to run 'go mod tidy': %v", err)
-	}
+	// wg := new(sync.WaitGroup)
+
+	// wg.Add(1)
+	// go downloadPkgFromGithub(projectTitle, wg)
+
+	// err = runGoModTidy("./" + projectTitle)
+	// if err != nil {
+	// 	log.Fatalf("Failed to run 'go mod tidy': %v", err)
+	// }
+
+	// wg.Wait()
 }
 
 func runGoModTidy(basePath string) error {
@@ -134,20 +141,42 @@ func initGoModule(projectTitle string) error {
 
 	err = os.MkdirAll(customDir, os.ModePerm)
 	if err != nil {
-		log.Fatalf("Error creating 'custom' folder: %v", err)
+		log.Fatalf("Error creating directory: %v", err)
 	}
 
 	cmd := exec.Command("go", "mod", "init", projectTitle)
 	cmd.Dir = customDir
-	err = cmd.Run()
-	if err != nil {
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	
+	if err := cmd.Run(); err != nil {
+		// Try to clean up if initialization fails
+		os.RemoveAll(customDir)
 		log.Fatalf("Error initializing Go module: %v", err)
+	}
+
+	// Create go.mod file with required dependencies
+	goModContent := `module ` + projectTitle + `
+
+go 1.21
+
+require (
+	github.com/go-chi/chi/v5 v5.0.11
+	github.com/golang-jwt/jwt/v5 v5.2.0
+	github.com/jackc/pgx/v5 v5.5.1
+	golang.org/x/crypto v0.17.0
+)
+`
+	err = os.WriteFile(filepath.Join(customDir, "go.mod"), []byte(goModContent), 0644)
+	if err != nil {
+		log.Fatalf("Error writing go.mod file: %v", err)
 	}
 
 	return nil
 }
 
-func downloadPkgFromGithub(projectTitle string) {
+func downloadPkgFromGithub(projectTitle string, wg *sync.WaitGroup) {
+	defer wg.Done()
 	repoURL := "https://github.com/indalyadav56/go-generator"
 	pkgPath := "pkg"
 	targetDir := filepath.Join(projectTitle, "pkg")
