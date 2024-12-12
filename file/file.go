@@ -46,6 +46,7 @@ var templatePatterns = []templatePattern{
 	// General patterns
 	{"env.go", "config", true},
 	{"app.go", "app", true},
+	{"deps.go", "deps", true},
 	{"router.go", "router", true},
 
 	{"handler_test", "handler_test", true},

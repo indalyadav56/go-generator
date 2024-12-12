@@ -103,17 +103,17 @@ func CreateProject(projectTitle string) {
 
 	initGoModule(projectTitle)
 
-	// wg := new(sync.WaitGroup)
+	wg := new(sync.WaitGroup)
 
-	// wg.Add(1)
-	// go downloadPkgFromGithub(projectTitle, wg)
+	wg.Add(1)
+	go downloadPkgFromGithub(projectTitle, wg)
 
-	// err = runGoModTidy("./" + projectTitle)
-	// if err != nil {
-	// 	log.Fatalf("Failed to run 'go mod tidy': %v", err)
-	// }
+	err = runGoModTidy("./" + projectTitle)
+	if err != nil {
+		log.Fatalf("Failed to run 'go mod tidy': %v", err)
+	}
 
-	// wg.Wait()
+	wg.Wait()
 }
 
 func runGoModTidy(basePath string) error {
@@ -148,7 +148,7 @@ func initGoModule(projectTitle string) error {
 	cmd.Dir = customDir
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	
+
 	if err := cmd.Run(); err != nil {
 		// Try to clean up if initialization fails
 		os.RemoveAll(customDir)
@@ -178,12 +178,12 @@ require (
 func downloadPkgFromGithub(projectTitle string, wg *sync.WaitGroup) {
 	defer wg.Done()
 	repoURL := "https://github.com/indalyadav56/go-generator"
-	pkgPath := "pkg"
-	targetDir := filepath.Join(projectTitle, "pkg")
+	commonPath := "common"
+	targetDir := filepath.Join(projectTitle, "common")
 
-	// Remove existing pkg directory if it exists
+	// Remove existing common directory if it exists
 	if err := os.RemoveAll(targetDir); err != nil {
-		log.Fatalf("Error removing existing pkg directory: %v", err)
+		log.Fatalf("Error removing existing common directory: %v", err)
 	}
 
 	// Create the target directory
@@ -192,7 +192,7 @@ func downloadPkgFromGithub(projectTitle string, wg *sync.WaitGroup) {
 		log.Fatalf("Error creating target directory: %v", err)
 	}
 
-	// Run git sparse-checkout to download only the pkg directory
+	// Run git sparse-checkout to download only the common directory
 	cmd := exec.Command("git", "clone", "--depth", "1", "--filter=blob:none", "--sparse", repoURL, targetDir+"_temp")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -202,7 +202,7 @@ func downloadPkgFromGithub(projectTitle string, wg *sync.WaitGroup) {
 
 	// Change to the temp directory
 	tempDir := targetDir + "_temp"
-	cmd = exec.Command("git", "sparse-checkout", "set", pkgPath)
+	cmd = exec.Command("git", "sparse-checkout", "set", commonPath)
 	cmd.Dir = tempDir
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -210,11 +210,11 @@ func downloadPkgFromGithub(projectTitle string, wg *sync.WaitGroup) {
 		log.Fatalf("Error setting sparse-checkout: %v", err)
 	}
 
-	// Move the pkg directory to the target location
-	srcPath := filepath.Join(tempDir, pkgPath)
+	// Move the common directory to the target location
+	srcPath := filepath.Join(tempDir, commonPath)
 	err = os.Rename(srcPath, targetDir)
 	if err != nil {
-		log.Fatalf("Error moving pkg directory: %v", err)
+		log.Fatalf("Error moving common directory: %v", err)
 	}
 
 	// Clean up the temp directory
@@ -223,7 +223,7 @@ func downloadPkgFromGithub(projectTitle string, wg *sync.WaitGroup) {
 		log.Printf("Warning: Error cleaning up temp directory: %v", err)
 	}
 
-	fmt.Println("Successfully downloaded pkg directory from GitHub!")
+	fmt.Println("Successfully downloaded common directory from GitHub!")
 }
 
 func CopyFolder(src, dst string) error {

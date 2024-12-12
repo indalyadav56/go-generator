@@ -2,7 +2,11 @@
 package handlers
 
 import (
+	"context"
+
 	"{{.ServiceName}}/internal/{{.AppName}}/services"
+	"{{.ServiceName}}/internal/{{.AppName}}/dto"
+	"{{.ServiceName}}/common/errors"
 )
 
 type {{.IAppName}}Handler interface {
@@ -22,14 +26,23 @@ func New{{.IAppName}}Handler(service services.{{.IAppName}}Service) {{.IAppName}
 }
 
 func (h *{{.AppName}}Handler) Register(ctx context.Context, req *dto.RegisterRequest) (*dto.RegisterResponse, error) {
+	if req == nil {
+		return nil, errors.ErrInvalidRequest
+	}
 	return h.service.Register(ctx, req)
 }
 
 func (h *{{.AppName}}Handler) Login(ctx context.Context, req *dto.LoginRequest) (*dto.LoginResponse, error) {
+	if req == nil {
+		return nil, errors.ErrInvalidRequest
+	}
 	return h.service.Login(ctx, req)
 }
 
 func (h *{{.AppName}}Handler) RefreshToken(ctx context.Context, req *dto.RefreshTokenRequest) (*dto.RefreshTokenResponse, error) {
+	if req == nil {
+		return nil, errors.ErrInvalidRequest
+	}
 	return h.service.RefreshToken(ctx, req)
 }
 {{end}}

@@ -15,31 +15,20 @@ import (
 	"{{.ServiceName}}/common/logger"
 	"{{.ServiceName}}/common/database"
 	"{{.ServiceName}}/common/jwt"
-	"{{.ServiceName}}/internal/auth/handlers"
-	"{{.ServiceName}}/internal/auth/services"
-	"{{.ServiceName}}/internal/auth/routes"
 )
 
 type App struct {
 	config *config.Config
-	logger logger.Logger
-	db     *database.DB
-	jwt    *jwt.JWT
+	deps   *Dependencies
 	server *http.Server
 }
 
 func NewApp(cfg *config.Config) (*App, error) {
-	// Initialize logger
-	logger := logger.New()
-
-	// Initialize database
-	db, err := database.New(cfg.DatabaseURL)
+	// Initialize dependencies
+	deps, err := NewDependencies(cfg)
 	if err != nil {
-		return nil, fmt.Errorf("failed to initialize database: %w", err)
+		return nil, fmt.Errorf("failed to initialize dependencies: %w", err)
 	}
-
-	// Initialize JWT
-	jwt := jwt.New(cfg.JWTSecret, cfg.JWTExpiry)
 
 	// Initialize HTTP server
 	server := &http.Server{
@@ -51,32 +40,24 @@ func NewApp(cfg *config.Config) (*App, error) {
 
 	return &App{
 		config: cfg,
-		logger: logger,
-		db:     db,
-		jwt:    jwt,
+		deps:   deps,
 		server: server,
 	}, nil
 }
 
 func (a *App) Run() error {
-	// Initialize dependencies
-	authService := services.NewAuthService(a.db, a.jwt)
-	authHandler := handlers.NewAuthHandler(authService)
-	authRoutes := routes.NewAuthRoutes(authHandler)
-
 	// Set up routes
-	mux := http.NewServeMux()
-	authRoutes.Setup(mux)
+	router := NewRouter(a.deps)
 
 	// Set server handler
-	a.server.Handler = mux
+	a.server.Handler = router
 
 	// Channel to listen for errors coming from the listener.
 	serverErrors := make(chan error, 1)
 
 	// Start the service listening for requests.
 	go func() {
-		a.logger.Info("api listening on", "addr", a.server.Addr)
+		log.Printf("API listening on %s", a.server.Addr)
 		serverErrors <- a.server.ListenAndServe()
 	}()
 
@@ -90,8 +71,8 @@ func (a *App) Run() error {
 		return fmt.Errorf("server error: %w", err)
 
 	case sig := <-shutdown:
-		a.logger.Info("shutdown", "status", "shutdown started", "signal", sig)
-		defer a.logger.Info("shutdown", "status", "shutdown complete", "signal", sig)
+		log.Printf("shutdown started, signal: %v", sig)
+		defer log.Printf("shutdown complete, signal: %v", sig)
 
 		// Give outstanding requests a deadline for completion.
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -108,9 +89,6 @@ func (a *App) Run() error {
 }
 
 func (a *App) Close() error {
-	if err := a.db.Close(); err != nil {
-		return fmt.Errorf("failed to close database: %w", err)
-	}
-	return nil
+	return a.deps.Close()
 }
 {{end}}
