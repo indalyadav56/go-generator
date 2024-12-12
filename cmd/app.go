@@ -79,13 +79,13 @@ func CreateApp(appName, dirPath string) {
 
 func AddApp(title string) file.DirectoryStructure {
 	structure := file.DirectoryStructure{
-		fmt.Sprintf("%s/constants", title):  {"constants.go"},
-		fmt.Sprintf("%s/routes", title):     {"routes.go"},
-		fmt.Sprintf("%s/dto", title):        {"dto.go"},
-		fmt.Sprintf("%s/models", title):     {"model.go"},
-		fmt.Sprintf("%s/services", title):   {"service.go"},
-		fmt.Sprintf("%s/repository", title): {"repository.go"},
-		fmt.Sprintf("%s/handlers", title):   {"handler.go"},
+		fmt.Sprintf("%s/constants", title): {"constants.go"},
+		// fmt.Sprintf("%s/routes", title):     {"routes.go"},
+		fmt.Sprintf("%s/dto", title): {"dto.go"},
+		// fmt.Sprintf("%s/models", title):     {"model.go"},
+		// fmt.Sprintf("%s/services", title):   {"service.go"},
+		// fmt.Sprintf("%s/repository", title): {"repository.go"},
+		// fmt.Sprintf("%s/handlers", title): {"handler.go"},
 	}
 
 	if title == "auth" || title == "authentication" {

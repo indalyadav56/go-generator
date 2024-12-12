@@ -61,6 +61,8 @@ func CreateProject(projectTitle string) {
 
 	// Parse the templates using the embedded file system
 	tmpl, err := template.ParseFS(templates.TemplateFS,
+		"templates/app/app.tmpl",
+		"templates/app/deps.tmpl",
 		"templates/app/app_config.tmpl",
 		"templates/app/app_config_router.tmpl",
 		"templates/app/gorm_app_config.tmpl",
