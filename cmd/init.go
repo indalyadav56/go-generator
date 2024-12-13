@@ -62,9 +62,6 @@ func CreateProject(projectTitle string) {
 	tmpl, err := template.ParseFS(templates.TemplateFS,
 		"templates/app/app.tmpl",
 		"templates/app/deps.tmpl",
-		"templates/app/app_config.tmpl",
-		"templates/app/app_config_router.tmpl",
-		"templates/app/gorm_app_config.tmpl",
 		"templates/config/config.tmpl",
 		"templates/docker/dockerfile.tmpl",
 		"templates/docker/docker-compose.tmpl",
@@ -72,16 +69,11 @@ func CreateProject(projectTitle string) {
 		"templates/makefile/makefile.tmpl",
 		"templates/readme/readme.tmpl",
 		"templates/models/model.tmpl",
-		"templates/models/model_test.tmpl",
 		"templates/main.tmpl",
 		"templates/gin/routes.tmpl",
-		"templates/gin/controller.tmpl",
 		"templates/gin/auth_middleware.tmpl",
 		"templates/gin/logger_middleware.tmpl",
-		"templates/gin/app_config_router.tmpl",
 		"templates/constants/constant.tmpl",
-		"templates/gorm/postgres_db.tmpl",
-		"templates/gorm/db_logger.tmpl",
 	)
 	if err != nil {
 		panic(err)

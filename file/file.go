@@ -34,7 +34,6 @@ var templatePatterns = []templatePattern{
 
 	{"auth_dto", "auth_dto", true},
 	{"auth_routes", "auth_routes", true},
-	{"auth_service", "auth_service", true},
 	{"auth_handler", "auth_handler", true},
 
 	{"logger_middleware", "logger_middleware", true},
@@ -151,23 +150,33 @@ func ParseContent(tmpl *template.Template, fileName, dir, projectTitle, appName 
 		return "", nil
 	}
 
-	templateName, isFormat := getTemplateName(fileName, dir)
+	var templateName string
 	var output bytes.Buffer
+
+	// Special handling for auth module templates
+	if appName == "auth" {
+		switch {
+		case strings.HasSuffix(dir, "services") && strings.HasSuffix(fileName, "service.go"):
+			templateName = "auth_service"
+		case strings.HasSuffix(dir, "dto") && strings.HasSuffix(fileName, "dto.go"):
+			templateName = "auth_dto"
+		default:
+			templateName, _ = getTemplateName(fileName, dir)
+		}
+	} else {
+		templateName, _ = getTemplateName(fileName, dir)
+	}
 
 	err := tmpl.ExecuteTemplate(&output, templateName, data)
 	if err != nil {
 		return "", fmt.Errorf("failed to execute template: %w", err)
 	}
 
-	if isFormat {
-		formattedOutput, err := format.FormatGoCode(output.Bytes())
-		if err != nil {
-			return "", fmt.Errorf("failed to format Go code: %w", err)
-		}
-		return string(formattedOutput), nil
+	formattedOutput, err := format.FormatGoCode(output.Bytes())
+	if err != nil {
+		return "", fmt.Errorf("failed to format Go code: %w", err)
 	}
-
-	return output.String(), nil
+	return string(formattedOutput), nil
 }
 
 func getTemplateName(fileName, dir string) (templateName string, isFormat bool) {
@@ -176,12 +185,6 @@ func getTemplateName(fileName, dir string) (templateName string, isFormat bool) 
 
 	for _, tp := range templatePatterns {
 		if strings.Contains(baseName, tp.pattern) {
-			if dir == "auth/services" {
-				return "auth_service", true
-			}
-			if dir == "auth/dto" {
-				return "auth_dto", true
-			}
 			return tp.template, tp.isFormat
 		}
 	}

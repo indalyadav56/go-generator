@@ -46,7 +46,8 @@ func init() {
 }
 
 func CreateApp(appName, dirPath string) {
-	// Parse all templates from the embedded filesystem
+	defer runGoModTidy(dirPath)
+
 	tmpl := template.New("")
 
 	err := fs.WalkDir(templates.TemplateFS, ".", func(path string, d fs.DirEntry, err error) error {
