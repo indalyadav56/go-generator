@@ -3,15 +3,15 @@
 package routes
 
 import (
-	"{{.ServiceName}}/internal/{{.AppName}}/controllers"
+	"{{.ServiceName}}/internal/{{.AppName}}/handlers"
 	"github.com/gin-gonic/gin"
 )
 
-func {{.IAppName}}Routes(router *gin.Engine, c controllers.{{.IAppName}}Controller) {
+func {{.IAppName}}Routes(router *gin.Engine,  h handlers.AuthHandler) {
 	authV1 := router.Group("/v1/auth")
 	{
-		authV1.POST("/register", c.Register)
-		authV1.POST("/login", c.Login)
+		authV1.POST("/register", h.Register)
+		authV1.POST("/login", h.Login)
 	}
 }
 

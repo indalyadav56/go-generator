@@ -160,6 +160,10 @@ func ParseContent(tmpl *template.Template, fileName, dir, projectTitle, appName 
 			templateName = "auth_service"
 		case strings.HasSuffix(dir, "dto") && strings.HasSuffix(fileName, "dto.go"):
 			templateName = "auth_dto"
+		case strings.HasSuffix(dir, "routes") && strings.HasSuffix(fileName, "routes.go"):
+			templateName = "gin_auth_routes"
+		case strings.HasSuffix(dir, "handlers") && strings.HasSuffix(fileName, "handler.go"):
+			templateName = "auth_handler"
 		default:
 			templateName, _ = getTemplateName(fileName, dir)
 		}

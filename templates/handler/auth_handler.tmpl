@@ -2,17 +2,17 @@
 package handlers
 
 import (
-	"context"
+	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"{{.ServiceName}}/internal/{{.AppName}}/services"
 	"{{.ServiceName}}/internal/{{.AppName}}/dto"
-	"{{.ServiceName}}/common/errors"
 )
 
 type {{.IAppName}}Handler interface {
-	Register(ctx context.Context, req *dto.RegisterRequest) (*dto.RegisterResponse, error)
-	Login(ctx context.Context, req *dto.LoginRequest) (*dto.LoginResponse, error)
-	RefreshToken(ctx context.Context, req *dto.RefreshTokenRequest) (*dto.RefreshTokenResponse, error)
+	Register(c *gin.Context)
+	Login(c *gin.Context)
+	RefreshToken(c *gin.Context)
 }
 
 type {{.AppName}}Handler struct {
@@ -25,24 +25,45 @@ func New{{.IAppName}}Handler(service services.{{.IAppName}}Service) {{.IAppName}
 	}
 }
 
-func (h *{{.AppName}}Handler) Register(ctx context.Context, req *dto.RegisterRequest) (*dto.RegisterResponse, error) {
-	if req == nil {
-		return nil, errors.ErrInvalidRequest
+func (h *{{.AppName}}Handler) Register(c *gin.Context) {
+	var req dto.RegisterRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
 	}
-	return h.service.Register(ctx, req)
+	resp, err := h.service.Register(c.Request.Context(), &req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, resp)
 }
 
-func (h *{{.AppName}}Handler) Login(ctx context.Context, req *dto.LoginRequest) (*dto.LoginResponse, error) {
-	if req == nil {
-		return nil, errors.ErrInvalidRequest
+func (h *{{.AppName}}Handler) Login(c *gin.Context) {
+	var req dto.LoginRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
 	}
-	return h.service.Login(ctx, req)
+	resp, err := h.service.Login(c.Request.Context(), &req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, resp)
 }
 
-func (h *{{.AppName}}Handler) RefreshToken(ctx context.Context, req *dto.RefreshTokenRequest) (*dto.RefreshTokenResponse, error) {
-	if req == nil {
-		return nil, errors.ErrInvalidRequest
+func (h *{{.AppName}}Handler) RefreshToken(c *gin.Context) {
+	var req dto.RefreshTokenRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
 	}
-	return h.service.RefreshToken(ctx, req)
+	resp, err := h.service.RefreshToken(c.Request.Context(), &req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, resp)
 }
 {{end}}

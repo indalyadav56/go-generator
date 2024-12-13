@@ -13,4 +13,31 @@ type LoginRequest struct {
 	Password string `json:"password" validate:"required,min=6,not_blank"`
 }
 
+
+type RegisterResponse struct {
+	UserID   string `json:"userId"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Token    string `json:"token"`
+	ExpireAt int64  `json:"expireAt"`
+}
+
+type LoginResponse struct {
+	UserID   string `json:"userId"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Token    string `json:"token"`
+	ExpireAt int64  `json:"expireAt"`
+}
+
+
+type RefreshTokenRequest struct {
+	RefreshToken string `json:"refreshToken" validate:"required"`
+}
+
+type RefreshTokenResponse struct {
+	Token    string `json:"token"`
+	ExpireAt int64  `json:"expireAt"`
+}
+
 {{end}}

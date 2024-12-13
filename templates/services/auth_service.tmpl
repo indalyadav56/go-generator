@@ -2,6 +2,7 @@
 package services
 
 import (
+	"context"
 	"common/pkg/logger"
 	"common/pkg/jwt"
 	"{{.ServiceName}}/internal/user/services"
@@ -9,8 +10,9 @@ import (
 )
 
 type {{.IAppName}}Service interface {
-	Register(req *dto.RegisterRequest) (interface{}, error)
-	Login(req *dto.LoginRequest) (interface{}, error)
+	Register(ctx context.Context, req *dto.RegisterRequest) (interface{}, error)
+	Login(ctx context.Context, req *dto.LoginRequest) (interface{}, error)
+	RefreshToken(ctx context.Context, req *dto.RefreshTokenRequest) (interface{}, error)
 }
 
 type {{.AppName}}Service struct {
@@ -27,12 +29,16 @@ func New{{.IAppName}}Service(log logger.Logger, jwt jwt.JWT, userSrv services.Us
 	}
 }
 
-func (s *{{.AppName}}Service) Register(req *dto.RegisterRequest) (interface{}, error){
+func (s *{{.AppName}}Service) Register(ctx context.Context, req *dto.RegisterRequest) (interface{}, error){
 	return nil, nil
 }
 
 
-func (s *{{.AppName}}Service) Login(req *dto.LoginRequest) (interface{}, error){
+func (s *{{.AppName}}Service) Login(ctx context.Context, req *dto.LoginRequest) (interface{}, error){
+	return nil, nil
+}
+
+func (s *authService) RefreshToken(ctx context.Context, req *dto.LoginRequest) (interface{}, error) {
 	return nil, nil
 }
 
