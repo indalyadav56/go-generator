@@ -3,18 +3,18 @@
 package routes
 
 import (
-	"{{.ServiceName}}/internal/{{.AppName}}/controllers"
-	"github.com/gofiber/fiber/v2"
+	"{{.ServiceName}}/internal/{{.AppName}}/handlers"
+	"github.com/gin-gonic/gin"
 )
 
-func {{.IAppName}}Routes(app *fiber.App, c controllers.{{.IAppName}}Controller) {
-	{{.AppName}}V1 := app.Group("/v1/{{.AppName}}s")
-	{
-		{{.AppName}}V1.Get("", c.Get)
-	 	{{.AppName}}V1.Post("", c.Create)
-	 	{{.AppName}}V1.Patch("", c.Update)
-	 	{{.AppName}}V1.Delete("",c.Delete )
-	}
+func {{.IAppName}}Routes(app *gin.Engine, h handlers.{{.IAppName}}Handler) {
+	// {{.AppName}}V1 := app.Group("/v1/{{.AppName}}s")
+	// {
+	// 	{{.AppName}}V1.Get("", h.Get)
+	// 	{{.AppName}}V1.Post("", h.Create)
+	// 	{{.AppName}}V1.Patch("", h.Update)
+	//	{{.AppName}}V1.Delete("", h.Delete )
+	// }
 }
 
 {{end}}

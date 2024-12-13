@@ -68,52 +68,6 @@ var templatePatterns = []templatePattern{
 	{"env", "env", false},
 }
 
-// var ginTemplatePatterns = []templatePattern{
-// 	{"makefile", "makefile", false},
-// 	{"dockerfile", "dockerfile", false},
-// 	{"readme", "readme", false},
-
-// 	// Specific patterns
-// 	{"auth_constant", "auth_constant", true},
-// 	{"auth_service_test", "auth_service_test", true},
-// 	{"auth_handler_test", "handler_test", true},
-// 	{"auth_integration_test", "handler_test", true},
-
-// 	{"auth_dto", "auth_dto", true},
-// 	{"auth_routes", "auth_routes", true},
-// 	{"auth_service", "auth_service", true},
-// 	{"auth_handler", "auth_handler", true},
-
-// 	{"logger_middleware", "logger_middleware", true},
-// 	{"auth_middleware", "auth_middleware", true},
-
-// 	{"gitignore", "gitignore", false},
-// 	{"docker-compose", "compose", false},
-
-// 	// General patterns
-// 	{"env.go", "config", true},
-// 	{"app.go", "app", true},
-// 	{"router.go", "router", true},
-
-// 	{"handler_test", "handler_test", true},
-// 	{"integration_test", "handler_test", true},
-// 	{"service_test", "service_test", true},
-// 	{"repository_test", "repository_test", true},
-
-// 	{"service", "service", true},
-// 	{"handler", "handler", true},
-// 	{"repository", "repository", true},
-// 	{"routes", "routes", true},
-// 	{"dto", "dto", true},
-// 	{"model", "model", true},
-// 	{"constant", "constant", true},
-
-// 	{"db_logger", "db_logger", true},
-// 	{"postgres", "sql_db", true},
-// 	{"main", "main", true},
-// 	{"env", "env", false},
-// }
-
 func CreateStructure(basePath string, structure DirectoryStructure, temp *template.Template, appName string) error {
 	for dir, files := range structure {
 		fullDirPath := filepath.Join(basePath, dir)

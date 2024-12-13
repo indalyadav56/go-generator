@@ -3,9 +3,8 @@ package repository
 
 import (
 	"database/sql"
-	"fmt"
 	"{{.ServiceName}}/internal/{{.AppName}}/models"
-	"{{.ServiceName}}/pkg/logger"
+	"common/pkg/logger"
 )
 
 type {{.IAppName}}Repository interface {
@@ -30,64 +29,70 @@ func New{{.IAppName}}Repository(db *sql.DB, log logger.Logger) *{{.AppName}}Repo
 
 // Insert inserts a new record into the database
 func (r *{{.AppName}}Repository) Insert({{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error) {
-	query := "INSERT INTO {{.AppName}}s (field1, field2) VALUES (?, ?) RETURNING id"
-	err := r.db.QueryRow(query, {{.AppName}}.Field1, {{.AppName}}.Field2).Scan(&{{.AppName}}.ID)
-	if err != nil {
-		return nil, err
-	}
-	return {{.AppName}}, nil
+	// Execute INSERT query and retrieve the newly created ID
+	// query := "INSERT INTO {{.AppName}}s (field1, field2) VALUES (?, ?) RETURNING id"
+	// err := r.db.QueryRow(query, {{.AppName}}.Field1, {{.AppName}}.Field2).Scan(&{{.AppName}}.ID)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// return {{.AppName}}, nil
+	return nil, nil
 }
 
 // FindByID retrieves a record by its ID from the database
 func (r *{{.AppName}}Repository) FindByID(id string) (*models.{{.IAppName}}, error) {
-	query := "SELECT id, field1, field2 FROM {{.AppName}}s WHERE id = ?"
-	row := r.db.QueryRow(query, id)
+	// Execute SELECT query to find a record by ID
+	// query := "SELECT id, field1, field2 FROM {{.AppName}}s WHERE id = ?"
+	// row := r.db.QueryRow(query, id)
 
-	var {{.AppName}} models.{{.IAppName}}
-	if err := row.Scan(&{{.AppName}}.ID, &{{.AppName}}.Field1, &{{.AppName}}.Field2); err != nil {
-		if err == sql.ErrNoRows {
-			return nil, nil
-		}
-		return nil, err
-	}
+	// var {{.AppName}} models.{{.IAppName}}
+	// if err := row.Scan(&{{.AppName}}.ID, &{{.AppName}}.Field1, &{{.AppName}}.Field2); err != nil {
+	// 	if err == sql.ErrNoRows {
+	// 		return nil, nil // No record found
+	// 	}
+	// 	return nil, err // Other error occurred
+	// }
 
-	return &{{.AppName}}, nil
+	// return &{{.AppName}}, nil // Return the found record
+	return nil, nil
 }
 
 // List retrieves a paginated list of records from the database
 func (r *{{.AppName}}Repository) List(page, pageSize int) ([]models.{{.IAppName}}, error) {
-	offset := (page - 1) * pageSize
-	query := "SELECT id, field1, field2 FROM {{.AppName}}s LIMIT ? OFFSET ?"
-	rows, err := r.db.Query(query, pageSize, offset)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
+	// offset := (page - 1) * pageSize
+	// query := "SELECT id, field1, field2 FROM {{.AppName}}s LIMIT ? OFFSET ?"
+	// rows, err := r.db.Query(query, pageSize, offset)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// defer rows.Close()
 
-	var {{.AppName}}s []models.{{.IAppName}}
-	for rows.Next() {
-		var {{.AppName}} models.{{.IAppName}}
-		if err := rows.Scan(&{{.AppName}}.ID, &{{.AppName}}.Field1, &{{.AppName}}.Field2); err != nil {
-			return nil, err
-		}
-		{{.AppName}}s = append({{.AppName}}s, {{.AppName}})
-	}
+	// var {{.AppName}}s []models.{{.IAppName}}
+	// for rows.Next() {
+	// 	var {{.AppName}} models.{{.IAppName}}
+	// 	if err := rows.Scan(&{{.AppName}}.ID, &{{.AppName}}.Field1, &{{.AppName}}.Field2); err != nil {
+	// 		return nil, err
+	// 	}
+	// 	{{.AppName}}s = append({{.AppName}}s, {{.AppName}})
+	// }
 
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
+	// if err := rows.Err(); err != nil {
+	// 	return nil, err
+	// }
 
-	return {{.AppName}}s, nil
+	// return {{.AppName}}s, nil
+	return nil, nil
 }
 
 // Update updates an existing record in the database
 func (r *{{.AppName}}Repository) Update({{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error) {
-	query := "UPDATE {{.AppName}}s SET field1 = ?, field2 = ? WHERE id = ?"
-	_, err := r.db.Exec(query, {{.AppName}}.Field1, {{.AppName}}.Field2, {{.AppName}}.ID)
-	if err != nil {
-		return nil, err
-	}
-	return {{.AppName}}, nil
+	// query := "UPDATE {{.AppName}}s SET field1 = ?, field2 = ? WHERE id = ?"
+	// _, err := r.db.Exec(query, {{.AppName}}.Field1, {{.AppName}}.Field2, {{.AppName}}.ID)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// return {{.AppName}}, nil
+	return nil, nil
 }
 
 // Delete removes a record from the database by ID

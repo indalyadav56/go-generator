@@ -88,10 +88,10 @@ func CreateProject(projectTitle string) {
 	}
 
 	structure := file.DirectoryStructure{
-		fmt.Sprintf("cmd/%s", projectTitle): {"main.go"},
-		"config":                            {"config.go"},
-		"internal/app":                      {"app.go", "deps.go"},
-		".":                                 {".gitignore", "README.md", "Dockerfile", "docker-compose.yml", "Makefile", ".env"},
+		fmt.Sprintf("cmd/%s", "api"): {"main.go"},
+		"config":                     {"config.go"},
+		"internal/app":               {"app.go", "deps.go"},
+		".":                          {".gitignore", "README.md", "Dockerfile", "docker-compose.yml", "Makefile", ".env"},
 	}
 
 	err = file.CreateStructure(projectTitle, structure, tmpl, "")
@@ -185,15 +185,14 @@ func initGoModule(projectTitle string) error {
 
 	// Add common module replacement and requirement to main go.mod
 	goModContent := fmt.Sprintf(`module %s
+	go 1.23.1
 
-go 1.23.1
+	replace common => ./common
 
-replace common => ./common
-
-require (
-	common v1.0.0
-)
-`, projectTitle)
+	require (
+		common v1.0.0
+	)
+	`, projectTitle)
 
 	err = os.WriteFile(filepath.Join(customDir, "go.mod"), []byte(goModContent), 0644)
 	if err != nil {

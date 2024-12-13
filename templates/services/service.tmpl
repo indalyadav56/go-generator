@@ -4,7 +4,7 @@ package services
 import (
 	"{{.ServiceName}}/internal/{{.AppName}}/repository"
 	"{{.ServiceName}}/internal/{{.AppName}}/models"
-	"{{.ServiceName}}/pkg/logger"
+	"common/pkg/logger"
 )
 
 type {{.IAppName}}Service interface {
@@ -12,8 +12,8 @@ type {{.IAppName}}Service interface {
 	GetByID(id string) (*models.{{.IAppName}}, error)
 	Update(id string, {{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error)
 	Delete(id string) error
-	GetAll() ([]*models.{{.IAppName}}, error)
-	Search(query string) ([]*models.{{.IAppName}}, error)
+	// GetAll() ([]*models.{{.IAppName}}, error)
+	// Search(query string) ([]*models.{{.IAppName}}, error)
 }
 
 type {{.AppName}}Service struct {
@@ -40,16 +40,17 @@ func (s *{{.AppName}}Service) GetByID(id string) (*models.{{.IAppName}}, error) 
 
 // Update updates an existing {{.AppName}} by its ID
 func (s *{{.AppName}}Service) Update(id string, {{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error) {
-	existing{{.IAppName}}, err := s.{{.AppName}}Repo.FindByID(id)
-	if err != nil {
-		return nil, err
-	}
+	// {{.IAppName}}, err := s.{{.AppName}}Repo.FindByID(id)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	// Update fields (example: only certain fields are updated)
-	existing{{.IAppName}}.Field1 = {{.AppName}}.Field1
-	existing{{.IAppName}}.Field2 = {{.AppName}}.Field2
+	// existing{{.IAppName}}.Field1 = {{.AppName}}.Field1
+	// existing{{.IAppName}}.Field2 = {{.AppName}}.Field2
 
-	return s.{{.AppName}}Repo.Update(id, existing{{.IAppName}})
+	// return s.{{.AppName}}Repo.Update(id, existing{{.IAppName}})
+	return nil, nil
 }
 
 // Delete removes a {{.AppName}} by its ID
@@ -57,14 +58,14 @@ func (s *{{.AppName}}Service) Delete(id string) error {
 	return s.{{.AppName}}Repo.Delete(id)
 }
 
-// GetAll retrieves all {{.AppName}} records
-func (s *{{.AppName}}Service) GetAll() ([]*models.{{.IAppName}}, error) {
-	return s.{{.AppName}}Repo.FindAll()
-}
+// // GetAll retrieves all {{.AppName}} records
+// func (s *{{.AppName}}Service) GetAll() ([]*models.{{.IAppName}}, error) {
+// 	return s.{{.AppName}}Repo.FindAll()
+// }
 
-// Search allows searching for {{.AppName}} entities based on a query
-func (s *{{.AppName}}Service) Search(query string) ([]*models.{{.IAppName}}, error) {
-	return s.{{.AppName}}Repo.Search(query)
-}
+// // Search allows searching for {{.AppName}} entities based on a query
+// func (s *{{.AppName}}Service) Search(query string) ([]*models.{{.IAppName}}, error) {
+// 	return s.{{.AppName}}Repo.Search(query)
+// }
 
 {{end}}
