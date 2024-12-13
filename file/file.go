@@ -176,6 +176,12 @@ func getTemplateName(fileName, dir string) (templateName string, isFormat bool) 
 
 	for _, tp := range templatePatterns {
 		if strings.Contains(baseName, tp.pattern) {
+			if dir == "auth/services" {
+				return "auth_service", true
+			}
+			if dir == "auth/dto" {
+				return "auth_dto", true
+			}
 			return tp.template, tp.isFormat
 		}
 	}
