@@ -82,6 +82,9 @@ func CreateProject(projectTitle string) {
 	structure := file.DirectoryStructure{
 		fmt.Sprintf("cmd/%s", "api"): {"main.go"},
 		"config":                     {"config.go"},
+		"docs":                       {""},
+		"scripts":                    {"build.sh"},
+		"logs":                       {""},
 		"internal/app":               {"app.go", "deps.go"},
 		".":                          {".gitignore", "README.md", "Dockerfile", "docker-compose.yml", "Makefile", ".env"},
 	}

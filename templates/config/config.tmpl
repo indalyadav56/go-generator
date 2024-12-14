@@ -1,74 +1,102 @@
 {{define "config"}}
-
 package config
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 )
 
 type Config struct {
-	DBHost            string `mapstructure:"DB_HOST" validate:"required"`
-	DBPort            string `mapstructure:"DB_PORT"`
-	DBUser            string `mapstructure:"DB_USER"`
-	DBPassword        string `mapstructure:"DB_PASSWORD"`
-	DBName            string `mapstructure:"DB_NAME"`
-	RedisAddr         string `mapstructure:"REDIS_ADDR"`
-	JWTSecretKey      string `mapstructure:"JWT_SECRET_KEY" validate:"required"`
+	ServerPort string `mapstructure:"SERVER_PORT" validate:"required"`
+
+	// database
+	DBHost     string `mapstructure:"DB_HOST" validate:"required"`
+	DBPort     string `mapstructure:"DB_PORT"`
+	DBUser     string `mapstructure:"DB_USER"`
+	DBPassword string `mapstructure:"DB_PASSWORD"`
+	DBName     string `mapstructure:"DB_NAME"`
+
+	// redis
+	RedisAddr     string `mapstructure:"REDIS_ADDR"`
+	RedisUsername string `mapstructure:"REDIS_USERNAME"`
+	RedisPassword string `mapstructure:"REDIS_PASSWORD"`
+	RedisDB       int    `mapstructure:"REDIS_DB"`
+
+	// jwt
+	JWTSecret         string `mapstructure:"JWT_SECRET" validate:"required"`
 	JWTExpirationDays int    `mapstructure:"JWT_EXPIRATION_DAYS" validate:"required,gt=0"`
-	ServerPort        string    `mapstructure:"SERVER_PORT" validate:"required"`
-	LogLevel          string `mapstructure:"LOG_LEVEL"`
-	LogFilePath       string `mapstructure:"LOG_FILE_PATH"`
-	AppName           string `mapstructure:"APP_NAME"`
-	MongoDB           string `mapstructure:"MONGO_DB"`
+
+
+	// log
+	LogFilePath string `mapstructure:"LOG_FILE_PATH"`
 }
 
-func LoadConfig(path string) (Config, error) {
-	var config Config
-
-	if err := setupViper(path); err != nil {
-		return config, fmt.Errorf("error setting up viper: %w", err)
+func New(path ...string) (*Config, error) {
+	if len(path) == 0 {
+		path = []string{".env"}
 	}
-
-	if err := viper.Unmarshal(&config); err != nil {
-		return config, fmt.Errorf("error unmarshalling config: %w", err)
+	cfg := &Config{}
+	if err := cfg.load(path[0]); err != nil {
+		return nil, fmt.Errorf("failed to load config: %w", err)
 	}
-
-	if err := validateConfig(config); err != nil {
-		return config, fmt.Errorf("error validating config: %w", err)
-	}
-
-	return config, nil
+	return cfg, nil
 }
 
-func setupViper(path string) error {
-	if path != "" {
-		viper.SetConfigFile(path)
-	} else {
-		viper.SetConfigFile(".env")
+// load reads configuration from file and environment
+func (c *Config) load(path string) error {
+	if err := c.loadEnv(path); err != nil {
+		log.Printf("Warning: error loading .env file: %v", err)
 	}
 
-	viper.SetDefault("DB_PORT", "5432")
-	viper.SetDefault("REDIS_ADDR", "localhost:6379")
-	viper.SetDefault("LOG_LEVEL", "info")
-	viper.SetDefault("JWT_EXPIRATION_DAYS", 7)
-	viper.SetDefault("SERVER_PORT", 8080)
-
-	if err := viper.ReadInConfig(); err != nil {
-		return fmt.Errorf("error reading config file: %w", err)
+	if err := c.loadViper(path); err != nil {
+		return fmt.Errorf("error loading configuration: %w", err)
 	}
 
-	viper.AutomaticEnv()
+	if err := c.validate(); err != nil {
+		return fmt.Errorf("invalid configuration: %w", err)
+	}
 
 	return nil
 }
 
-func validateConfig(config Config) error {
+func (c *Config) loadEnv(path string) error {
+	return godotenv.Load(path)
+}
+
+// loadViper configures and loads configuration using Viper
+func (c *Config) loadViper(path string) error {
+	v := viper.New()
+
+	c.setDefaults(v)
+
+	v.SetConfigFile(path)
+	v.SetConfigType("env")
+	v.AutomaticEnv()
+
+	if err := v.ReadInConfig(); err != nil {
+		log.Printf("Warning: error reading config file: %v", err)
+	}
+
+	if err := v.Unmarshal(c); err != nil {
+		return fmt.Errorf("error unmarshaling config: %w", err)
+	}
+
+	return nil
+}
+
+func (c *Config) setDefaults(v *viper.Viper) {
+	v.SetDefault("JWT_EXPIRATION_DAYS", 7)
+	v.SetDefault("SERVER_PORT", "8080")
+}
+
+func (c *Config) validate() error {
 	validate := validator.New()
-	if err := validate.Struct(config); err != nil {
-		return fmt.Errorf("config validation failed: %w", err)
+	if err := validate.Struct(c); err != nil {
+		return fmt.Errorf("validation failed: %w", err)
 	}
 	return nil
 }

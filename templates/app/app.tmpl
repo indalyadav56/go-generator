@@ -3,24 +3,65 @@ package app
 
 import (
 	"backend/config"
-	"net/http"
+	"fmt"
+	"common/pkg/server"
+	"context"
 )
 
 type App struct {
 	config *config.Config
-	server *http.Server
+	deps   *Dependencies
 }
 
 func New() (*App, error) {
-	return nil, nil
+	cfg, err := config.New()
+	if err != nil {
+		return nil, fmt.Errorf("failed to load config: %w", err)
+	}
+
+	app := &App{
+		config: cfg,
+		deps: &Dependencies{
+			Config: cfg,
+		},
+	}
+
+	// Initialize all dependencies
+	if err := app.initDependencies(); err != nil {
+		return nil, err
+	}
+
+	return app, nil
 }
 
 func (a *App) Run() error {
+	if err := a.deps.Server.Start(context.Background()); err != nil {
+		return fmt.Errorf("failed to start server: %w", err)
+	}
+	return nil
+}
+
+func (a *App) initDependencies() error {
+	var err error
+	if a.deps.Server, err = server.New(); err != nil {
+		return fmt.Errorf("failed to start server: %w", err)
+	}
 
 	return nil
 }
 
-func (a *App) Close() error {
+func (a *App) initRepositories() {}
+
+func (a *App) initServices() {}
+
+func (a *App) initHandlers() {}
+
+func (a *App) registerRoutes() {}
+
+func (a *App) Shutdown() error {
+	// if err := a.deps.DB.Close(); err != nil {
+	// 	a.deps.Logger.Error("failed to close database connection", zap.Error(err))
+	// }
 	return nil
 }
 {{end}}

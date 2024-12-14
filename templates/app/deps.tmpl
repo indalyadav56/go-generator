@@ -1,5 +1,25 @@
 {{define "deps"}}
 package app
 
+import (
+	"backend/config"
+	database "common/pkg/db"
+	"common/pkg/http_client"
+	"common/pkg/jwt"
+	"common/pkg/logger"
+	"common/pkg/server"
+	"common/pkg/validator"
+)
+
+type Dependencies struct {
+	Config     *config.Config
+	DB         *database.DB
+	Server     server.Server
+	Logger     logger.Logger
+	JWT        jwt.JWT
+	Validator  validator.Validator
+	HttpClient http_client.HttpClient
+}
+
 
 {{end}}
