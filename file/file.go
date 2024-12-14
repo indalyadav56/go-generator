@@ -67,7 +67,7 @@ var templatePatterns = []templatePattern{
 	{"env", "env", false},
 }
 
-func CreateStructure(basePath string, structure DirectoryStructure, temp *template.Template, appName string) error {
+func CreateStructure(basePath string, structure DirectoryStructure, temp *template.Template, appName string, data interface{}) error {
 	for dir, files := range structure {
 		fullDirPath := filepath.Join(basePath, dir)
 
@@ -87,7 +87,7 @@ func CreateStructure(basePath string, structure DirectoryStructure, temp *templa
 				continue
 			}
 
-			contentData, _ := ParseContent(temp, file, dir, basePath, appName)
+			contentData, _ := ParseContent(temp, file, dir, basePath, appName, data)
 			err = CreateFile(filepath.Join(fullDirPath, file), contentData)
 			if err != nil {
 				log.Fatalf("Failed to create file: %v", err)
@@ -127,7 +127,7 @@ func CreateFile(filePath, content string) error {
 	return nil
 }
 
-func ParseContent(tmpl *template.Template, fileName, dir, projectTitle, appName string) (string, error) {
+func ParseContent(tmpl *template.Template, fileName, dir, projectTitle, appName string, templateData interface{}) (string, error) {
 	if strings.Contains(projectTitle, ".") {
 		data := strings.Split(projectTitle, "/")
 		projectTitle = data[1]
@@ -137,12 +137,21 @@ func ParseContent(tmpl *template.Template, fileName, dir, projectTitle, appName 
 	capitalized := caser.String(projectTitle)
 	appCapitalized := caser.String(appName)
 
-	data := map[string]string{
+	data := map[string]interface{}{
 		"IServiceName": capitalized,
 		"ServiceName":  projectTitle,
 		"IAppName":     appCapitalized,
 		"AppName":      appName,
-		"ProjectTitle": strings.ToLower(projectTitle), // Added for docker-compose
+		"ProjectTitle": strings.ToLower(projectTitle),
+	}
+
+	// Merge templateData if provided
+	if templateData != nil {
+		if td, ok := templateData.(map[string]interface{}); ok {
+			for k, v := range td {
+				data[k] = v
+			}
+		}
 	}
 
 	if strings.Contains(fileName, "app.log") {

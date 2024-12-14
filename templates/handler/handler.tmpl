@@ -1,10 +1,16 @@
 {{define "handler"}}
 package handlers
 
-import "{{.ServiceName}}/internal/{{.AppName}}/services"
+import (
+	"github.com/gin-gonic/gin"
+	"{{.ServiceName}}/internal/{{.AppName}}/services"
+)
 
 type {{.IAppName}}Handler interface {
-	// Add your handler methods here
+	Create(c *gin.Context)
+	Get(c *gin.Context)
+	Update(c *gin.Context)
+	Delete(c *gin.Context)
 }
 
 type {{.AppName}}Handler struct {
@@ -17,5 +23,19 @@ func New{{.IAppName}}Handler(service services.{{.IAppName}}Service) {{.IAppName}
 	}
 }
 
-// Add your handler implementations here
+func (h *{{.AppName}}Handler) Create(c *gin.Context) {
+	// Implementation for Create
+}
+
+func (h *{{.AppName}}Handler) Get(c *gin.Context) {
+	// Implementation for Get
+}
+
+func (h *{{.AppName}}Handler) Update(c *gin.Context) {
+	// Implementation for Update
+}
+
+func (h *{{.AppName}}Handler) Delete(c *gin.Context) {
+	// Implementation for Delete
+}
 {{end}}

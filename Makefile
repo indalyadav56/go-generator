@@ -9,6 +9,7 @@ test-run:
 sample: 
 	go run main.go init backend --app=auth --app=user --app=todo
 
+# go run main.go init my_project --app=auth --app=notification --app=user --framework=gin --frontend=htmx
 # govulncheck ./...
 
 build:

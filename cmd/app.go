@@ -72,7 +72,7 @@ func CreateApp(appName, dirPath string) {
 	}
 
 	dirData := AddApp(appName)
-	err = file.CreateStructure(dirPath, dirData, tmpl, appName)
+	err = file.CreateStructure(dirPath, dirData, tmpl, appName, nil)
 	if err != nil {
 		log.Fatalf("Failed to create structure: %v\n", err)
 	}

@@ -1,0 +1,30 @@
+/* Base styles */
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    line-height: 1.5;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+h1 {
+    color: #2d3748;
+    margin-bottom: 2rem;
+}
+
+/* HTMX loading states */
+.htmx-indicator {
+    opacity: 0;
+    transition: opacity 200ms ease-in;
+}
+.htmx-request .htmx-indicator {
+    opacity: 1
+}
+.htmx-request.htmx-indicator {
+    opacity: 1
+}

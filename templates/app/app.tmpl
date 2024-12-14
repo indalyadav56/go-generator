@@ -47,6 +47,14 @@ func (a *App) initDependencies() error {
 		return fmt.Errorf("failed to start server: %w", err)
 	}
 
+	{{if eq .Frontend "htmx"}}
+	// // Serve static files
+	// a.deps.Server.Router.Static("/static", "./static")
+	// 
+	// // Load HTML templates
+	// a.deps.Server.Router.LoadHTMLGlob("templates/*.html")
+	{{end}}
+
 	return nil
 }
 

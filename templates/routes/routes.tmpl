@@ -8,13 +8,13 @@ import (
 )
 
 func {{.IAppName}}Routes(app *gin.Engine, h handlers.{{.IAppName}}Handler) {
-	// {{.AppName}}V1 := app.Group("/v1/{{.AppName}}s")
-	// {
-	// 	{{.AppName}}V1.Get("", h.Get)
-	// 	{{.AppName}}V1.Post("", h.Create)
-	// 	{{.AppName}}V1.Patch("", h.Update)
-	//	{{.AppName}}V1.Delete("", h.Delete )
-	// }
+	{{.AppName}}V1 := app.Group("/v1/{{.AppName}}s")
+	{
+		{{.AppName}}V1.GET("", h.Get)
+		{{.AppName}}V1.POST("", h.Create)
+		{{.AppName}}V1.PATCH("", h.Update)
+		{{.AppName}}V1.DELETE("", h.Delete)
+	}
 }
 
 {{end}}
