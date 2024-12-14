@@ -1,32 +1,43 @@
 {{define "compose"}}
+version: '3.8'
+
 services:
   postgres_db:
     image: postgres:latest
     restart: always
-    container_name: meetspace_postgres
+    container_name: {{.ProjectTitle}}_postgres
     ports:
       - "5433:5432"
     environment:
-      - POSTGRES_DB=meetspace_db
+      - POSTGRES_DB={{.ProjectTitle}}_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   redis:
     image: redis:latest
-    container_name: meetspace_redis
+    container_name: {{.ProjectTitle}}_redis
     ports:
       - "6371:6379"
+    volumes:
+      - redis_data:/data
 
   rabbitmq:
     image: rabbitmq:management
-    container_name: meetspace_rabbitmq
+    container_name: {{.ProjectTitle}}_rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
 
-
+volumes:
+  postgres_data:
+  redis_data:
+  rabbitmq_data:
 
 {{end}}

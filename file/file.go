@@ -127,9 +127,7 @@ func CreateFile(filePath, content string) error {
 	return nil
 }
 
-// ParseContent processes a Go template and returns the formatted Go code.
 func ParseContent(tmpl *template.Template, fileName, dir, projectTitle, appName string) (string, error) {
-
 	if strings.Contains(projectTitle, ".") {
 		data := strings.Split(projectTitle, "/")
 		projectTitle = data[1]
@@ -144,6 +142,7 @@ func ParseContent(tmpl *template.Template, fileName, dir, projectTitle, appName 
 		"ServiceName":  projectTitle,
 		"IAppName":     appCapitalized,
 		"AppName":      appName,
+		"ProjectTitle": strings.ToLower(projectTitle), // Added for docker-compose
 	}
 
 	if strings.Contains(fileName, "app.log") {
@@ -151,6 +150,7 @@ func ParseContent(tmpl *template.Template, fileName, dir, projectTitle, appName 
 	}
 
 	var templateName string
+	var isFormat bool
 	var output bytes.Buffer
 
 	// Special handling for auth module templates
@@ -158,17 +158,21 @@ func ParseContent(tmpl *template.Template, fileName, dir, projectTitle, appName 
 		switch {
 		case strings.HasSuffix(dir, "services") && strings.HasSuffix(fileName, "service.go"):
 			templateName = "auth_service"
+			isFormat = true
 		case strings.HasSuffix(dir, "dto") && strings.HasSuffix(fileName, "dto.go"):
 			templateName = "auth_dto"
+			isFormat = true
 		case strings.HasSuffix(dir, "routes") && strings.HasSuffix(fileName, "routes.go"):
 			templateName = "gin_auth_routes"
+			isFormat = true
 		case strings.HasSuffix(dir, "handlers") && strings.HasSuffix(fileName, "handler.go"):
 			templateName = "auth_handler"
+			isFormat = true
 		default:
-			templateName, _ = getTemplateName(fileName, dir)
+			templateName, isFormat = getTemplateName(fileName, dir)
 		}
 	} else {
-		templateName, _ = getTemplateName(fileName, dir)
+		templateName, isFormat = getTemplateName(fileName, dir)
 	}
 
 	err := tmpl.ExecuteTemplate(&output, templateName, data)
@@ -176,11 +180,16 @@ func ParseContent(tmpl *template.Template, fileName, dir, projectTitle, appName 
 		return "", fmt.Errorf("failed to execute template: %w", err)
 	}
 
-	formattedOutput, err := format.FormatGoCode(output.Bytes())
-	if err != nil {
-		return "", fmt.Errorf("failed to format Go code: %w", err)
+	// Only format if it's a Go file
+	if isFormat && strings.HasSuffix(fileName, ".go") {
+		formattedOutput, err := format.FormatGoCode(output.Bytes())
+		if err != nil {
+			return "", fmt.Errorf("failed to format Go code: %w", err)
+		}
+		return string(formattedOutput), nil
 	}
-	return string(formattedOutput), nil
+
+	return output.String(), nil
 }
 
 func getTemplateName(fileName, dir string) (templateName string, isFormat bool) {
