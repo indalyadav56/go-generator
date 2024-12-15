@@ -1,23 +1,15 @@
 {{define "makefile"}}
-run:
-	go run cmd/{{.ServiceName}}/main.go
-	
-swagger:
-    swag init -o ./docs -d ./cmd/todo
-	swag init -g ./cmd/meetspace/main.go -o ./docs
-
-run-test:
-    GIN_MODE=test go test -v -cover -coverprofile=coverage.out ./....
-
 # Project variables
-BINARY_NAME=myapp
-PKG=./...
+BINARY_NAME := myapp
+PKG := ./...
 
 # Go commands
-GO=go
-GOFMT=gofmt
+GO := go
+GOFMT := gofmt
 
-# Default command to run if no other target is provided
+.PHONY: all build run test fmt lint clean tidy tools ci swagger run-test
+
+# Default target
 all: build
 
 # Build the binary
@@ -28,6 +20,19 @@ build:
 run: build
 	./$(BINARY_NAME)
 
+# Run the API
+run-api:
+	$(GO) run cmd/api/main.go
+
+# Generate Swagger documentation
+swagger:
+	swag init -o ./docs -d ./cmd/api
+	swag init -g ./cmd/meetspace/main.go -o ./docs
+
+# Run tests with coverage
+run-test:
+	GIN_MODE=test $(GO) test -v -cover -coverprofile=coverage.out $(PKG)
+
 # Test the code
 test:
 	$(GO) test -v $(PKG)
@@ -36,7 +41,7 @@ test:
 fmt:
 	$(GOFMT) -s -w .
 
-# Lint the code (optional)
+# Lint the code
 lint:
 	golangci-lint run
 
@@ -50,12 +55,8 @@ tidy:
 
 # Install necessary Go tools
 tools:
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	$(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 
 # Run all the tests and check formatting
 ci: fmt test lint
-
-# .PHONY: all build run test fmt lint clean tidy tools ci
-
-
 {{end}}

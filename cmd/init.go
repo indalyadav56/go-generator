@@ -183,11 +183,44 @@ func CreateProject(projectTitle string, framework string, frontend string) {
 		log.Fatalf("Error initializing submodule: %v", err)
 	}
 
-	// Run go mod tidy after submodule is set up
-	err = runGoModTidy(projectTitle)
+	// Initialize Swagger
+	err = initSwagger(projectTitle)
 	if err != nil {
-		log.Fatalf("Failed to run 'go mod tidy': %v", err)
+		log.Fatalf("Failed to initialize Swagger: %v", err)
 	}
+}
+
+// initSwagger initializes Swagger documentation for the project
+func initSwagger(projectPath string) error {
+	// // Install swag CLI tool
+	// cmd := exec.Command("go", "install", "github.com/swaggo/swag/cmd/swag@latest")
+	// cmd.Dir = projectPath
+	// if err := cmd.Run(); err != nil {
+	// 	return fmt.Errorf("failed to install swag: %w", err)
+	// }
+
+	// // Add Swagger dependencies to go.mod
+	// swaggerDeps := []string{
+	// 	"github.com/swaggo/swag@v1.16.2",
+	// 	"github.com/swaggo/gin-swagger@v1.6.0",
+	// 	"github.com/swaggo/files@v1.0.1",
+	// }
+	// for _, dep := range swaggerDeps {
+	// 	cmd = exec.Command("go", "get", dep)
+	// 	cmd.Dir = projectPath
+	// 	if err := cmd.Run(); err != nil {
+	// 		return fmt.Errorf("failed to add swagger dependency %s: %w", dep, err)
+	// 	}
+	// }
+
+	// Run swag init
+	cmd := exec.Command("swag", "init", "-g", "cmd/api/main.go")
+	cmd.Dir = projectPath
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("failed to initialize swagger: %w", err)
+	}
+
+	return nil
 }
 
 func runGoModTidy(basePath string) error {

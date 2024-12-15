@@ -2,10 +2,14 @@
 package app
 
 import (
-	"backend/config"
+	"{{.ServiceName}}/config"
 	"fmt"
 	"common/pkg/server"
 	"context"
+	_ "my_project/docs"
+
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type App struct {
@@ -55,6 +59,14 @@ func (a *App) initDependencies() error {
 	// a.deps.Server.Router.LoadHTMLGlob("templates/*.html")
 	{{end}}
 
+
+
+	a.initRepositories()
+
+	a.initServices()
+
+	a.initHandlers()
+
 	return nil
 }
 
@@ -62,7 +74,22 @@ func (a *App) initRepositories() {}
 
 func (a *App) initServices() {}
 
-func (a *App) initHandlers() {}
+func (a *App) initHandlers() {
+	a.deps.Server.Router().GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	{{if eq .Frontend "react"}}
+	// Serve frontend static files
+	router.Static("/assets", "./frontend/dist/assets")
+	router.StaticFile("/favicon.ico", "./frontend/dist/favicon.ico")
+
+	// Handle frontend routes
+	router.NoRoute(func(c *gin.Context) {
+		// Serve the React index.html for all other routes
+		c.File("./frontend/dist/index.html")
+	})
+	{{end}}
+
+}
 
 func (a *App) registerRoutes() {}
 

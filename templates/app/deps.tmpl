@@ -2,8 +2,8 @@
 package app
 
 import (
-	"backend/config"
-	database "common/pkg/db"
+	"{{.ServiceName}}/config"
+	"database/sql"
 	"common/pkg/http_client"
 	"common/pkg/jwt"
 	"common/pkg/logger"
@@ -13,7 +13,7 @@ import (
 
 type Dependencies struct {
 	Config     *config.Config
-	DB         *database.DB
+	DB         *sql.DB
 	Server     server.Server
 	Logger     logger.Logger
 	JWT        jwt.JWT
