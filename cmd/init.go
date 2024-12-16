@@ -28,7 +28,8 @@ var initCmd = &cobra.Command{
 			return
 		}
 		name := args[0]
-		CreateProject(strings.ToLower(name), framework, frontend)
+
+		CreateProject(strings.ToLower(name), framework, frontend, apps)
 
 		// create apps
 		for _, v := range apps {
@@ -44,7 +45,7 @@ func init() {
 	initCmd.Flags().StringP("frontend", "", "", "frontend framework to use (e.g., react, htmx)")
 }
 
-func CreateProject(projectTitle string, framework string, frontend string) {
+func CreateProject(projectTitle string, framework string, frontend string, apps []string) {
 	// Debug: List all files in embedded FS
 	entries, err := templates.TemplateFS.ReadDir(".")
 	if err != nil {
@@ -103,16 +104,27 @@ func CreateProject(projectTitle string, framework string, frontend string) {
 	}
 
 	if frontend == "htmx" {
-		structure["templates"] = []string{"base.html", "index.html"}
-		structure["static"] = []string{
+		structure["web/templates"] = []string{"base.html", "index.html"}
+		structure["web/static"] = []string{
 			"css/style.css",
 			"js/htmx.min.js",
 		}
 	}
 
+	initialApps := make(map[string]bool)
+	for _, app := range apps {
+		if app == "user" {
+			initialApps["user"] = true
+		}
+		if app == "auth" {
+			initialApps["auth"] = true
+		}
+	}
+
 	err = file.CreateStructure(projectTitle, structure, tmpl, "", map[string]interface{}{
-		"Framework": framework,
-		"Frontend":  frontend,
+		"Framework":   framework,
+		"Frontend":    frontend,
+		"InitialApps": initialApps,
 	})
 	if err != nil {
 		log.Fatalf("Failed to create structure: %v\n", err)

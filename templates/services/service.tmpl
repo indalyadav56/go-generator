@@ -5,6 +5,9 @@ import (
 	"{{.ServiceName}}/internal/{{.AppName}}/repository"
 	"{{.ServiceName}}/internal/{{.AppName}}/models"
 	"common/pkg/logger"
+	{{if eq .AppName "user"}}
+	"{{.ServiceName}}/internal/user/dto"
+	{{end}}
 )
 
 type {{.IAppName}}Service interface {
@@ -14,6 +17,7 @@ type {{.IAppName}}Service interface {
 	Delete(id string) error
 	// GetAll() ([]*models.{{.IAppName}}, error)
 	// Search(query string) ([]*models.{{.IAppName}}, error)
+	{{if eq .AppName "user"}}GetByEmail(email string) (*dto.UserResponse, error){{end}}
 }
 
 type {{.AppName}}Service struct {
@@ -67,5 +71,16 @@ func (s *{{.AppName}}Service) Delete(id string) error {
 // func (s *{{.AppName}}Service) Search(query string) ([]*models.{{.IAppName}}, error) {
 // 	return s.{{.AppName}}Repo.Search(query)
 // }
+
+{{if eq .AppName "user"}}
+func (s *userService) GetByEmail(email string) (*dto.UserResponse, error) {
+	existingUser, err := s.userRepo.FindByEmail(email)
+	if err != nil {
+		return nil, nil
+	}
+
+	return existingUser, nil
+}
+{{end}}
 
 {{end}}

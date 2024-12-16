@@ -9,6 +9,15 @@ import (
 	"common/pkg/logger"
 	"common/pkg/server"
 	"common/pkg/validator"
+	{{if (index .InitialApps "user")}}
+	userHandlers "{{.ServiceName}}/internal/user/handlers"
+	userServices "{{.ServiceName}}/internal/user/services"
+	userRepo "{{.ServiceName}}/internal/user/repository"
+	{{end}}
+	{{if (index .InitialApps "auth")}}
+	authHandlers "{{.ServiceName}}/internal/auth/handlers"
+	authServices "{{.ServiceName}}/internal/auth/services"
+	{{end}}
 )
 
 type Dependencies struct {
@@ -19,6 +28,17 @@ type Dependencies struct {
 	JWT        jwt.JWT
 	Validator  validator.Validator
 	HttpClient http_client.HttpClient
+
+	{{if (index .InitialApps "user")}}
+	AuthHandler authHandlers.AuthHandler
+	AuthService authServices.AuthService
+	{{end}}
+
+	{{if (index .InitialApps "user")}}
+	UserHandler userHandlers.UserHandler
+	UserService userServices.UserService
+	UserRepo    userRepo.UserRepository
+	{{end}}
 }
 
 

@@ -13,6 +13,8 @@ type {{.IAppName}}Handler interface {
 	Register(c *gin.Context)
 	Login(c *gin.Context)
 	RefreshToken(c *gin.Context)
+	Logout(c *gin.Context)
+	ResetPassword(c *gin.Context)
 }
 
 type {{.AppName}}Handler struct {
@@ -25,6 +27,13 @@ func New{{.IAppName}}Handler(service services.{{.IAppName}}Service) {{.IAppName}
 	}
 }
 
+// Register godoc
+// @Summary Register a new user
+// @Description Register a new user with the provided details
+// @Tags Auth
+// @Accept  json
+// @Produce  json
+// @Router /auth/register [post]
 func (h *{{.AppName}}Handler) Register(c *gin.Context) {
 	var req dto.RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -39,6 +48,13 @@ func (h *{{.AppName}}Handler) Register(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
+// Login godoc
+// @Summary Login a user
+// @Description Authenticate a user and return a JWT token
+// @Tags Auth
+// @Accept  json
+// @Produce  json
+// @Router /auth/login [post]
 func (h *{{.AppName}}Handler) Login(c *gin.Context) {
 	var req dto.LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -53,6 +69,13 @@ func (h *{{.AppName}}Handler) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
+// RefreshToken godoc
+// @Summary Refresh the JWT token
+// @Description Refresh the JWT token using a valid refresh token
+// @Tags Auth
+// @Accept  json
+// @Produce  json
+// @Router /auth/refresh [post]
 func (h *{{.AppName}}Handler) RefreshToken(c *gin.Context) {
 	var req dto.RefreshTokenRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -66,4 +89,27 @@ func (h *{{.AppName}}Handler) RefreshToken(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, resp)
 }
+
+// Logout godoc
+// @Summary Logout a user
+// @Description Invalidate the refresh token to log the user out
+// @Tags Auth
+// @Accept  json
+// @Produce  json
+// @Router /auth/logout [post]
+func (h *authHandler) Logout(ctx *gin.Context) {
+
+}
+
+// ResetPassword godoc
+// @Summary Reset password
+// @Description Reset the user's password using a valid reset token
+// @Tags Auth
+// @Accept  json
+// @Produce  json
+// @Router /auth/password-reset/confirm [post]
+func (h *authHandler) ResetPassword(ctx *gin.Context) {
+
+}
+
 {{end}}

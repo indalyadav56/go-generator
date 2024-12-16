@@ -5,6 +5,9 @@ import (
 	"database/sql"
 	"{{.ServiceName}}/internal/{{.AppName}}/models"
 	"common/pkg/logger"
+	{{if eq .AppName "user"}}
+	"{{.ServiceName}}/internal/user/dto"
+	{{end}}
 )
 
 type {{.IAppName}}Repository interface {
@@ -13,6 +16,7 @@ type {{.IAppName}}Repository interface {
 	FindByID(id string) (*models.{{.IAppName}}, error)
 	List(page, pageSize int) ([]models.{{.IAppName}}, error)
 	Delete(id string) error
+	{{if eq .AppName "user"}}FindByEmail(email string) (*dto.UserResponse, error){{end}}
 }
 
 type {{.AppName}}Repository struct {
@@ -104,5 +108,20 @@ func (r *{{.AppName}}Repository) Delete(id string) error {
 	}
 	return nil
 }
+
+{{if eq .AppName "user"}}
+func (r *{{.AppName}}Repository) FindByEmail(email string) (*dto.UserResponse, error) {
+	query := `
+		SELECT id, first_name, middle_name, last_name, email from users where email = $1;
+	`
+	var user dto.UserResponse
+	err := r.db.QueryRow(query, email).Scan(&user.ID, &user.FirstName, &user.MiddleName, &user.LastName, &user.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+{{end}}
 
 {{end}}

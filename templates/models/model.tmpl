@@ -11,6 +11,14 @@ import (
 
 type {{.IAppName}} struct {
     ID          uuid.UUID  `gorm:"type:uuid;primary_key;default:gen_random_uuid()" json:"id"`
+
+	{{if eq .AppName "user"}}
+	FirstName   string `json:"first_name"`
+	MiddleName  string `json:"middle_name"`
+	LastName    string `json:"last_name"`
+	Email       string `json:"email"`
+	Password    string `json:"-"`
+	{{end}}
     
     CreatedAt   time.Time  `json:"-"`
 	UpdatedAt   time.Time  `json:"-"`

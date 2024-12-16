@@ -6,8 +6,16 @@ import (
 	"fmt"
 	"common/pkg/server"
 	"context"
-	_ "my_project/docs"
+	_ "{{.ServiceName}}/docs"
 
+	{{if (index .InitialApps "user")}}
+	userRoutes "{{.ServiceName}}/internal/user/routes"
+	{{end}}
+	{{if (index .InitialApps "auth")}}
+	authRoutes "{{.ServiceName}}/internal/auth/routes"
+	authServices "{{.ServiceName}}/internal/auth/services"
+	{{end}}
+	
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -72,9 +80,21 @@ func (a *App) initDependencies() error {
 
 func (a *App) initRepositories() {}
 
-func (a *App) initServices() {}
+func (a *App) initServices() {
+	{{if (index .InitialApps "auth")}}
+	a.deps.AuthService = authServices.NewAuthService(a.deps.Logger, a.deps.JWT, {{if (index .InitialApps "user")}}a.deps.UserService{{else}}nil{{end}})
+	{{end}}
+
+}
 
 func (a *App) initHandlers() {
+	{{if (index .InitialApps "user")}}
+	userRoutes.UserRoutes(a.deps.Server.Router(), nil)
+	{{end}}
+	{{if (index .InitialApps "auth")}}
+	authRoutes.AuthRoutes(a.deps.Server.Router(), nil)
+	{{end}}
+
 	a.deps.Server.Router().GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	{{if eq .Frontend "react"}}
