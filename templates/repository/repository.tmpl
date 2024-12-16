@@ -33,14 +33,16 @@ func New{{.IAppName}}Repository(db *sql.DB, log logger.Logger) *{{.AppName}}Repo
 
 // Insert inserts a new record into the database
 func (r *{{.AppName}}Repository) Insert({{.AppName}} *models.{{.IAppName}}) (*models.{{.IAppName}}, error) {
-	// Execute INSERT query and retrieve the newly created ID
-	// query := "INSERT INTO {{.AppName}}s (field1, field2) VALUES (?, ?) RETURNING id"
-	// err := r.db.QueryRow(query, {{.AppName}}.Field1, {{.AppName}}.Field2).Scan(&{{.AppName}}.ID)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// return {{.AppName}}, nil
+	{{if eq .AppName "user"}}
+	query := "INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4) RETURNING id"
+	err := r.db.QueryRow(query, {{.AppName}}.FirstName, {{.AppName}}.LastName, {{.AppName}}.Email, {{.AppName}}.Password).Scan(&{{.AppName}}.ID)
+	if err != nil {
+		return nil, err
+	}
+	return {{.AppName}}, nil
+	{{else}}
 	return nil, nil
+	{{end}}
 }
 
 // FindByID retrieves a record by its ID from the database

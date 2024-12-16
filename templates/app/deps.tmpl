@@ -3,7 +3,7 @@ package app
 
 import (
 	"{{.ServiceName}}/config"
-	"database/sql"
+	database "common/pkg/db"
 	"common/pkg/http_client"
 	"common/pkg/jwt"
 	"common/pkg/logger"
@@ -22,7 +22,7 @@ import (
 
 type Dependencies struct {
 	Config     *config.Config
-	DB         *sql.DB
+	DB         *database.DB
 	Server     server.Server
 	Logger     logger.Logger
 	JWT        jwt.JWT

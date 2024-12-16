@@ -2,9 +2,13 @@
 package app
 
 import (
+	"log"
+	database "common/pkg/db"
 	"{{.ServiceName}}/config"
+	"common/pkg/jwt"
 	"fmt"
 	"common/pkg/server"
+	"time"
 	"context"
 	_ "{{.ServiceName}}/docs"
 
@@ -59,6 +63,29 @@ func (a *App) Run() error {
 
 func (a *App) initDependencies() error {
 	var err error
+	dbCfg := &database.Config{
+		Host:     a.config.DBHost,
+		Port:     a.config.DBPort,
+		User:     a.config.DBUser,
+		Password: a.config.DBPassword,
+		Name:     a.config.DBName,
+		SSLMode:  "disable",
+	}
+
+	if a.deps.DB, err = database.New(dbCfg); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := a.deps.DB.ApplyMigrations(context.Background(), "./migrations"); err != nil {
+		return err
+	}
+
+	jwtConfig := jwt.JWTConfig{
+		SecretKey:     []byte(a.deps.Config.JWTSecret),
+		TokenDuration: time.Duration(a.deps.Config.JWTExpirationDays) * 24 * time.Hour,
+	}
+	a.deps.JWT = jwt.New(jwtConfig)
+
 	if a.deps.Server, err = server.New(); err != nil {
 		return fmt.Errorf("failed to start server: %w", err)
 	}
@@ -76,7 +103,7 @@ func (a *App) initDependencies() error {
 
 func (a *App) initRepositories() {
 	{{if (index .InitialApps "user")}}
-	a.deps.UserRepository = userRepos.NewUserRepository(a.deps.DB, a.deps.Logger)
+	a.deps.UserRepository = userRepos.NewUserRepository(a.deps.DB.DB, a.deps.Logger)
 	{{end}}}
 
 func (a *App) initServices() {

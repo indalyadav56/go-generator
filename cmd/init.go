@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"log"
@@ -9,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
+	"time"
 
 	"github.com/indalyadav56/go-generator/file"
 	"github.com/indalyadav56/go-generator/templates"
@@ -78,6 +80,7 @@ func CreateProject(projectTitle string, framework string, frontend string, apps 
 		"templates/gin/auth_middleware.tmpl",
 		"templates/gin/logger_middleware.tmpl",
 		"templates/constants/constant.tmpl",
+		"templates/migrations/users.sql.tmpl",
 	}
 
 	if frontend == "htmx" {
@@ -99,6 +102,7 @@ func CreateProject(projectTitle string, framework string, frontend string, apps 
 		"docs":                       {""},
 		"scripts":                    {"build.sh"},
 		"logs":                       {""},
+		"migrations":                 []string{""},
 		"internal/app":               {"app.go", "deps.go"},
 		".":                          {".gitignore", "README.md", "Dockerfile", "docker-compose.yml", "Makefile", ".env"},
 	}
@@ -129,6 +133,47 @@ func CreateProject(projectTitle string, framework string, frontend string, apps 
 	if err != nil {
 		log.Fatalf("Failed to create structure: %v\n", err)
 	}
+
+	go func() {
+		for _, app := range apps {
+			if app != "auth" && app != "authentication" {
+				migrationName := app
+				cmd := exec.Command("goose", "create", migrationName, "sql")
+				cmd.Dir = filepath.Join(projectTitle, "migrations")
+				if err := cmd.Run(); err != nil {
+					log.Printf("Failed to create migration for %s: %v", app, err)
+					continue
+				}
+				time.Sleep(1 * time.Second)
+
+				if app == "user" {
+					output := new(bytes.Buffer)
+
+					files, err := filepath.Glob(filepath.Join(projectTitle, "migrations", fmt.Sprintf("*_%s.sql", migrationName)))
+					if err != nil || len(files) == 0 {
+						log.Printf("Failed to find migration file for %s: %v", app, err)
+						continue
+					}
+
+					for _, file := range files {
+						if strings.Contains(file, "user.sql") {
+							if err := tmpl.ExecuteTemplate(output, "sql_migration", map[string]string{"AppName": app}); err != nil {
+								log.Printf("Failed to generate migration content for %s: %v", app, err)
+								continue
+							}
+
+							if err := os.WriteFile(file, output.Bytes(), 0644); err != nil {
+								log.Printf("Failed to write migration file for %s: %v", app, err)
+							}
+						}
+					}
+
+					output.Reset()
+				}
+
+			}
+		}
+	}()
 
 	// Initialize Go module first
 	err = initGoModule(projectTitle)
@@ -204,26 +249,35 @@ func CreateProject(projectTitle string, framework string, frontend string, apps 
 
 // initSwagger initializes Swagger documentation for the project
 func initSwagger(projectPath string) error {
-	// // Install swag CLI tool
-	// cmd := exec.Command("go", "install", "github.com/swaggo/swag/cmd/swag@latest")
-	// cmd.Dir = projectPath
-	// if err := cmd.Run(); err != nil {
-	// 	return fmt.Errorf("failed to install swag: %w", err)
-	// }
+	// Check if swag CLI tool is installed
+	checkCmd := exec.Command("swag", "version")
+	if err := checkCmd.Run(); err != nil {
+		// Install swag CLI tool if not found
+		installCmd := exec.Command("go", "install", "github.com/swaggo/swag/cmd/swag@latest")
+		installCmd.Dir = projectPath
+		if err := installCmd.Run(); err != nil {
+			return fmt.Errorf("failed to install swag: %w", err)
+		}
+	}
 
-	// // Add Swagger dependencies to go.mod
-	// swaggerDeps := []string{
-	// 	"github.com/swaggo/swag@v1.16.2",
-	// 	"github.com/swaggo/gin-swagger@v1.6.0",
-	// 	"github.com/swaggo/files@v1.0.1",
-	// }
-	// for _, dep := range swaggerDeps {
-	// 	cmd = exec.Command("go", "get", dep)
-	// 	cmd.Dir = projectPath
-	// 	if err := cmd.Run(); err != nil {
-	// 		return fmt.Errorf("failed to add swagger dependency %s: %w", dep, err)
-	// 	}
-	// }
+	// Add Swagger dependencies to go.mod
+	swaggerDeps := []string{
+		"github.com/swaggo/swag@v1.16.2",
+		"github.com/swaggo/gin-swagger@v1.6.0",
+		"github.com/swaggo/files@v1.0.1",
+	}
+	for _, dep := range swaggerDeps {
+		checkCmd := exec.Command("go", "list", "-m", dep)
+		checkCmd.Dir = projectPath
+		if err := checkCmd.Run(); err != nil {
+			// Dependency not found, install it
+			getCmd := exec.Command("go", "get", dep)
+			getCmd.Dir = projectPath
+			if err := getCmd.Run(); err != nil {
+				return fmt.Errorf("failed to add swagger dependency %s: %w", dep, err)
+			}
+		}
+	}
 
 	// Run swag init
 	cmd := exec.Command("swag", "init", "-g", "cmd/api/main.go")

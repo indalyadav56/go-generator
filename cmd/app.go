@@ -34,7 +34,6 @@ var appCmd = &cobra.Command{
 		if appName == "" {
 			return
 		}
-		// apiFramework, _ := cmd.Flags().GetString("framework")
 		CreateApp(appName, dirPath)
 
 	},
