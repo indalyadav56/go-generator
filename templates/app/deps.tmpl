@@ -37,7 +37,7 @@ type Dependencies struct {
 	{{if (index .InitialApps "user")}}
 	UserHandler userHandlers.UserHandler
 	UserService userServices.UserService
-	UserRepo    userRepo.UserRepository
+	UserRepository    userRepo.UserRepository
 	{{end}}
 }
 

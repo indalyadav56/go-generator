@@ -10,10 +10,14 @@ import (
 
 	{{if (index .InitialApps "user")}}
 	userRoutes "{{.ServiceName}}/internal/user/routes"
+	userHandlers "{{.ServiceName}}/internal/user/handlers"
+	userRepos "{{.ServiceName}}/internal/user/repository"
+	userServices "{{.ServiceName}}/internal/user/services"
 	{{end}}
 	{{if (index .InitialApps "auth")}}
 	authRoutes "{{.ServiceName}}/internal/auth/routes"
 	authServices "{{.ServiceName}}/internal/auth/services"
+	authHandlers "{{.ServiceName}}/internal/auth/handlers"
 	{{end}}
 	
 	swaggerFiles "github.com/swaggo/files"
@@ -59,28 +63,27 @@ func (a *App) initDependencies() error {
 		return fmt.Errorf("failed to start server: %w", err)
 	}
 
-	{{if eq .Frontend "htmx"}}
-	// // Serve static files
-	// a.deps.Server.Router.Static("/static", "./static")
-	// 
-	// // Load HTML templates
-	// a.deps.Server.Router.LoadHTMLGlob("templates/*.html")
-	{{end}}
-
-
-
 	a.initRepositories()
 
 	a.initServices()
 
 	a.initHandlers()
 
+	a.registerRoutes()
+
 	return nil
 }
 
-func (a *App) initRepositories() {}
+func (a *App) initRepositories() {
+	{{if (index .InitialApps "user")}}
+	a.deps.UserRepository = userRepos.NewUserRepository(a.deps.DB, a.deps.Logger)
+	{{end}}}
 
 func (a *App) initServices() {
+	{{if (index .InitialApps "user")}}
+	a.deps.UserService = userServices.NewUserService(a.deps.UserRepository, a.deps.Logger)
+	{{end}}
+
 	{{if (index .InitialApps "auth")}}
 	a.deps.AuthService = authServices.NewAuthService(a.deps.Logger, a.deps.JWT, {{if (index .InitialApps "user")}}a.deps.UserService{{else}}nil{{end}})
 	{{end}}
@@ -88,14 +91,32 @@ func (a *App) initServices() {
 }
 
 func (a *App) initHandlers() {
+	{{if (index .InitialApps "auth")}}
+	a.deps.AuthHandler = authHandlers.NewAuthHandler(a.deps.AuthService, a.deps.Logger, a.deps.Validator)
+	{{end}}
 	{{if (index .InitialApps "user")}}
-	userRoutes.UserRoutes(a.deps.Server.Router(), nil)
+	a.deps.UserHandler = userHandlers.NewUserHandler(a.deps.UserService, a.deps.Logger, a.deps.Validator)
+	{{end}}
+}
+
+func (a *App) registerRoutes() {
+	{{if (index .InitialApps "user")}}
+	userRoutes.UserRoutes(a.deps.Server.Router(), a.deps.UserHandler)
 	{{end}}
 	{{if (index .InitialApps "auth")}}
-	authRoutes.AuthRoutes(a.deps.Server.Router(), nil)
+	authRoutes.AuthRoutes(a.deps.Server.Router(), a.deps.AuthHandler)
 	{{end}}
 
 	a.deps.Server.Router().GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+
+	{{if eq .Frontend "htmx"}}
+	// Serve static files
+	// a.deps.Server.Router.Static("/web/static", "./static")
+	// Load HTML templates
+	// a.deps.Server.Router.LoadHTMLGlob("/web/templates/*.html")
+	{{end}}
+
 
 	{{if eq .Frontend "react"}}
 	// Serve frontend static files
@@ -108,10 +129,7 @@ func (a *App) initHandlers() {
 		c.File("./frontend/dist/index.html")
 	})
 	{{end}}
-
 }
-
-func (a *App) registerRoutes() {}
 
 func (a *App) Shutdown() error {
 	// if err := a.deps.DB.Close(); err != nil {

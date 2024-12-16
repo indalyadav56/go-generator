@@ -7,6 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"{{.ServiceName}}/internal/{{.AppName}}/services"
 	"{{.ServiceName}}/internal/{{.AppName}}/dto"
+	"common/pkg/logger"
+	"common/pkg/validator"
 )
 
 type {{.IAppName}}Handler interface {
@@ -19,11 +21,16 @@ type {{.IAppName}}Handler interface {
 
 type {{.AppName}}Handler struct {
 	service services.{{.IAppName}}Service
+	logger logger.Logger
+	validator validator.Validator
+
 }
 
-func New{{.IAppName}}Handler(service services.{{.IAppName}}Service) {{.IAppName}}Handler {
+func New{{.IAppName}}Handler(service services.{{.IAppName}}Service, log logger.Logger, validator validator.Validator) {{.IAppName}}Handler {
 	return &{{.AppName}}Handler{
 		service: service,
+		logger: log,
+		validator: validator,
 	}
 }
 

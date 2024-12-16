@@ -4,6 +4,8 @@ package handlers
 import (
 	"github.com/gin-gonic/gin"
 	"{{.ServiceName}}/internal/{{.AppName}}/services"
+	"common/pkg/logger"
+	"common/pkg/validator"
 )
 
 type {{.IAppName}}Handler interface {
@@ -15,27 +17,58 @@ type {{.IAppName}}Handler interface {
 
 type {{.AppName}}Handler struct {
 	service services.{{.IAppName}}Service
+	log       logger.Logger
+	validator validator.Validator
 }
 
-func New{{.IAppName}}Handler(service services.{{.IAppName}}Service) {{.IAppName}}Handler {
+func New{{.IAppName}}Handler(service services.{{.IAppName}}Service, log logger.Logger, validator validator.Validator) {{.IAppName}}Handler {
 	return &{{.AppName}}Handler{
 		service: service,
+		log:       log,
+		validator: validator,
 	}
 }
 
+// @Summary Create a new {{.AppName}}
+// @Description Create a new {{.AppName}} entry
+// @Tags {{.AppName}}
+// @Accept json
+// @Produce json
+// @Router /v1/{{.AppName}}s [post]
 func (h *{{.AppName}}Handler) Create(c *gin.Context) {
 	// Implementation for Create
 }
 
+// @Summary Get {{.AppName}} details
+// @Description Get details of a {{.AppName}} entry
+// @Tags {{.AppName}}
+// @Accept json
+// @Produce json
+// @Param id path int true "{{.AppName}} ID"
+// @Router /v1/{{.AppName}}s/{id} [get]
 func (h *{{.AppName}}Handler) Get(c *gin.Context) {
 	// Implementation for Get
 }
 
+// @Summary Update {{.AppName}} details
+// @Description Update details of an existing {{.AppName}} entry
+// @Tags {{.AppName}}
+// @Accept json
+// @Produce json
+// @Param id path int true "{{.AppName}} ID"
+// @Router /v1/{{.AppName}}s/{id} [patch]
 func (h *{{.AppName}}Handler) Update(c *gin.Context) {
 	// Implementation for Update
 }
 
+// @Summary Delete {{.AppName}}
+// @Description Delete an existing {{.AppName}} entry
+// @Tags {{.AppName}}
+// @Accept json
+// @Produce json
+// @Router /v1/{{.AppName}}s/{id} [delete]
 func (h *{{.AppName}}Handler) Delete(c *gin.Context) {
 	// Implementation for Delete
 }
+
 {{end}}
