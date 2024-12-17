@@ -1,0 +1,34 @@
+{{define "auth_routes"}}
+
+### Create User
+POST http://localhost:8080/v1/{{.AppName}}s
+Content-Type: application/json
+
+{
+    "first_name": "John",
+    "last_name": "Doe",
+    "email": "john.doe@example.com",
+    "password": "password123"
+}
+
+### Get User
+GET http://localhost:8080/v1/{{.AppName}}s/1
+
+### Update User
+PATCH http://localhost:8080/v1/{{.AppName}}s/1
+Content-Type: application/json
+
+{
+    "first_name": "Jane",
+    "last_name": "Doe"
+}
+
+### Delete User
+DELETE http://localhost:8080/v1/{{.AppName}}s/1
+
+### Get Current User
+GET http://localhost:8080/v1/{{.AppName}}s/me
+Authorization: Bearer your_jwt_token_here
+
+
+{{end}}

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io/fs"
 	"log"
-	"os/exec"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -70,7 +69,7 @@ func CreateApp(appName, dirPath string) {
 		log.Fatalf("Failed to parse templates: %v", err)
 	}
 
-	dirData := AddApp(appName)
+	dirData := AddApp(appName, dirPath)
 	templateData := map[string]interface{}{
 		"AppName": appName,
 	}
@@ -80,7 +79,7 @@ func CreateApp(appName, dirPath string) {
 	}
 }
 
-func AddApp(title string) file.DirectoryStructure {
+func AddApp(title, dirPath string) file.DirectoryStructure {
 	structure := file.DirectoryStructure{
 		fmt.Sprintf("%s/constants", title):  {"constants.go"},
 		fmt.Sprintf("%s/routes", title):     {"routes.go"},
@@ -96,28 +95,4 @@ func AddApp(title string) file.DirectoryStructure {
 		delete(structure, fmt.Sprintf("%s/models", title))
 	}
 	return structure
-}
-
-func runSwaggerInit(dirPath string) error {
-	var projectTitle string
-
-	if strings.Contains(dirPath, "/") {
-		data := strings.Split(dirPath, "/")
-		projectTitle = data[1]
-	}
-
-	// dirPath = "./backend/cmd/backend"
-	dirPath = fmt.Sprintf("./%s/cmd/%s", projectTitle, projectTitle)
-	args := []string{"init", "-o", "../../docs", fmt.Sprintf("./cmd/%s", projectTitle), dirPath}
-	cmd := exec.Command("swag", args...)
-	cmd.Dir = dirPath
-
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Printf("Error initializing swagger: %v", err)
-		log.Printf("Command output: %s", string(output))
-		return err
-	}
-
-	return nil
 }

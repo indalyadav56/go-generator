@@ -13,7 +13,16 @@ type UserResponse struct {
 	Email      string               `json:"email"`
 }
 
-{{end}}
+{{else}}
 
+type {{.IAppName}}Response struct {
+	ID string `json:"id"`
+}
+
+type {{.IAppName}}Request struct {
+	ID string `json:"id"`
+}
+
+{{end}}
 
 {{end}}

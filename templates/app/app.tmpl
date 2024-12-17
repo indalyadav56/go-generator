@@ -159,9 +159,9 @@ func (a *App) registerRoutes() {
 }
 
 func (a *App) Shutdown() error {
-	// if err := a.deps.DB.Close(); err != nil {
-	// 	a.deps.Logger.Error("failed to close database connection", zap.Error(err))
-	// }
+	if err := a.deps.DB.Close(); err != nil {
+		a.deps.Logger.Error("failed to close database connection")
+	}
 	return nil
 }
 {{end}}

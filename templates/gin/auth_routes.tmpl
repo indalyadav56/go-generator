@@ -12,6 +12,9 @@ func {{.IAppName}}Routes(router *gin.Engine,  h handlers.AuthHandler) {
 	{
 		authV1.POST("/register", h.Register)
 		authV1.POST("/login", h.Login)
+		authV1.POST("/refresh", h.RefreshToken)
+		authV1.POST("/logout", h.Logout)
+		authV1.POST("/reset-password", h.ResetPassword)
 	}
 }
 

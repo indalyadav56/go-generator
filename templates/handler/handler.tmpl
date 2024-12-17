@@ -13,6 +13,10 @@ type {{.IAppName}}Handler interface {
 	Get(c *gin.Context)
 	Update(c *gin.Context)
 	Delete(c *gin.Context)
+
+	{{if eq .AppName "user"}}
+	GetCurrentUser(ctx *gin.Context)
+	{{end}}
 }
 
 type {{.AppName}}Handler struct {
@@ -70,5 +74,30 @@ func (h *{{.AppName}}Handler) Update(c *gin.Context) {
 func (h *{{.AppName}}Handler) Delete(c *gin.Context) {
 	// Implementation for Delete
 }
+
+
+
+{{if eq .AppName "user"}}
+// GetCurrentUser godoc
+// @Summary Get the current authenticated user
+// @Description Return details of the currently authenticated user
+// @Tags Auth
+// @Accept  json
+// @Produce  json
+// @Router /v1/users/me [get]
+func (h *userHandler) GetCurrentUser(ctx *gin.Context) {
+	userId, ok := ctx.Get("user_id")
+	if !ok {
+		return
+	}
+
+	data, err := h.service.GetByID(userId.(string))
+	if err != nil {
+		return
+	}
+
+	ctx.JSON(200, data)
+}
+{{end}}
 
 {{end}}

@@ -12,6 +12,7 @@ sample:
 # ╰─ go run main.go init backend --app=auth --app=notification --app=payment --app=storage --frontend=htmx --framework=gin --driver=postgres --orm=gorm
 # go run main.go init my_project --app=auth --app=notification --app=user --framework=gin --frontend=htmx
 # govulncheck ./...
+# --websocket
 
 build:
 	go build -o ./bin/go-generator

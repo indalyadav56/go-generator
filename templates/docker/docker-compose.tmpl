@@ -9,7 +9,7 @@ services:
     ports:
       - "5433:5432"
     environment:
-      - POSTGRES_DB={{.ProjectTitle}}_db
+      - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
@@ -23,21 +23,8 @@ services:
     volumes:
       - redis_data:/data
 
-  rabbitmq:
-    image: rabbitmq:management
-    container_name: {{.ProjectTitle}}_rabbitmq
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-
 volumes:
   postgres_data:
   redis_data:
-  rabbitmq_data:
 
 {{end}}

@@ -17,6 +17,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type ProjectOpts struct {
+	Websocket bool
+}
+
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "This command initializes a golang project",
@@ -25,13 +29,14 @@ var initCmd = &cobra.Command{
 		apps, _ := cmd.Flags().GetStringSlice("app")
 		framework, _ := cmd.Flags().GetString("framework")
 		frontend, _ := cmd.Flags().GetString("frontend")
+		websocket, _ := cmd.Flags().GetBool("websocket")
 		if len(args) == 0 {
 			fmt.Println("provide the name of the project")
 			return
 		}
 		name := args[0]
 
-		CreateProject(strings.ToLower(name), framework, frontend, apps)
+		CreateProject(strings.ToLower(name), framework, frontend, apps, ProjectOpts{Websocket: websocket})
 
 		// create apps
 		for _, v := range apps {
@@ -45,26 +50,11 @@ func init() {
 	initCmd.Flags().StringSliceP("app", "", []string{}, "app names to initialize")
 	initCmd.Flags().StringP("framework", "", "", "web framework to use (e.g., htmx)")
 	initCmd.Flags().StringP("frontend", "", "", "frontend framework to use (e.g., react, htmx)")
+	initCmd.Flags().BoolP("websocket", "w", false, "enable WebSocket support")
+
 }
 
-func CreateProject(projectTitle string, framework string, frontend string, apps []string) {
-	// Debug: List all files in embedded FS
-	entries, err := templates.TemplateFS.ReadDir(".")
-	if err != nil {
-		panic(err)
-	}
-	for _, entry := range entries {
-		if entry.IsDir() {
-			subEntries, err := templates.TemplateFS.ReadDir(entry.Name())
-			if err != nil {
-				panic(err)
-			}
-			for _, subEntry := range subEntries {
-				fmt.Printf("  - %s/%s\n", entry.Name(), subEntry.Name())
-			}
-		}
-	}
-
+func CreateProject(projectTitle string, framework string, frontend string, apps []string, opts ProjectOpts) {
 	templatePaths := []string{
 		"templates/app/app.tmpl",
 		"templates/app/deps.tmpl",
@@ -96,6 +86,19 @@ func CreateProject(projectTitle string, framework string, frontend string, apps 
 		panic(err)
 	}
 
+	rootFiles := []string{
+		".gitignore",
+		"README.md",
+		"Dockerfile",
+		"docker-compose.yml",
+		"Makefile",
+		".env",
+	}
+
+	for _, app := range apps {
+		rootFiles = append(rootFiles, fmt.Sprintf("%s.http", app))
+	}
+
 	structure := file.DirectoryStructure{
 		fmt.Sprintf("cmd/%s", "api"): {"main.go"},
 		"config":                     {"config.go"},
@@ -104,7 +107,7 @@ func CreateProject(projectTitle string, framework string, frontend string, apps 
 		"logs":                       {""},
 		"migrations":                 []string{""},
 		"internal/app":               {"app.go", "deps.go"},
-		".":                          {".gitignore", "README.md", "Dockerfile", "docker-compose.yml", "Makefile", ".env"},
+		".":                          rootFiles,
 	}
 
 	if frontend == "htmx" {
@@ -113,6 +116,10 @@ func CreateProject(projectTitle string, framework string, frontend string, apps 
 			"css/style.css",
 			"js/htmx.min.js",
 		}
+	}
+
+	if opts.Websocket && framework == "gin" {
+		structure["internal/websocket"] = []string{"client.go", "config.go", "server.go", "routes.go", "hub.go", "handler.go"}
 	}
 
 	initialApps := make(map[string]bool)
@@ -280,6 +287,7 @@ func initSwagger(projectPath string) error {
 	}
 
 	// Run swag init
+	// 	cmd := exec.Command("swag", "init", "-g", "cmd/api/main.go", "-o", "./docs")
 	cmd := exec.Command("swag", "init", "-g", "cmd/api/main.go")
 	cmd.Dir = projectPath
 	if err := cmd.Run(); err != nil {

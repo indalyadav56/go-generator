@@ -10,6 +10,10 @@ import (
 func {{.IAppName}}Routes(app *gin.Engine, h handlers.{{.IAppName}}Handler) {
 	{{.AppName}}V1 := app.Group("/v1/{{.AppName}}s")
 	{
+		{{if eq .AppName "user"}}
+		{{.AppName}}V1.GET("/me", h.GetCurrentUser)
+		{{end}}
+
 		{{.AppName}}V1.GET("", h.Get)
 		{{.AppName}}V1.POST("", h.Create)
 		{{.AppName}}V1.PATCH("", h.Update)
