@@ -65,6 +65,7 @@ var templatePatterns = []templatePattern{
 	{"postgres", "postgres_db", true},
 	{"main", "main", true},
 	{"env", "env", false},
+	{"nginx", "nginx_conf", false},
 }
 
 func CreateStructure(basePath string, structure DirectoryStructure, temp *template.Template, appName string, data interface{}) error {

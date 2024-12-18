@@ -90,7 +90,16 @@ func (c *Config) loadViper(path string) error {
 
 func (c *Config) setDefaults(v *viper.Viper) {
 	v.SetDefault("JWT_EXPIRATION_DAYS", 7)
+	v.SetDefault("JWT_SECRET", "test")
+	
 	v.SetDefault("SERVER_PORT", "8080")
+
+	// database
+	v.SetDefault("DB_HOST", "localhost")
+	v.SetDefault("DB_PORT", "5432")
+	v.SetDefault("DB_USER", "postgres")
+	v.SetDefault("DB_PASSWORD", "postgres")
+	v.SetDefault("DB_NAME", "postgres")
 }
 
 func (c *Config) validate() error {

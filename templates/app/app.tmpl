@@ -3,6 +3,8 @@ package app
 
 import (
 	"log"
+	"common/pkg/validator"
+	"common/pkg/logger"
 	database "common/pkg/db"
 	"{{.ServiceName}}/config"
 	"common/pkg/jwt"
@@ -79,6 +81,9 @@ func (a *App) initDependencies() error {
 	if err := a.deps.DB.ApplyMigrations(context.Background(), "./migrations"); err != nil {
 		return err
 	}
+
+	a.deps.Logger = logger.New()
+	a.deps.Validator = validator.New()
 
 	jwtConfig := jwt.JWTConfig{
 		SecretKey:     []byte(a.deps.Config.JWTSecret),

@@ -26,8 +26,9 @@ run-api:
 
 # Generate Swagger documentation
 swagger:
-	swag init -o ./docs -d ./cmd/api
 	swag init -g ./cmd/api/main.go -o ./docs
+	
+#swag init -o ./docs -d ./cmd/api
 
 # Run tests with coverage
 run-test:

@@ -38,9 +38,13 @@ var initCmd = &cobra.Command{
 
 		CreateProject(strings.ToLower(name), framework, frontend, apps, ProjectOpts{Websocket: websocket})
 
-		// create apps
-		for _, v := range apps {
-			CreateApp(strings.ToLower(v), fmt.Sprintf("./%s/internal", name))
+		if len(apps) > 0 {
+			// create apps
+			for _, v := range apps {
+				CreateApp(strings.ToLower(v), fmt.Sprintf("./%s/internal", name))
+			}
+
+			go initSwagger(strings.ToLower(name))
 		}
 	},
 }
@@ -71,6 +75,7 @@ func CreateProject(projectTitle string, framework string, frontend string, apps 
 		"templates/gin/logger_middleware.tmpl",
 		"templates/constants/constant.tmpl",
 		"templates/migrations/users.sql.tmpl",
+		"templates/nginx/nginx-conf.tmpl",
 	}
 
 	if frontend == "htmx" {
@@ -108,6 +113,7 @@ func CreateProject(projectTitle string, framework string, frontend string, apps 
 		"migrations":                 []string{""},
 		"internal/app":               {"app.go", "deps.go"},
 		".":                          rootFiles,
+		"nginx":                      {"nginx.conf"},
 	}
 
 	if frontend == "htmx" {
@@ -287,8 +293,8 @@ func initSwagger(projectPath string) error {
 	}
 
 	// Run swag init
-	// 	cmd := exec.Command("swag", "init", "-g", "cmd/api/main.go", "-o", "./docs")
-	cmd := exec.Command("swag", "init", "-g", "cmd/api/main.go")
+	cmd := exec.Command("swag", "init", "-g", "cmd/api/main.go", "-o", "./docs")
+	// cmd := exec.Command("swag", "init", "-g", "cmd/api/main.go")
 	cmd.Dir = projectPath
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("failed to initialize swagger: %w", err)
