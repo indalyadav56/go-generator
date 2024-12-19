@@ -38,7 +38,7 @@ func (s *{{.AppName}}Service) Register(ctx context.Context, req *dto.RegisterReq
 		MiddleName: req.MiddleName,
 		LastName:  req.LastName,
 		Email:     req.Email,
-		Password:  req.Password,
+		Password:  s.hashPassword(req.Password),
 	}
 	newUser, err := s.userSrv.Create(user)
 	if err != nil {
@@ -72,6 +72,10 @@ func (s *{{.AppName}}Service) Login(ctx context.Context, req *dto.LoginRequest) 
 		return nil, err
 	}
 
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
+		return nil, errors.New("invalid credentials")
+	}
+
 	token, err := s.jwt.GenerateToken(map[string]interface{}{
 		"user_id": user.ID,
 	})
@@ -92,5 +96,15 @@ func (s *{{.AppName}}Service) Login(ctx context.Context, req *dto.LoginRequest) 
 func (s *authService) RefreshToken(ctx context.Context, req *dto.RefreshTokenRequest) (interface{}, error) {
 	return nil, nil
 }
+
+func (s *authService) hashPassword(password string) string {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		s.log.Error("failed to hash password", err)
+		return ""
+	}
+	return string(hashedPassword)
+}
+
 
 {{end}}

@@ -7,8 +7,9 @@ import (
 	"common/pkg/http_client"
 	"common/pkg/jwt"
 	"common/pkg/logger"
-	"common/pkg/server"
 	"common/pkg/validator"
+	"github.com/gin-gonic/gin"
+
 	{{if (index .InitialApps "user")}}
 	userHandlers "{{.ServiceName}}/internal/user/handlers"
 	userServices "{{.ServiceName}}/internal/user/services"
@@ -23,7 +24,7 @@ import (
 type Dependencies struct {
 	Config     *config.Config
 	DB         *database.DB
-	Server     server.Server
+	Server     *gin.Engine
 	Logger     logger.Logger
 	JWT        jwt.JWT
 	Validator  validator.Validator

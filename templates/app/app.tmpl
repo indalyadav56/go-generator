@@ -9,7 +9,7 @@ import (
 	"{{.ServiceName}}/config"
 	"common/pkg/jwt"
 	"fmt"
-	"common/pkg/server"
+	"github.com/gin-gonic/gin"
 	"time"
 	"context"
 	_ "{{.ServiceName}}/docs"
@@ -28,6 +28,7 @@ import (
 	
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	
 )
 
 type App struct {
@@ -57,10 +58,7 @@ func New() (*App, error) {
 }
 
 func (a *App) Run() error {
-	if err := a.deps.Server.Start(context.Background()); err != nil {
-		return fmt.Errorf("failed to start server: %w", err)
-	}
-	return nil
+	return a.deps.Server.Run(":8080")
 }
 
 func (a *App) initDependencies() error {
@@ -91,9 +89,7 @@ func (a *App) initDependencies() error {
 	}
 	a.deps.JWT = jwt.New(jwtConfig)
 
-	if a.deps.Server, err = server.New(); err != nil {
-		return fmt.Errorf("failed to start server: %w", err)
-	}
+	a.deps.Server = gin.Default()
 
 	a.initRepositories()
 
@@ -139,7 +135,7 @@ func (a *App) registerRoutes() {
 	authRoutes.AuthRoutes(a.deps.Server.Router(), a.deps.AuthHandler)
 	{{end}}
 
-	a.deps.Server.Router().GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	a.deps.Server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 
 	{{if eq .Frontend "htmx"}}
