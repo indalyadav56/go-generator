@@ -9,6 +9,8 @@ import (
 	"{{.ServiceName}}/internal/auth/dto"
 	"{{.ServiceName}}/internal/user/models"
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
+	"errors"
 )
 
 type {{.IAppName}}Service interface {
@@ -84,7 +86,7 @@ func (s *{{.AppName}}Service) Login(ctx context.Context, req *dto.LoginRequest) 
 	}
 
 	resp := &dto.LoginResponse{
-		UserID: user.ID,
+		UserID: user.ID.String(),
 		Email:  user.Email,
 		Token: dto.Token{
 			AccessToken: token,

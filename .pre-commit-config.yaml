@@ -1,0 +1,24 @@
+repos:
+  # Run `go fmt` to format Go code
+  - repo: https://github.com/dnephin/pre-commit-golang
+    rev: v0.3.8 # Use the latest stable version
+    hooks:
+      - id: go-fmt
+      - id: go-vet
+      - id: go-lint
+      - id: go-mod-tidy
+
+  # Check for trailing whitespace
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0 # Use the latest stable version
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-added-large-files
+
+  # Run static analysis with `golangci-lint`
+  - repo: https://github.com/golangci/golangci-lint
+    rev: v1.54.2 # Use the latest stable version
+    hooks:
+      - id: golangci-lint
+        args: [--fast]

@@ -129,10 +129,10 @@ func (a *App) initHandlers() {
 
 func (a *App) registerRoutes() {
 	{{if (index .InitialApps "user")}}
-	userRoutes.UserRoutes(a.deps.Server.Router(), a.deps.UserHandler)
+	userRoutes.UserRoutes(a.deps.Server, a.deps.UserHandler)
 	{{end}}
 	{{if (index .InitialApps "auth")}}
-	authRoutes.AuthRoutes(a.deps.Server.Router(), a.deps.AuthHandler)
+	authRoutes.AuthRoutes(a.deps.Server, a.deps.AuthHandler)
 	{{end}}
 
 	a.deps.Server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

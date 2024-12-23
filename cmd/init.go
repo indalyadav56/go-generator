@@ -150,16 +150,15 @@ func CreateProject(projectTitle string, framework string, frontend string, apps 
 	go func() {
 		for _, app := range apps {
 			if app != "auth" && app != "authentication" {
-				migrationName := app
-				cmd := exec.Command("goose", "create", migrationName, "sql")
-				cmd.Dir = filepath.Join(projectTitle, "migrations")
-				if err := cmd.Run(); err != nil {
-					log.Printf("Failed to create migration for %s: %v", app, err)
-					continue
-				}
-				time.Sleep(1 * time.Second)
-
 				if app == "user" {
+					migrationName := app
+					cmd := exec.Command("goose", "create", migrationName, "sql")
+					cmd.Dir = filepath.Join(projectTitle, "migrations")
+					if err := cmd.Run(); err != nil {
+						log.Printf("Failed to create migration for %s: %v", app, err)
+						continue
+					}
+					time.Sleep(1 * time.Second)
 					output := new(bytes.Buffer)
 
 					files, err := filepath.Glob(filepath.Join(projectTitle, "migrations", fmt.Sprintf("*_%s.sql", migrationName)))
@@ -182,6 +181,7 @@ func CreateProject(projectTitle string, framework string, frontend string, apps 
 					}
 
 					output.Reset()
+					break
 				}
 
 			}
