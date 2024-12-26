@@ -8,7 +8,7 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "yourcli",
+	Use:   "go-generator",
 	Short: "Your Project CLI",
 	Long:  "A command-line tool for interacting with YourProject services.",
 }

@@ -14,7 +14,7 @@ import (
 )
 
 var appCmd = &cobra.Command{
-	Use:   "app",
+	Use:   "startapp",
 	Short: "to create a new app",
 	Long: `A longer description that spans multiple lines and likely contains examples
 	and usage of using your command. For example:
@@ -26,14 +26,14 @@ var appCmd = &cobra.Command{
 		var dirPath string
 
 		if len(args) > 0 {
-			dirPath = args[0]
+			dirPath = "./backend/internal"
 		}
 
-		appName, _ := cmd.Flags().GetString("name")
-		if appName == "" {
-			return
+		for _, v := range args {
+			appName := strings.ToLower(v)
+			CreateApp(appName, dirPath)
+			fmt.Printf("created %s app\n", v)
 		}
-		CreateApp(appName, dirPath)
 
 	},
 }
