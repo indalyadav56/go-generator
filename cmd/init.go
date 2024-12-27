@@ -22,7 +22,7 @@ type ProjectOpts struct {
 }
 
 var initCmd = &cobra.Command{
-	Use:   "startproject",
+	Use:   "new",
 	Short: "This command initializes a golang project",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {

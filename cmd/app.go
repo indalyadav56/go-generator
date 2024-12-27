@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/fs"
 	"log"
+	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -26,9 +27,16 @@ var appCmd = &cobra.Command{
 		var dirPath string
 
 		if len(args) > 0 {
-			dirPath = "./backend/internal"
+			if _, err := os.Stat("./internal"); err == nil {
+				dirPath = "./internal"
+			} else {
+				cwd, err := os.Getwd()
+				if err != nil {
+					log.Fatal(err)
+				}
+				dirPath = cwd
+			}
 		}
-
 		for _, v := range args {
 			appName := strings.ToLower(v)
 			CreateApp(appName, dirPath)
