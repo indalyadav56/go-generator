@@ -40,6 +40,7 @@ func New{{.IAppName}}Handler(service services.{{.IAppName}}Service, log logger.L
 // @Tags Auth
 // @Accept  json
 // @Produce  json
+// @Param user body dto.RegisterRequest true "User details"
 // @Router /auth/register [post]
 func (h *{{.AppName}}Handler) Register(c *gin.Context) {
 	var req dto.RegisterRequest
@@ -61,6 +62,7 @@ func (h *{{.AppName}}Handler) Register(c *gin.Context) {
 // @Tags Auth
 // @Accept  json
 // @Produce  json
+// @Param user body dto.LoginRequest true "User details"
 // @Router /auth/login [post]
 func (h *{{.AppName}}Handler) Login(c *gin.Context) {
 	var req dto.LoginRequest
@@ -82,6 +84,7 @@ func (h *{{.AppName}}Handler) Login(c *gin.Context) {
 // @Tags Auth
 // @Accept  json
 // @Produce  json
+// @Param user body dto.RefreshTokenRequest true "Refresh token"
 // @Router /auth/refresh [post]
 func (h *{{.AppName}}Handler) RefreshToken(c *gin.Context) {
 	var req dto.RefreshTokenRequest

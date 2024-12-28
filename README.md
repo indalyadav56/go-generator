@@ -9,7 +9,32 @@ A powerful code generator tool for Go projects that helps streamline development
 - Customizable code templates
 - Easy to use CLI interface
 
-## Installation
+## Installation the package
+
+```bash
+go install github.com/indalyadav56/go-generator@latest
+```
+
+## Examples
+
+```bash
+# Initialize a backend project with authentication, user, and todo apps
+go-generator new backend --app=auth --app=user --app=todo #add more if needed
+
+# Generate a new app
+go-generator app another-app
+
+<!-- with htmx -->
+
+go-generator new project --app=auth --app=user --app=todo --frontend=htmx
+
+<!-- with react -->
+
+go-generator new project --app=auth --app=user --app=todo --frontend=react
+
+```
+
+## Source Code Clone
 
 Clone the repository with submodules:
 

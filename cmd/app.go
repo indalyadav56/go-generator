@@ -15,7 +15,7 @@ import (
 )
 
 var appCmd = &cobra.Command{
-	Use:   "startapp",
+	Use:   "app",
 	Short: "to create a new app",
 	Long: `A longer description that spans multiple lines and likely contains examples
 	and usage of using your command. For example:
