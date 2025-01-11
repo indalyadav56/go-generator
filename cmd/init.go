@@ -197,7 +197,7 @@ func CreateProject(projectTitle string, framework string, frontend string, apps 
 	// Create React frontend with Vite if framework is react
 	if frontend == "react" {
 		fmt.Println("Creating React frontend with Vite...")
-		cmd := exec.Command("npm", "create", "vite@latest", "frontend", "--", "--template", "react")
+		cmd := exec.Command("npm", "create", "vite@latest", "frontend", "--", "--template", "react-ts")
 		cmd.Dir = projectTitle
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
@@ -206,15 +206,15 @@ func CreateProject(projectTitle string, framework string, frontend string, apps 
 			return
 		}
 
-		// Install dependencies
-		cmd = exec.Command("npm", "install")
-		cmd.Dir = filepath.Join(projectTitle, "frontend")
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-		if err := cmd.Run(); err != nil {
-			log.Printf("Warning: Failed to install React dependencies: %v\n", err)
-			return
-		}
+		// // Install dependencies
+		// cmd = exec.Command("npm", "install")
+		// cmd.Dir = filepath.Join(projectTitle, "frontend")
+		// cmd.Stdout = os.Stdout
+		// cmd.Stderr = os.Stderr
+		// if err := cmd.Run(); err != nil {
+		// 	log.Printf("Warning: Failed to install React dependencies: %v\n", err)
+		// 	return
+		// }
 	}
 
 	// Initialize Git and add common as submodule synchronously
