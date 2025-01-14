@@ -148,11 +148,11 @@ func (a *App) registerRoutes() {
 
 	{{if eq .Frontend "react"}}
 	// Serve frontend static files
-	router.Static("/assets", "./frontend/dist/assets")
-	router.StaticFile("/favicon.ico", "./frontend/dist/favicon.ico")
+	a.deps.Server.Static("/assets", "./frontend/dist/assets")
+	a.deps.Server.StaticFile("/favicon.ico", "./frontend/dist/favicon.ico")
 
 	// Handle frontend routes
-	router.NoRoute(func(c *gin.Context) {
+	a.deps.Server.NoRoute(func(c *gin.Context) {
 		// Serve the React index.html for all other routes
 		c.File("./frontend/dist/index.html")
 	})
