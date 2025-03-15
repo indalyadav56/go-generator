@@ -34,6 +34,10 @@ go-generator new project --app=auth --app=user --app=todo --frontend=react
 
 ```
 
+## Screenshots
+
+![Go Generator Screenshot](/screenshots/image.png)
+
 ## Source Code Clone
 
 Clone the repository with submodules:
