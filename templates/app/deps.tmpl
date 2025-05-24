@@ -28,7 +28,7 @@ type Dependencies struct {
 	Logger     logger.Logger
 	JWT        jwt.JWT
 	Validator  validator.Validator
-	HttpClient http_client.HttpClient
+	HttpClient http_client.Client
 
 	{{if (index .InitialApps "auth")}}
 	AuthHandler authHandlers.AuthHandler
