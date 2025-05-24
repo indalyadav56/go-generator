@@ -44,7 +44,7 @@ var initCmd = &cobra.Command{
 				CreateApp(strings.ToLower(v), fmt.Sprintf("./%s/internal", name))
 			}
 
-			go initSwagger(strings.ToLower(name))
+			initSwagger(strings.ToLower(name))
 		}
 	},
 }
@@ -253,17 +253,12 @@ func CreateProject(projectTitle string, framework string, frontend string, apps 
 		log.Fatalf("Error initializing submodule: %v", err)
 	}
 
-	// Initialize Swagger
-	err = initSwagger(projectTitle)
-	if err != nil {
-		log.Fatalf("Failed to initialize Swagger: %v", err)
-	}
 }
 
 // initSwagger initializes Swagger documentation for the project
 func initSwagger(projectPath string) error {
 	// Check if swag CLI tool is installed
-	checkCmd := exec.Command("swag", "version")
+	checkCmd := exec.Command("swag", "--version")
 	if err := checkCmd.Run(); err != nil {
 		// Install swag CLI tool if not found
 		installCmd := exec.Command("go", "install", "github.com/swaggo/swag/cmd/swag@latest")
@@ -275,9 +270,9 @@ func initSwagger(projectPath string) error {
 
 	// Add Swagger dependencies to go.mod
 	swaggerDeps := []string{
-		"github.com/swaggo/swag@v1.16.2",
-		"github.com/swaggo/gin-swagger@v1.6.0",
-		"github.com/swaggo/files@v1.0.1",
+		"github.com/swaggo/swag@latest",
+		"github.com/swaggo/gin-swagger@latest",
+		"github.com/swaggo/files@latest",
 	}
 	for _, dep := range swaggerDeps {
 		checkCmd := exec.Command("go", "list", "-m", dep)
@@ -294,7 +289,6 @@ func initSwagger(projectPath string) error {
 
 	// Run swag init
 	cmd := exec.Command("swag", "init", "-g", "cmd/api/main.go", "-o", "./docs")
-	// cmd := exec.Command("swag", "init", "-g", "cmd/api/main.go")
 	cmd.Dir = projectPath
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("failed to initialize swagger: %w", err)
