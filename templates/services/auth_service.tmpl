@@ -73,6 +73,10 @@ func (s *{{.AppName}}Service) Login(ctx context.Context, req *dto.LoginRequest) 
 	if err != nil {
 		return nil, err
 	}
+	
+	if user == nil {
+		return nil, errors.New("user not found")
+	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
 		return nil, errors.New("invalid credentials")
