@@ -195,9 +195,9 @@ func CreateProject(projectTitle string, framework string, frontend string, apps 
 	}
 
 	// Create React frontend with Vite if framework is react
-	if frontend == "react" {
+	if strings.ToLower(frontend) == "react" || strings.ToLower(frontend) == "reactjs" {
 		fmt.Println("Creating React frontend with Vite...")
-		cmd := exec.Command("npm", "create", "vite@latest", "frontend", "--", "--template", "react-ts")
+		cmd := exec.Command("npm", "create", "vite@latest", "web", "--", "--template", "react-ts")
 		cmd.Dir = projectTitle
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
@@ -261,29 +261,10 @@ func initSwagger(projectPath string) error {
 	checkCmd := exec.Command("swag", "--version")
 	if err := checkCmd.Run(); err != nil {
 		// Install swag CLI tool if not found
-		installCmd := exec.Command("go", "install", "github.com/swaggo/swag/cmd/swag@latest")
+		installCmd := exec.Command("go", "install", "github.com/swaggo/swag/cmd/swag@v1")
 		installCmd.Dir = projectPath
 		if err := installCmd.Run(); err != nil {
 			return fmt.Errorf("failed to install swag: %w", err)
-		}
-	}
-
-	// Add Swagger dependencies to go.mod
-	swaggerDeps := []string{
-		"github.com/swaggo/swag@latest",
-		"github.com/swaggo/gin-swagger@latest",
-		"github.com/swaggo/files@latest",
-	}
-	for _, dep := range swaggerDeps {
-		checkCmd := exec.Command("go", "list", "-m", dep)
-		checkCmd.Dir = projectPath
-		if err := checkCmd.Run(); err != nil {
-			// Dependency not found, install it
-			getCmd := exec.Command("go", "get", dep)
-			getCmd.Dir = projectPath
-			if err := getCmd.Run(); err != nil {
-				return fmt.Errorf("failed to add swagger dependency %s: %w", dep, err)
-			}
 		}
 	}
 
@@ -297,7 +278,21 @@ func initSwagger(projectPath string) error {
 	return nil
 }
 
+func enforceSpecificSwagVersion(basePath string, version string) error {
+	getCmd := exec.Command("go", "get", fmt.Sprintf("github.com/swaggo/swag@%s", version))
+	getCmd.Dir = basePath
+	getCmd.Stdout = os.Stdout
+	getCmd.Stderr = os.Stderr
+	if err := getCmd.Run(); err != nil {
+		return fmt.Errorf("failed to get swag version %s: %w", version, err)
+	}
+
+	return nil
+}
+
 func runGoModTidy(basePath string) error {
+	enforceSpecificSwagVersion(basePath, "v1.16.4")
+
 	cmd := exec.Command("go", "mod", "tidy")
 	cmd.Dir = basePath
 	cmd.Stdout = os.Stdout

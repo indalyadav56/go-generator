@@ -22,6 +22,9 @@ run: build
 
 # Run the API
 run-api:
+	@if [ -d "./web" ]; then \
+		(cd ./web && npm run build); \
+	fi
 	$(GO) run cmd/api/main.go
 
 # Generate Swagger documentation

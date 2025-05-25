@@ -41,7 +41,7 @@ func New{{.IAppName}}Handler(service services.{{.IAppName}}Service, log logger.L
 // @Accept  json
 // @Produce  json
 // @Param user body dto.RegisterRequest true "User details"
-// @Router /auth/register [post]
+// @Router /v1/auth/register [post]
 func (h *{{.AppName}}Handler) Register(c *gin.Context) {
 	var req dto.RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -63,7 +63,7 @@ func (h *{{.AppName}}Handler) Register(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param user body dto.LoginRequest true "User details"
-// @Router /auth/login [post]
+// @Router /v1/auth/login [post]
 func (h *{{.AppName}}Handler) Login(c *gin.Context) {
 	var req dto.LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -85,7 +85,7 @@ func (h *{{.AppName}}Handler) Login(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param user body dto.RefreshTokenRequest true "Refresh token"
-// @Router /auth/refresh [post]
+// @Router /v1/auth/refresh [post]
 func (h *{{.AppName}}Handler) RefreshToken(c *gin.Context) {
 	var req dto.RefreshTokenRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -106,7 +106,7 @@ func (h *{{.AppName}}Handler) RefreshToken(c *gin.Context) {
 // @Tags Auth
 // @Accept  json
 // @Produce  json
-// @Router /auth/logout [post]
+// @Router /v1/auth/logout [post]
 func (h *authHandler) Logout(ctx *gin.Context) {
 
 }
@@ -117,7 +117,7 @@ func (h *authHandler) Logout(ctx *gin.Context) {
 // @Tags Auth
 // @Accept  json
 // @Produce  json
-// @Router /auth/reset-password [post]
+// @Router /v1/auth/reset-password [post]
 func (h *authHandler) ResetPassword(ctx *gin.Context) {
 
 }
