@@ -23,7 +23,7 @@ run: build
 # Run the API
 run-api:
 	@if [ -d "./web" ]; then \
-		(cd ./web && npm run build); \
+		(cd ./web && npm i &&  npm run build); \
 	fi
 	$(GO) run cmd/api/main.go
 
