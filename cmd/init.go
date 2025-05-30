@@ -76,6 +76,8 @@ func CreateProject(projectTitle string, framework string, frontend string, apps 
 		"templates/constants/constant.tmpl",
 		"templates/migrations/users.sql.tmpl",
 		"templates/nginx/nginx-conf.tmpl",
+		"templates/mockery.tmpl",
+		"templates/gitignore.tmpl",
 	}
 
 	if frontend == "htmx" {
@@ -98,10 +100,11 @@ func CreateProject(projectTitle string, framework string, frontend string, apps 
 		"docker-compose.yml",
 		"Makefile",
 		".env",
+		".mockery.yaml",
 	}
 
 	for _, app := range apps {
-		rootFiles = append(rootFiles, fmt.Sprintf("%s.http", app))
+		rootFiles = append(rootFiles, fmt.Sprintf("/docs/api/%s.http", app))
 	}
 
 	structure := file.DirectoryStructure{
@@ -269,7 +272,7 @@ func initSwagger(projectPath string) error {
 	}
 
 	// Run swag init
-	cmd := exec.Command("swag", "init", "-g", "cmd/api/main.go", "-o", "./docs")
+	cmd := exec.Command("swag", "init", "-g", "cmd/api/main.go", "-o", "./docs/swagger")
 	cmd.Dir = projectPath
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("failed to initialize swagger: %w", err)

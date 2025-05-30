@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"time"
 	"context"
-	_ "{{.ServiceName}}/docs"
+	_ "{{.ServiceName}}/docs/swagger"
 
 	{{if (index .InitialApps "user")}}
 	userRoutes "{{.ServiceName}}/internal/user/routes"

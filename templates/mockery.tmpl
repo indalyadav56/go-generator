@@ -1,0 +1,13 @@
+{{define "mockery"}}
+packages:
+{{- range $key, $val := .InitialApps }}
+  {{$.ServiceName}}/internal/{{$key}}/services:
+    config:
+      all: true
+      dir: internal/{{$key}}/mocks
+  {{$.ServiceName}}/internal/{{$key}}/repository:
+    config:
+      all: true
+      dir: internal/{{$key}}/mocks
+{{- end }}
+{{end}}

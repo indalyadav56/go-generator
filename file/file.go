@@ -12,6 +12,7 @@ import (
 	"github.com/indalyadav56/go-generator/format"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
+	"gopkg.in/yaml.v2"
 )
 
 type DirectoryStructure map[string][]string
@@ -25,6 +26,8 @@ var templatePatterns = []templatePattern{
 	{"makefile", "makefile", false},
 	{"dockerfile", "dockerfile", false},
 	{"readme", "readme", false},
+	{"readme", "readme", false},
+	{"mockery", "mockery", false},
 
 	// Specific patterns
 	{"auth_constant", "auth_constant", true},
@@ -119,6 +122,31 @@ func CreateFile(filePath, content string) error {
 	defer file.Close()
 
 	if content != "" {
+		var mockeryContent string
+		if strings.Contains(filePath, "mockery") {
+			mockeryContent = `
+  all: false
+  dir: "{{.InterfaceDir}}"
+  filename: "{{.Mock}}{{.InterfaceName}}.go"
+  force-file-write: true
+  formatter: goimports
+  log-level: info
+  structname: "{{.Mock}}{{.InterfaceName}}"
+  pkgname: "mocks"
+  recursive: false
+  require-template-schema-exists: true
+  template: testify
+  template-schema: "{{.Template}}.schema.json"`
+		}
+
+		if strings.HasSuffix(filePath, "yaml") || strings.HasSuffix(filePath, "yml") {
+			formattedContent, err := formatYAML(mockeryContent)
+			if err != nil {
+				return fmt.Errorf("error formatting YAML content: %v", err)
+			}
+			content = formattedContent + content
+		}
+
 		_, err = file.WriteString(content)
 		if err != nil {
 			return fmt.Errorf("error writing content to file: %v", err)
@@ -126,6 +154,21 @@ func CreateFile(filePath, content string) error {
 	}
 
 	return nil
+}
+
+func formatYAML(yamlStr string) (string, error) {
+	var data map[string]interface{}
+	err := yaml.Unmarshal([]byte(yamlStr), &data)
+	if err != nil {
+		return "", err
+	}
+
+	out, err := yaml.Marshal(&data)
+	if err != nil {
+		return "", err
+	}
+
+	return string(out), nil
 }
 
 func ParseContent(tmpl *template.Template, fileName, dir, projectTitle, appName string, templateData interface{}) (string, error) {
